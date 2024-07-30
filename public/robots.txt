@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: http://search.hotellook.com
+
+
+Sitemap: https://www.travell.co/sitemapindex.xml
