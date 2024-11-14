@@ -92,7 +92,7 @@
     max-height: 92px;
     overflow: hidden;
     position: relative;
-    line-height: 1.5; 
+    line-height: 1.5;
 }
 
 .tr-more-facilities .short-description-content.show-more {
@@ -901,57 +901,73 @@
                     @endif
                     <!-- <div class="tr-vgood">Very Good</div> -->
                   </div>
-                   <div class="tr-hotel-facilities">
-                    <?php
-                        // Step 2: Define your selected amenities by name
-                        $selectedAmenities = ['A/C', 'Parking', 'Wi-Fi', 'Laundry', 'Smoke-free', 'Pool', 'Gym', 'Food', 'Pets', 'Bar', 'Spa']; // Replace with names of your selected 15-20 amenities
+          <div class="tr-hotel-facilities">
+    <?php
+        // Define an array to map each selected amenity to its specific icon path
+        $amenityIconPaths = [
+            'A/C' => 'public/frontend/hotel-detail/images/amenities/A/C.svg',
+            'Parking' => 'public/frontend/hotel-detail/images/amenities/Parking.svg',
+            'Wi-Fi' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
+            'Laundry' => 'public/frontend/hotel-detail/images/amenities/Laundry.svg',
+            'Smoke-free' => 'public/frontend/hotel-detail/images/amenities/Smoke-free.svg',
+            'Pool' => 'public/frontend/hotel-detail/images/amenities/Pool.svg',
+            'Gym' => 'public/frontend/hotel-detail/images/amenities/Gym.svg',
+            'Food' => 'public/frontend/hotel-detail/images/amenities/Food.svg',
+            'Pets' => 'public/frontend/hotel-detail/images/amenities/Pets.svg',
+            'Bar' => 'public/frontend/hotel-detail/images/amenities/Bar.svg',
+            'Spa' => 'public/frontend/hotel-detail/images/amenities/Spa.svg',
+            // Add additional amenities as needed
+        ];
 
-                        $amenities = [];
-                        if ($searchresult->amenity_info != "") {
-                            $amenityData = explode(',', $searchresult->amenity_info);
-                            foreach ($amenityData as $item) {
-                                if (strpos($item, '|') !== false) {
-                                    list($name, $available) = explode('|', $item);
-                                    $name = trim($name);
-                                    $available = (int) trim($available);
+        // Define your selected amenities by name
+        $selectedAmenities = array_keys($amenityIconPaths); // Fetch keys directly from icon paths
 
-                                    // Only include amenities from the selected list
-                                    if (in_array($name, $selectedAmenities)) {
-                                        $amenities[] = [
-                                            'name' => $name,
-                                            'available' => $available,
-                                        ];
-                                    }
-                                }
-                            }
+        $amenities = [];
+        if ($searchresult->amenity_info != "") {
+            $amenityData = explode(',', $searchresult->amenity_info);
+            foreach ($amenityData as $item) {
+                if (strpos($item, '|') !== false) {
+                    list($name, $available) = explode('|', $item);
+                    $name = trim($name);
+                    $available = (int) trim($available);
 
-                            // Remove duplicates and limit to 5
-                            $uniqueAmenities = [];
-                            foreach ($amenities as $amenity) {
-                                if (!in_array($amenity['name'], array_column($uniqueAmenities, 'name'))) {
-                                    $uniqueAmenities[] = $amenity;
-                                }
-                            }
-                            $uniqueAmenities = array_slice($uniqueAmenities, 0, 5); // Limit to the first 5 amenities
-                        }
-                    ?>
+                    // Only include amenities from the selected list
+                    if (in_array($name, $selectedAmenities)) {
+                        $amenities[] = [
+                            'name' => $name,
+                            'available' => $available,
+                        ];
+                    }
+                }
+            }
 
-                    <!-- Display Amenities on the Page -->
-                    @if (!empty($uniqueAmenities))
-                        <ul>
-                            @foreach ($uniqueAmenities as $mnt)
-                                <li>
-                                    @if($mnt['available'] == 1 && is_string($mnt['name']))
-                                        <img src="{{ asset('public/frontend/hotel-detail/images/amenities/'.trim($mnt['name']).'.svg') }}" >
-                                    @else
-                                        <img src="{{ asset('public/frontend/hotel-detail/images/amenities/wifi.svg') }}" >
-                                    @endif
-                                    <span> {{ $mnt['name'] }}</span> <!-- Display the amenity name -->
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
+            // Remove duplicates and limit to 5
+            $uniqueAmenities = [];
+            foreach ($amenities as $amenity) {
+                if (!in_array($amenity['name'], array_column($uniqueAmenities, 'name'))) {
+                    $uniqueAmenities[] = $amenity;
+                }
+            }
+            $uniqueAmenities = array_slice($uniqueAmenities, 0, 5); // Limit to the first 5 amenities
+        }
+    ?>
+
+    <!-- Display Amenities on the Page -->
+    @if (!empty($uniqueAmenities))
+        <ul>
+            @foreach ($uniqueAmenities as $mnt)
+                <li>
+                    @php
+                        // Assign icon path from predefined list; if unavailable, use a default
+                        $iconPath = $amenityIconPaths[$mnt['name']] ?? 'public/frontend/hotel-detail/images/amenities/wifi.svg';
+                    @endphp
+                    <img src="{{ asset($iconPath) }}" alt="{{ $mnt['name'] }}">
+                    <span>{{ $mnt['name'] }}</span> <!-- Display the amenity name -->
+                </li>
+            @endforeach
+        </ul>
+    @endif
+</div>
                 <div class="tr-more-facilities">
                     @if(!empty($searchresult->short_description))
                         <ul class="short-description-content">
@@ -1252,13 +1268,13 @@
                             <ul>
                               @foreach ($amenities as $mnt)
                                 <li style="">
-                                  @if($mnt['available'] == 1 && is_string($mnt['name'])) 
+                                  @if($mnt['available'] == 1 && is_string($mnt['name']))
                                     <!-- Only display the image if available and valid name -->
                                     <img src="{{ asset('public/frontend/hotel-detail/images/amenities/'.trim($mnt['name']).'.svg') }}" >
                                   @else
                                     <img src="{{ asset('public/frontend/hotel-detail/images/amenities/wifi.svg') }}" >
                                   @endif
-                                  <span>{{ $mnt['name'] }}</span> 
+                                  <span>{{ $mnt['name'] }}</span>
                                   <!-- Display the amenity name -->
                                 </li>
                               @endforeach
@@ -1418,8 +1434,8 @@
 
   </div>
   <!-- Map Modal With Filter & Hotel List - End-->
-	  
-	  
+
+
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -1433,8 +1449,8 @@
     </div>
 </div>
 
-	  
-	  
+
+
    <!-- breadcrums -->
 
 
@@ -1846,4 +1862,3 @@ document.addEventListener('DOMContentLoaded', function() {
         button.textContent = content.classList.contains('show-more') ? 'Read Less' : 'Read More';
     }
 </script>
-

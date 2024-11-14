@@ -24,16 +24,16 @@ class DataController extends Controller
         }
     }
 
-       public function homepage(){ 
+       public function homepage(){
         $searchresults =null;
        return view('welcome')->with('searchresults',array());
     }
-  
+
 
 
 	  public function listLocation(Request $request)
-    {          
-        if ($request->has('search')) {     
+    {
+        if ($request->has('search')) {
             $searchText = $request->input('search');
 
             // Create a unique cache key based on the search text
@@ -91,7 +91,7 @@ class DataController extends Controller
     }
 
     public function recenthistory(Request $request){
-    
+
         if (Session::has('lastsearch')) {
             $serializedData = Session::get('lastsearch');
             $search = unserialize($serializedData);
@@ -105,7 +105,7 @@ class DataController extends Controller
                     'value' => $value['Name'],
                 ];
             }
-    
+
         }else{
             $searcht = array(
                 array(
@@ -124,10 +124,10 @@ class DataController extends Controller
                     'Name' => 'Dubai,United Arab Emirates'
                 )
             );
-            
-            
+
+
             $result = array();
-            
+
             foreach ($searcht as $item) {
                 $result[] = array(
                     'id' => $item['id'],
@@ -135,16 +135,16 @@ class DataController extends Controller
                     'value' => $item['Name']
                 );
             }
-            
-            
+
+
         }
-   
+
         return view('mainpage_result', ['searchresults' => $result]);
-   
+
     }
 	   public function singleLocation($segment, Request $request){
-       
-        $parts = explode('-', $segment);    
+
+        $parts = explode('-', $segment);
 	    $id = null;
         $slug = null;
         if (count($parts) > 1) {
@@ -152,46 +152,46 @@ class DataController extends Controller
             $slug = implode('-', $parts);
         }
         $explocname = $slug;
-		$dist =50;     
-        $rest = implode('-', $parts);  
+		$dist =50;
+        $rest = implode('-', $parts);
         $is_rest ="";
         $ismustsee ="";
-        $is_rest ="";      
+        $is_rest ="";
         $rest_avail ="";
-        $getSightCat ="";   
+        $getSightCat ="";
         $explocname = $slug;
         $location_name ="";
         $getloccheck = DB::table('Location')
             ->select('Name','LocationId')
             ->where('Slug', $slug)
-            ->where('slugid', $id)	
+            ->where('slugid', $id)
             ->get();
-	   
-       if($getloccheck->isEmpty()){		  
+
+       if($getloccheck->isEmpty()){
 		    if ($id != null) {
-				$checkgetloc = DB::table('Location')			
+				$checkgetloc = DB::table('Location')
 				->select('slugid')
-				->where('LocationId', $id)			  
-				->get();        
-				if(!$checkgetloc->isEmpty()){    
-					$id =  $checkgetloc[0]->slugid;				 
+				->where('LocationId', $id)
+				->get();
+				if(!$checkgetloc->isEmpty()){
+					$id =  $checkgetloc[0]->slugid;
 
 					return redirect()->route('search.results', [$id.'-'.$slug]);
-				 }  
+				 }
           }
-          abort(404, 'NOT FOUND');		  
-        }	
+          abort(404, 'NOT FOUND');
+        }
 
         $location_name =$getloccheck[0]->Name;
         $locationID=$getloccheck[0]->LocationId;
         $lociID = $locationID ;
         $locn=$getloccheck[0]->Name;
-		 
+
 		 //cat code
 		$catid = $request->get('category');
 		$catid= str_replace('ct','',$catid);
 		$lid = $request->session()->get('locId');
-     
+
 
 		if($lid != $locationID){
 			foreach (request()->session()->all() as $key => $value) {
@@ -215,7 +215,7 @@ class DataController extends Controller
 
 
             if (!$request->session()->has('catid_' . $catid)) {
-                $sessionVariableName = 'catid_' . $catid; 
+                $sessionVariableName = 'catid_' . $catid;
                 $request->session()->put($sessionVariableName, $catid);
 
             }
@@ -225,7 +225,7 @@ class DataController extends Controller
 
                 $sessionVariableName = 'cat_' . $catid;
                 $request->session()->put($sessionVariableName, $catNameAndId);
-            }   
+            }
        }else{
 		 $request->session()->forget('catid_mustsee');
 			 $request->session()->forget('cat_mustsee');
@@ -237,12 +237,12 @@ class DataController extends Controller
 		// session()->flush();
 			if(!$getcat->isEmpty()){
 				$names= $getcat[0]->Title;
-				$catid= $getcat[0]->CategoryId;                
+				$catid= $getcat[0]->CategoryId;
 				$request->session()->put('locId', $locationID);
 
 
 				if (!$request->session()->has('catid_' . $catid)) {
-					$sessionVariableName = 'catid_' . $catid; 
+					$sessionVariableName = 'catid_' . $catid;
 					$request->session()->put($sessionVariableName, $catid);
 
 				}
@@ -252,32 +252,32 @@ class DataController extends Controller
 
 					$sessionVariableName = 'cat_' . $catid;
 					$request->session()->put($sessionVariableName, $catNameAndId);
-				}   
+				}
 		   }
            $getSightCat = DB::table('Sight')
            ->select('Category.CategoryId', 'Category.Title')
            ->distinct()
            ->join('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-           ->where('Sight.LocationId', $locationID)	
+           ->where('Sight.LocationId', $locationID)
            ->get();
-	    	//end cat code      
+	    	//end cat code
             $faq = DB::table('LocationQuestion')
             ->where('LocationId', $locationID)
-            ->get();    
-            //end faq  
-            //fetch data 
+            ->get();
+            //end faq
+            //fetch data
             $searchresults = DB::table('Sight as s')
             ->select('s.SightId', 's.IsMustSee', 's.Title', 's.TAAggregateRating', 's.LocationId', 's.Slug', 'IsRestaurant', 'Address', 's.Latitude', 's.Longitude', 's.CategoryId', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName', 'l.About', 'l.slugid', 'l.Longitude as loc_longitude', 'l.Lat as loc_latitude', 's.TATotalReviews','s.ticket','s.MicroSummary')
             ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
-            ->join('Location as l', 's.LocationId', '=', 'l.LocationId')        
+            ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
             ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
          //   ->leftJoin('Sight_image as img', function ($join) {
            //     $join->on('s.SightId', '=', 'img.Sightid');
           //      $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
           //  })
-           
+
             ->where('l.Slug', $slug)
-            ->where('l.slugid', $id); 
+            ->where('l.slugid', $id);
             $categoryIds = [];
             $lid = $request->session()->get('locId');
             $mustsee ="";
@@ -291,7 +291,7 @@ class DataController extends Controller
                     }
                 }
             }
-            
+
             if ($mustsee == 1) {
                 $searchresults = $searchresults->where('s.IsMustSee', 1);
             }
@@ -300,17 +300,17 @@ class DataController extends Controller
             }
             $searchresults = $searchresults->distinct();
             if (empty($categoryIds)) {
-                
+
                 $searchresults = $searchresults->orderBy('s.TATotalReviews', 'desc')->limit(10)->get()->toArray();
             }else{
                 $searchresults = $searchresults->orderBy('s.IsMustSee', 'asc')->limit(10)->get()->toArray();
-            }   
-        //end fetch data       
+            }
+        //end fetch data
         //make count query
 
 
            // return print_r($searchresults);
-        $totalCountResults = 0;       
+        $totalCountResults = 0;
         $countResults = DB::table('Sight as s')
         ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
         ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
@@ -318,26 +318,26 @@ class DataController extends Controller
      //   ->leftJoin('Sight_image as img', function ($join) {
       //      $join->on('s.SightId', '=', 'img.Sightid');
       //      $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
-     //   })       
-        ->where('l.slugid', $id);       
+     //   })
+        ->where('l.slugid', $id);
         if (!empty($categoryIds)) {
             $countResults = $countResults->whereIn('s.CategoryId', $categoryIds);
         }
         if (!empty($mustsee)) {
             $countResults = $countResults->where('s.IsMustSee', 1);
-        }       
+        }
         $totalCountResults = $countResults->distinct()->count();
-        //end count query   
+        //end count query
         $loid =$locationID;
-        //empty query 1    
+        //empty query 1
         if(empty($searchresults)){
           $loc = DB::table('Location')
           ->select('LocationId', 'parentid','LocationLevel')
           ->where('LocationId', $locationID)
-          ->first();  
+          ->first();
           if(!empty($loc)){
                $parentId =$loc->parentid;
-              $LocationLevel =$loc->LocationLevel;	
+              $LocationLevel =$loc->LocationLevel;
               while ($parentId !== null && $LocationLevel !=1) {
                       $parent = DB::table('Location')
                       ->select('LocationId', 'ParentId')
@@ -346,9 +346,9 @@ class DataController extends Controller
                   if ($parent) {
                       $isParentInSight = DB::table('Sight')
                         ->where('LocationId', $parent->LocationId)
-                        ->exists();              
+                        ->exists();
                       if ($isParentInSight) {
-                          $parentId = $parent->LocationId;                          
+                          $parentId = $parent->LocationId;
                           break;
                       } else {
                           $parentId = $parent->ParentId;
@@ -362,8 +362,8 @@ class DataController extends Controller
           $searchresults = DB::table('Sight as s')
           ->select('s.SightId','s.IsMustSee','s.Title','s.TAAggregateRating','s.LocationId','s.Slug','IsRestaurant','Address', 's.Latitude','s.Longitude','s.CategoryId', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName','l.slugid','l.Longitude as loc_longitude','l.Lat as loc_latitude','s.TATotalReviews','l.About','s.ticket')
           ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
-          ->join('Location as l', 's.LocationId', '=', 'l.LocationId')	
-          ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')        
+          ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
+          ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
           //  ->leftJoin('Sight_image as img', function ($join) {
          //   $join->on('s.SightId', '=', 'img.Sightid');
          //   $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
@@ -377,40 +377,40 @@ class DataController extends Controller
         }
         $searchresults = $searchresults->distinct();
         if (empty($categoryIds)) {
-            
+
             $searchresults = $searchresults->orderBy('s.TATotalReviews', 'desc')->limit(1)->get()->toArray();
         }else{
 			$searchresults = $searchresults->limit(10)->orderBy('s.IsMustSee', 'asc')->get()->toArray();
 		}
       }
-        //empty query 2   
-      if(empty($searchresults)){        
+        //empty query 2
+      if(empty($searchresults)){
           $parentId = $locationID;
-          $loc = null; 
-          while ($parentId !== null) {             
+          $loc = null;
+          while ($parentId !== null) {
               $locations = DB::table('Location')
                   ->select('LocationId')
                   ->where('parentid', $parentId)
-                  ->limit(2) 
+                  ->limit(2)
                   ->get()
-                  ->pluck('LocationId'); 
+                  ->pluck('LocationId');
               if ($locations->isEmpty()) {
-                  break; 
-              }           
+                  break;
+              }
               $isInSight = DB::table('Sight')
                   ->whereIn('LocationId', $locations)
                   ->exists();
 
-              if ($isInSight) {                
+              if ($isInSight) {
                   $loc = $locations->first();
                   break;
-              }           
+              }
               $parentId = $locations->last();
-          }          
+          }
         //end
       $childIds = [];
       $parentId = $locationID;
-      while ($parentId !== null) {  
+      while ($parentId !== null) {
           $locations = DB::table('Location')
               ->select('LocationId')
               ->where('parentid', $parentId)
@@ -418,16 +418,16 @@ class DataController extends Controller
               ->get();
           foreach ($locations as $location) {
               $childIds[] = $location->LocationId;
-          }       
+          }
           $parentId = count($locations) > 0 ? $locations[0]->LocationId : null;
       }
 
         $searchresults =  DB::table('Sight as s')
           ->select('s.SightId','s.IsMustSee','s.Title','s.TAAggregateRating','s.LocationId','s.Slug','IsRestaurant','Address', 's.Latitude','s.Longitude','s.CategoryId', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName','l.About','l.slugid','l.Longitude as loc_longitude','l.Lat as loc_latitude','s.TATotalReviews','s.ticket')
-		
+
           ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
           ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
-          ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')  
+          ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
 	//	 ->leftJoin('Sight_image as img', function ($join) {
 	//		$join->on('s.SightId', '=', 'img.Sightid');
 	//		$join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
@@ -441,7 +441,7 @@ class DataController extends Controller
 		   }
 		    $searchresults = $searchresults->distinct();
         if (empty($categoryIds)) {
-            
+
             $searchresults = $searchresults->orderBy('s.TATotalReviews', 'desc')->limit(10)->get()->toArray();
          }else{
 			$searchresults = $searchresults->orderBy('s.IsMustSee', 'asc')->limit(10)->get()->toArray();
@@ -451,11 +451,11 @@ class DataController extends Controller
         if(!empty($searchresults)){
             $loid =$searchresults[0]->LocationId;
         }
-      
+
       }
       //end query 2
-	   //start distance code 
-		 
+	   //start distance code
+
 $getexp = collect();
 $countresult = count($searchresults);
 $restaurantdata = [];
@@ -469,12 +469,12 @@ if ($countresult > 2) {
                 break;
             }
         }
-        
+
         if ($firstRecord != null) {
             $dist = 50; // Distance threshold
             $lat = $firstRecord->Latitude;
-            $lon = $firstRecord->Longitude;    
-            $recordCount = 10; 
+            $lon = $firstRecord->Longitude;
+            $recordCount = 10;
             $locid = $locationID;
 
             // Clear existing data in the TempWorking table
@@ -536,7 +536,7 @@ if ($countresult > 2) {
 				FROM TempWorking
 				ORDER BY distance
 				LIMIT 2
-				ON DUPLICATE KEY UPDATE 
+				ON DUPLICATE KEY UPDATE
 					IsMustSee = VALUES(IsMustSee),
 					Title = VALUES(Title),
 					TAAggregateRating = VALUES(TAAggregateRating),
@@ -573,10 +573,10 @@ if ($countresult > 2) {
 
                 $countRows = DB::table('TempWorking')->select('SightId')->count();
 
-                
-              
-                        
-          
+
+
+
+
                 do {
                     $tempWorkingData = DB::table('TempWorking')
                         ->selectRaw('*, (6371 * ACOS(
@@ -587,7 +587,7 @@ if ($countresult > 2) {
                         ->whereNotIn('SightId', function ($query) {
                             $query->select('SightId')->from('TempSuggestedTrip');
                         })
-						 
+
                         ->orderBy('distance', 'ASC')
                         ->limit(1)
                         ->get();
@@ -610,13 +610,13 @@ if ($countresult > 2) {
                         $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
                     })
                     ->select(
-                        's.SightId', 's.IsMustSee', 's.Title', 's.TAAggregateRating', 's.LocationId', 's.Slug', 's.IsRestaurant', 
+                        's.SightId', 's.IsMustSee', 's.Title', 's.TAAggregateRating', 's.LocationId', 's.Slug', 's.IsRestaurant',
                         's.Address', 's.Latitude', 's.Longitude', 's.CategoryId',
                         'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName',
                         'l.Slug as Lslug', 'l.MetaTagTitle as mTitle',
                         'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id',
-                        'co.Name as CountryName', 'l.slugid', 
-                        'l.Longitude as loc_longitude', 'l.Lat as loc_latitude', 
+                        'co.Name as CountryName', 'l.slugid',
+                        'l.Longitude as loc_longitude', 'l.Lat as loc_latitude',
                         'l.About', 'img.Image', 's.ticket','s.MicroSummary'
                     )
                     ->get();
@@ -627,10 +627,10 @@ if ($countresult > 2) {
                     $searchresults1 = DB::table('Sight as s')
                     ->select('s.SightId', 's.IsMustSee', 's.Title', 's.TAAggregateRating', 's.LocationId', 's.Slug', 'IsRestaurant', 'Address', 's.Latitude', 's.Longitude', 's.CategoryId', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName', 'l.About', 'l.slugid', 'l.Longitude as loc_longitude', 'l.Lat as loc_latitude', 's.TATotalReviews','s.ticket','s.MicroSummary')
                     ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
-                    ->join('Location as l', 's.LocationId', '=', 'l.LocationId')        
+                    ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
                     ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
-                    ->where('l.slugid', $id)   
-                    ->whereNull('s.Latitude'); 
+                    ->where('l.slugid', $id)
+                    ->whereNull('s.Latitude');
                     $categoryIds = [];
                     $lid = $request->session()->get('locId');
                     $mustsee ="";
@@ -643,7 +643,7 @@ if ($countresult > 2) {
                                 $mustsee =1;
                             }
                         }
-                    }                    
+                    }
                     if ($mustsee == 1) {
                         $searchresults1 = $searchresults1->where('s.IsMustSee', 1);
                     }
@@ -651,20 +651,20 @@ if ($countresult > 2) {
                         $searchresults1 = $searchresults1->whereIn('s.CategoryId', $categoryIds);
                     }
                     $searchresults1 = $searchresults1->distinct()->limit(10 - count($searchresults));
-              
+
                         $searchresults1 = $searchresults1->orderBy('s.IsMustSee', 'asc')->get()->toArray();
-             
-                   
+
+
                     $searchresults = $searchresults->merge($searchresults1);
-                  
+
                 }
-               
+
                 //new code
   // return print_r($searchresults);
                 $fetchfunarray = $this->getrestaurents($searchresults, $locationID);
                 $restaurantdata = $fetchfunarray['restaurant'];
                 $getexp = $fetchfunarray['getexp'];
-               
+
             }
         }
     }
@@ -685,45 +685,45 @@ if (!empty($searchresults)) {
         $searchresults = collect($searchresults); // Convert to collection if needed
         $sightIds = $searchresults->pluck('SightId')->toArray();
     }
-    
+
     // Now that you have $sightIds, fetch sight images if it's not empty
     if (!empty($sightIds)) {
         $sightImages = DB::table('Sight_image')
             ->whereIn('Sightid', $sightIds)
             ->get();
-        
+
         // You can return or print $sightImages for debugging
       //  return print_r($sightImages);
     }
 }
 
-//end check distance code 
+//end check distance code
     $start2 =  date("H:i:s");
 
 
-     
+
       $breadcumb=[];
 
             $breadcumb  = DB::table('Location as l')
-      ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')   
+      ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')
       ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
        ->leftJoin('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-      ->where('l.LocationId', $locationID)	
+      ->where('l.LocationId', $locationID)
       ->get()
       ->toArray();
-  
+
     $start3 =  date("H:i:s");
    //    echo $start1.'---'.$start3;
 	//   die();
   //   echo $start.'---'.$start2.'--'.$start3;
   //   die();
-     //end replace procedure 
+     //end replace procedure
 
-  
-    
+
+
       if(!empty($searchresults[0]->LocationId)){
-          $locaionid = $searchresults[0]->LocationId;       
-      
+          $locaionid = $searchresults[0]->LocationId;
+
           $rest_avail = 0;
           if (!empty($searchresults)) {
               foreach ($searchresults as $searchresult) {
@@ -734,7 +734,7 @@ if (!empty($searchresults)) {
                   }
               }
           }
-      
+
           $ismustsee = 0;
           if (!empty($searchresults)) {
               foreach ($searchresults as $searchresult) {
@@ -745,19 +745,19 @@ if (!empty($searchresults)) {
                   }
               }
           }
-          
+
       }
-  
-     
+
+
      $tplocname=array();
      if(!empty($searchresults[0]->tp_location_mapping_id)){
        $tplocname =  DB::table('TPLocations')->select('cityName','countryName','LocationId')->where('LocationId',$searchresults[0]->tp_location_mapping_id)->get();
      }
-    
+
      $getparent = DB::table('Location')->where('LocationId', $lociID)->get();
 
      $locationPatent = [];
-     
+
      if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
          $loopcount = $getparent[0]->LocationLevel;
          $lociID = $getparent[0]->ParentId;
@@ -781,26 +781,26 @@ if (!empty($searchresults)) {
         if(!empty($searchresults[0]->LocationId)){
          $getrest = DB::table('Restaurant')->select('Title','RestaurantId','LocationId','Slug','Address','PriceRange')->where('LocationId',$searchresults[0]->LocationId)->get();
         }
-        
-        
+
+
       $experience =collect();
        if(!empty($searchresults[0]->LocationId)){
           $experience =  DB::table('Experience')->where('LocationId',$searchresults[0]->LocationId)->get();
      }
-     
+
        //new code
       $percentageRecommended = 0;
       if (!empty($searchresults)) {
 
           foreach ($searchresults as $results) {
               $sightId = $results->SightId;
-          
+
               $Sightcat = DB::table('SightCategory')
                   ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
                   ->select('Category.Title')
                   ->where('SightCategory.SightId', '=', $sightId)
-                  ->get();          
-          
+                  ->get();
+
               $results->Sightcat = $Sightcat;
 
               $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
@@ -808,28 +808,28 @@ if (!empty($searchresults)) {
 
           }
           //end code
-      
-          
+
+
 
       }
        //nearby hotel
           //nearby hotel
-       
+
         $nearby_hotel =collect();
-    
-        /*end nearby hotels */  
-     
-      
+
+        /*end nearby hotels */
+
+
         $getloc = DB::table('Location')->where('LocationId',$locationID)->get();
-  
-     
+
+
         if(!empty($getloc)){
           $latitude = $getloc[0]->Lat;
           $longitude = $getloc[0]->Longitude ;
-       
-     
-            
-            
+
+
+
+
               //hotel list id
           //hotel list id
         $gethotellistiid =collect();
@@ -838,7 +838,7 @@ if (!empty($searchresults)) {
         ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
         ->where('tm.Tid',$locationID)
         ->get();
-            
+
         $CountryId ="";
   $formattedDateTime = date("H:i:s");
              if($gethotellistiid->isEmpty()){
@@ -847,7 +847,7 @@ if (!empty($searchresults)) {
            $CountryId =$getlocid[0]->CountryId;
           }
              }
-            
+
 
   if($gethotellistiid->isEmpty()){
           $getlocid = DB::table('Location')->select('ParentId','CountryId')->where('LocationId',$locationID)->get();
@@ -855,7 +855,7 @@ if (!empty($searchresults)) {
               $locationID = $getlocid[0]->ParentId;
               $CountryId =$getlocid[0]->CountryId;
 
-      
+
           $gethotellistiid = DB::table('Temp_Mapping as tm')
           ->select('tpl.*')
           ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
@@ -863,9 +863,9 @@ if (!empty($searchresults)) {
           ->get();
           }
   }
-  
-            
-   
+
+
+
       if ($gethotellistiid->isEmpty()) {
           $gethotellistiid = DB::table('Temp_Mapping as tm')
               ->select('tpl.locationId')
@@ -875,19 +875,19 @@ if (!empty($searchresults)) {
               ->limit(1)
               ->get();
       }
- 
+
         // end hotel list id
-    
-       
+
+
         // end hotel list id
         }
 
           //end nearby hotel
       $lname  =$location_name;
-   
-               
+
+
      $type ="h";
-      return view('listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('restaurantdata',$restaurantdata)->with('getexp',$getexp)->with('location_name',$location_name)->with('type',$type)->with('lname',$lname)->with('totalCountResults',$totalCountResults)->with('sightImages',$sightImages)->with('top_attractions',$top_attractions);        
+      return view('listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('restaurantdata',$restaurantdata)->with('getexp',$getexp)->with('location_name',$location_name)->with('type',$type)->with('lname',$lname)->with('totalCountResults',$totalCountResults)->with('sightImages',$sightImages)->with('top_attractions',$top_attractions);
   }
   public function getrestaurents( $searchresults,$locationId)
   {
@@ -896,14 +896,14 @@ if (!empty($searchresults)) {
     $dist = 50;
     $insertData = [];
     $getexp = [];
-    
+
     if (count($searchresults) > 0) {
         foreach ($searchresults as $val) {
             $LocationId = $val->LocationId;
             $Longitude = $val->Longitude;
             $Latitude = $val->Latitude;
             $SightId = $val->SightId;
-    
+
             if ($Longitude !== null && $Latitude !== null) {
                 $tempWorkingData = DB::table('Restaurant as s')
                     ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
@@ -912,7 +912,7 @@ if (!empty($searchresults)) {
                         's.Latitude as Latitude', 's.Longitude as Longitude', 'l.Name as locname',
                         's.TAAggregateRating', 's.Timings', 's.PriceRange', 's.category', 's.features',
                         DB::raw('(6371 * ACOS(
-                            COS(RADIANS(' . $Latitude . ')) * COS(RADIANS(s.Latitude)) * 
+                            COS(RADIANS(' . $Latitude . ')) * COS(RADIANS(s.Latitude)) *
                             COS(RADIANS(s.Longitude) - RADIANS(' . $Longitude . ')) +
                             SIN(RADIANS(' . $Latitude . ')) * SIN(RADIANS(s.Latitude))
                         )) AS distance')
@@ -924,7 +924,7 @@ if (!empty($searchresults)) {
                     ->orderBy('distance', 'ASC')
                     ->limit(1)
                     ->get();
-    
+
                 foreach ($tempWorkingData as $restaurant) {
                     $restaurantArray = (array) $restaurant;
                     $restaurantArray['SightId'] = $SightId;
@@ -932,18 +932,18 @@ if (!empty($searchresults)) {
                 }
             }
         }
-    
+
         $locid = $locationId;
-    
+
         $getexp = [];
         $processedExperiences = [];
-    
+
         foreach ($searchresults as $val) {
             $LocationId = $val->LocationId;
             $Longitude = $val->Longitude;
             $Latitude = $val->Latitude;
             $SightId = $val->SightId;
-    
+
             if ($Longitude !== null && $Latitude !== null) {
                 $expdata1 = DB::table('Experience as e')
                     ->join('ExperienceItninerary as ei', 'e.ExperienceId', '=', 'ei.ExperienceId')
@@ -952,7 +952,7 @@ if (!empty($searchresults)) {
                         'e.slugid', 'e.ExperienceId', 'e.Slug', 'e.viator_url', 'e.Name', 'e.adult_price',
                         'e.Img1', 'e.Img2', 'e.Img3',
                         DB::raw('(6371 * ACOS(
-                            COS(RADIANS(' . $Latitude . ')) * COS(RADIANS(s.Latitude)) * 
+                            COS(RADIANS(' . $Latitude . ')) * COS(RADIANS(s.Latitude)) *
                             COS(RADIANS(s.Longitude) - RADIANS(' . $Longitude . ')) +
                             SIN(RADIANS(' . $Latitude . ')) * SIN(RADIANS(s.Latitude))
                         )) AS distance')
@@ -966,7 +966,7 @@ if (!empty($searchresults)) {
                     ->orderBy('distance', 'ASC')
                     ->limit(3)
                     ->get();
-    
+
                 foreach ($expdata1 as $exp) {
                     if (!isset($processedExperiences[$exp->ExperienceId][$SightId])) {
                         $expArray = (array) $exp;
@@ -977,36 +977,36 @@ if (!empty($searchresults)) {
                 }
             }
         }
-    
+
         $end = date('Y-m-d H:i:s');
-    
+
         return ['restaurant' => $insertData, 'getexp' => $getexp];
     }
-    
+
 
   }
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
   public function loadMoreAttractions(Request $request)
   {
       $page = $request->input('page');
-      $perPage = 10; 
+      $perPage = 10;
       $locationID = $request->input('locid');
       $explocname = $request->input('slug');
-      
-  
+
+
       if ($page == 1) {
           return response()->json(['html' => '']);
       }
-      
-      $offset = ($page - 1) * $perPage; 
-  
-       $searchresults = DB::table('Sight as s') 
+
+      $offset = ($page - 1) * $perPage;
+
+       $searchresults = DB::table('Sight as s')
           ->join('Location as l','l.LocationId','=','s.LocationId')
           ->leftJoin('Category', 's.categoryId', '=', 'Category.categoryId')
           ->leftJoin('Sight_image as img', function ($join) {
@@ -1014,22 +1014,22 @@ if (!empty($searchresults)) {
               $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = s.SightId LIMIT 1)');
              })
           ->select('s.*','l.slugid','img.Image','l.Name as LName','Category.Title as CategoryTitle')
-          ->where('s.LocationId', $locationID) 
-        //  ->where('s.TATotalReviews', '>', 20) 
+          ->where('s.LocationId', $locationID)
+        //  ->where('s.TATotalReviews', '>', 20)
 		   ->orderBy('s.IsMustSee', 'asc')
           ->get();
-  
+
       $attractions = collect($searchresults)
           ->slice($offset, $perPage)
-          ->values();  
+          ->values();
 
             // set timing cat values
-	  
+
 	  // return $result;
 $sightImages = collect();
 $sightIds = []; // Initialize the array to hold SightId values
 
-if (!empty($result)) {  
+if (!empty($result)) {
        $sightIds = $result->pluck('SightId')->toArray();
     if (!empty($sightIds)) {
         // Fetch sight images if $sightIds is not empty
@@ -1037,20 +1037,20 @@ if (!empty($result)) {
             ->whereIn('Sightid', $sightIds)
             ->get();
     }
-} 
+}
 
 
 if (!empty($attractions)) {
 
   foreach ($attractions as $results) {
       $sightId = $results->SightId;
-  
+
       $Sightcat = DB::table('SightCategory')
           ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
           ->select('Category.Title')
           ->where('SightCategory.SightId', '=', $sightId)
-          ->get();          
-  
+          ->get();
+
       $results->Sightcat = $Sightcat;
 
       $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
@@ -1058,14 +1058,14 @@ if (!empty($attractions)) {
 
       // Retrieve reviews for the sight using a raw SQL query
       $reviews = DB::select("SELECT * FROM SightReviews WHERE SightId = ?", [$sightId]);
-  
+
       // Merge the reviews into the result directly
       $results->reviews = $reviews;
   }
 }
 
 
-//end set timing cat val 
+//end set timing cat val
 $mergedData = [];
 
 // Loop through attractions and associate them with categories
@@ -1117,17 +1117,17 @@ if (!empty($attractions)) {
                  }else{
                         $imagepath = asset('public/images/Hotel lobby.svg');
                  }
-         
 
-        
-                 // cityName, tm, imagePath 
+
+
+                 // cityName, tm, imagePath
                   $locationData = [
                       'Latitude' => $att->Latitude,
                       'Longitude' => $att->Longitude,
                       'SightId' => $att->SightId,
                       'ismustsee' => $att->IsMustSee,
                       'name' => $att->Title,
-                      'recmd' => $recomd,                       
+                      'recmd' => $recomd,
                       'cat' => $categoryTitle,
                       'tm' => $timingInfo, // Include the timing in the locationData array
                       'cityName'=>'City of '.$att->LName,
@@ -1157,14 +1157,14 @@ if (!empty($attractions)) {
                  }else{
                         $imagepath = asset('public/images/Hotel lobby.svg');
                  }
-         
+
                   $locationData = [
                       'Latitude' => $att->Latitude,
                       'Longitude' => $att->Longitude,
                       'SightId' => $att->SightId,
                       'ismustsee' => $att->IsMustSee,
                       'name' => $att->Title,
-                      'recmd' => $recomd,                      
+                      'recmd' => $recomd,
                       'cat' => ' ',
                       'tm' => $timingInfo,
                       'cityName'=>'City of '.$att->LName,
@@ -1187,17 +1187,17 @@ $locationDataJson = json_encode($mergedData);
               return response()->json(['html' => '']);
           }
       $html = view('getloclistbycatid')->with('searchresults', $attractions)->with("sightImages",$sightImages)->with('type','loadmore')->render();
-  
+
       return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
   }
- 
+
   public function filtersightbycat(request $request){
-      
+
     $locId = $request->input('locationId');
     $catid = $request->input('catid');
     $names = $request->input('names');
     $delcatid = $request->input('delcatid');
-    
+
     $clearfilter = $request->input('clearfilter');
     if($clearfilter == 1){
         foreach (request()->session()->all() as $key => $value) {
@@ -1206,7 +1206,7 @@ $locationDataJson = json_encode($mergedData);
             }
         }
     }
-    
+
     $lid = $request->session()->get('locId');
     if($lid != $locId){
         foreach ($request->session()->all() as $key => $value) {
@@ -1214,7 +1214,7 @@ $locationDataJson = json_encode($mergedData);
                 $request->session()->forget($key);
             }
         }
- 
+
       $request->session()->forget('locId');
       $request->session()->forget('mustSee');
       $request->session()->forget('isrestaurant');
@@ -1226,10 +1226,10 @@ $locationDataJson = json_encode($mergedData);
             }
         }
         foreach ($request->session()->all() as $key => $value) {
-            if (str_starts_with($key, 'cat_')) {                 
+            if (str_starts_with($key, 'cat_')) {
                 $catId = explode('_', $value)[1];
-               
-                if ($catId == $delcatid) {                       
+
+                if ($catId == $delcatid) {
                     $request->session()->forget($key);
                 }
             }
@@ -1242,38 +1242,38 @@ $locationDataJson = json_encode($mergedData);
     if($delcatid = "isrestaurant"){
       $request->session()->forget('isrestaurant');
     }
-   
+
     $request->session()->put('locId', $locId);
- 
+
     if (!$request->session()->has('catid_' . $catid)) {
-        $sessionVariableName = 'catid_' . $catid; 
+        $sessionVariableName = 'catid_' . $catid;
         $request->session()->put($sessionVariableName, $catid);
-       
+
     }
 
 
     if (!$request->session()->has('cat_' . $catid)) {
-      
+
         $catNameAndId = $names . '_' . $catid;
-       
+
         $sessionVariableName = 'cat_' . $catid;
         $request->session()->put($sessionVariableName, $catNameAndId);
-    }   
+    }
 
 
     $categoryIds = [];
        $mustSee = 0;
     $isRestaurant = 0;
 
- 
+
 
 
  foreach ($request->session()->all() as $key => $value) {
         if (str_starts_with($key, 'catid_')) {
              if ($value != 'mustsee' && $value != 'isrestaurant' && $value != null) {
-            
+
                     $categoryIds[] = $value;
-                
+
              }
             if ($value === 'mustsee') {
                 $mustSee = 1;
@@ -1284,7 +1284,7 @@ $locationDataJson = json_encode($mergedData);
             }
         }
     }
-    
+
     $getSight = [];
     $getSight2 = [];
     $getSight3 = [];
@@ -1299,14 +1299,14 @@ $result=[];
 if (!empty($categoryIds) || isset($categoryIds[0])  && $categoryIds[0] == null) {
 
 $getSightCategory = DB::table('Sight')
-     ->join('Location','Location.LocationId','=','Sight.LocationId')	
+     ->join('Location','Location.LocationId','=','Sight.LocationId')
     ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-    
+
     ->leftJoin('Sight_image as img', function ($join) {
         $join->on('Sight.SightId', '=', 'img.Sightid');
         $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
        })
-       
+
     ->where('Sight.LocationId', $locId)
     ->whereIn('Sight.CategoryId', $categoryIds)
     ->select('Sight.SightId', 'Sight.IsMustSee', 'Sight.Title', 'Sight.TAAggregateRating', 'Sight.LocationId', 'Sight.Slug', 'IsRestaurant', 'Address', 'Sight.Latitude', 'Sight.Longitude', 'Sight.CategoryId', 'Category.Title as CategoryTitle', 'Location.Name as LName', 'Location.slugid',  'img.Image', 'Sight.TATotalReviews','Sight.ticket','Sight.MicroSummary')
@@ -1316,7 +1316,7 @@ $getSightCategory = DB::table('Sight')
     ->get()
     ->toArray();
 
-      
+
 
 $result = array_merge($result, $getSightCategory);
 $result = array_reverse($result);
@@ -1325,7 +1325,7 @@ $result = array_reverse($result);
 
 if ($mustSee == 1) {
 $getSightMustSee = DB::table('Sight')
-    ->join('Location','Location.LocationId','=','Sight.LocationId')	
+    ->join('Location','Location.LocationId','=','Sight.LocationId')
     ->leftJoin('Sight_image as img', function ($join) {
         $join->on('Sight.SightId', '=', 'img.Sightid');
         $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = Sight.SightId LIMIT 1)');
@@ -1356,20 +1356,20 @@ $result = array_unique($result, SORT_REGULAR);
 if (!$request->session()->has('mustSee') && !$request->session()->has('isrestaurant') && (empty($categoryIds) || $categoryIds[0] == null)) {
     $result =[];
     $result = DB::table('Sight')
-    ->join('Location','Location.LocationId','=','Sight.LocationId')	
+    ->join('Location','Location.LocationId','=','Sight.LocationId')
     ->leftJoin('Sight_image as img', function ($join) {
         $join->on('Sight.SightId', '=', 'img.Sightid');
         $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid = Sight.SightId LIMIT 1)');
        })
     ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-    ->where('Sight.LocationId', $locId)     
-   // ->select('Category.Title  as CategoryTitle', 'Sight.*','Location.slugid', 'img.Image','Location.Name as LName')  
+    ->where('Sight.LocationId', $locId)
+   // ->select('Category.Title  as CategoryTitle', 'Sight.*','Location.slugid', 'img.Image','Location.Name as LName')
      ->select('Sight.SightId', 'Sight.IsMustSee', 'Sight.Title', 'Sight.TAAggregateRating', 'Sight.LocationId', 'Sight.Slug', 'IsRestaurant', 'Address', 'Sight.Latitude', 'Sight.Longitude', 'Sight.CategoryId', 'Category.Title as CategoryTitle', 'Location.Name as LName', 'Location.slugid',  'img.Image', 'Sight.TATotalReviews','Sight.ticket','Sight.MicroSummary')
 		->orderBy('Sight.IsMustSee', 'asc')
     //->orderBy('Sight.TATotalReviews','desc')
     ->limit(10)
     ->get()->toArray();
-   
+
 }
 // return $result;
 $sightImages = collect();
@@ -1402,7 +1402,7 @@ if (!empty($result)) {
 
 
 // Final result as an array
-$result = array_values($result); 
+$result = array_values($result);
 //	$result = $result->toArray();
     //new code
 if (!empty($result)) {
@@ -1414,7 +1414,7 @@ foreach ($result as $results) {
         ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
         ->select('Category.Title')
         ->where('SightCategory.SightId', '=', $sightId)
-        ->get();          
+        ->get();
 
     $results->Sightcat = $Sightcat;
 
@@ -1430,7 +1430,7 @@ foreach ($result as $results) {
 }
 
 
-//end set timing cat val 
+//end set timing cat val
 $mergedData = [];
 
 // Loop through attractions and associate them with categories
@@ -1489,7 +1489,7 @@ foreach ($result as $att) {
                     'SightId' => $att->SightId,
                     'ismustsee' => $att->IsMustSee,
                     'name' => $att->Title,
-                    'recmd' => $recomd,                       
+                    'recmd' => $recomd,
                     'cat' => $categoryTitle,
                     'tm' => $timingInfo, // Include the timing in the locationData array
                     'cityName'=>'City of '.$att->LName,
@@ -1504,7 +1504,7 @@ foreach ($result as $att) {
         if (!empty($att->Latitude) && !empty($att->Longitude)) {
             // Check if $att->timing is set and contains the required properties
             if (isset($att->timing->timings)) {
-               
+
                if($att->TAAggregateRating != ""  && $att->TAAggregateRating != 0){
                     $recomd = rtrim($att->TAAggregateRating, '.0') * 20;
                    $recomd = $recomd . '%';
@@ -1523,7 +1523,7 @@ foreach ($result as $att) {
                     'SightId' => $att->SightId,
                     'ismustsee' => $att->IsMustSee,
                     'name' => $att->Title,
-                    'recmd' => $recomd,                      
+                    'recmd' => $recomd,
                     'cat' => ' ',
                     'tm' => $timingInfo,
                     'cityName'=>'City of '.$att->LName,
@@ -1536,7 +1536,7 @@ foreach ($result as $att) {
     }
 }
 }
-	  
+
 	    $result = array_reverse($result);
 //return print_r($result);
 // Encode data as JSON
@@ -1547,40 +1547,40 @@ $locationDataJson = json_encode($mergedData);
 return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 }
-    
+
     public function explore(request $request,$id)
     {
         $pt = $request->input('sloc');
-        
+
         $sighid =null;
         $locationID=null;
         $slug ="";
 
         $parts = explode('-', $id);
         $locationID = $parts[0];
-        $sighid = $parts[1]; 
+        $sighid = $parts[1];
         array_shift($parts);
-        array_shift($parts);    
+        array_shift($parts);
         $slug = implode('-', $parts);
 
 		$locid =	$locationID;
 
-		// get parent 
+		// get parent
      $getparent1 = DB::table('Location')->select('LocationId')->where('slugid', $locationID)->get();
-       
+
      if (!$getparent1->isEmpty()){
         $locationID = $getparent1[0]->LocationId;
 	 }else{
 	  if ($locid != null) {
 
-				 $checkgetloc = DB::table('Location')			
+				 $checkgetloc = DB::table('Location')
 					 ->select('slugid')
-					 ->where('LocationId', $locid)			  
+					 ->where('LocationId', $locid)
 					 ->get();
 
 
-				 if(!$checkgetloc->isEmpty()){    
-					 $lid =  $checkgetloc[0]->slugid;				 
+				 if(!$checkgetloc->isEmpty()){
+					 $lid =  $checkgetloc[0]->slugid;
 
 					 return redirect()->route('sight.details', [$lid.'-'.$sighid.'-'.$slug]);
 				 }
@@ -1588,13 +1588,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 
 			 }
-       
+
 		   abort(404, 'NOT FOUND');
 	 }
-     
+
      $lname ="";
 
-      
+
         //stored procedure to query start
      $searchresults = DB::table('Sight')
       ->Leftjoin('Location', 'Sight.LocationId', '=', 'Location.LocationId')
@@ -1607,18 +1607,18 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
       ->get()->toArray();
    // return print_r( $searchresults);
 		 if(empty($searchresults)){
-			  
-		  
+
+
 			 if ($locid != null) {
 
-				 $checkgetloc = DB::table('Location')			
+				 $checkgetloc = DB::table('Location')
 					 ->select('slugid')
-					 ->where('LocationId', $locid)			  
+					 ->where('LocationId', $locid)
 					 ->get();
 
 
-				 if(!$checkgetloc->isEmpty()){    
-					 $lid =  $checkgetloc[0]->slugid;				 
+				 if(!$checkgetloc->isEmpty()){
+					 $lid =  $checkgetloc[0]->slugid;
 
 					 return redirect()->route('sight.details', [$lid.'-'.$sighid.'-'.$slug]);
 				 }
@@ -1626,13 +1626,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 
 			 }
-       
+
 		   abort(404, 'NOT FOUND');
 		  }
-		
+
           $lname =$searchresults[0]->Name;
-		
-		// get parent 
+
+		// get parent
         $get_nearby_rest = DB::table('Sight_nearby_restaurant')->where('SightId',$sighid)->get();
 
   $getparent = DB::table('Location')->select('LocationLevel','ParentId')->where('slugid', $locationID)->get();
@@ -1655,28 +1655,28 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                     $lociID = $getparents[0]->ParentId;
                  }
              } else {
-                 break; 
+                 break;
              }
          }
      }
   }
   // end parent
 		   $breadcumb  = DB::table('Location as l')
-          ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')        
+          ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')
           ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
           ->leftJoin('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-          ->where('l.LocationId', $locationID)	
+          ->where('l.LocationId', $locationID)
           ->get()
           ->toArray();
      // $sightimages = DB::table('SightImages')->where('SightId',$sighid)->get();
    $sightreviews = DB::table('SightReviews')->whereNotNull('SightReviews.Name')->select('SightReviews.Name','SightReviews.ReviewDescription','SightReviews.IsRecommend','SightReviews.ReviewRating','SightReviews.CreatedDate')->where('SightReviews.SightId',$sighid)->limit(20)->get();
 
-   
+
      $faq = DB::table('SightListingDetailFaq')->select('SightListingDetailFaq.Faquestion','SightListingDetailFaq.Answer')->where('SightListingDetailFaq.SightId',$sighid)->get()->toArray();
- 
+
 
       //stored procedure to query end
-      
+
 
       $nearby_sight=collect();
       $getcat =collect();
@@ -1684,9 +1684,9 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
       $gettiming =collect();
       $nearby_hotel =collect();
       $within ="";
-  
+
       if(!empty($searchresults)) {
-       
+
        $getcat = DB::table('SightCategory')
               ->join('Category','Category.CategoryId','=','SightCategory.CategoryId')
 		   	   ->select('Category.Title')
@@ -1694,22 +1694,22 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
               ->distinct('SightCategory.CategoryId')
               ->get();
         $gettiming = DB::table('SightTiming')->select('SightTiming.main_hours','SightTiming.timings')->where('SightTiming.SightId',$searchresults[0]->SightId)->get();
-      
+
         $longitude = $searchresults[0]->Longitude;
-        $latitude = $searchresults[0]->Latitude;       
+        $latitude = $searchresults[0]->Latitude;
         $LocationId = $searchresults[0]->LocationId;
         $sightid = $searchresults[0]->SightId;
         $locationIds = array_column($locationPatent, 'LocationId');
-		  
+
         if( $latitude =="" || $longitude==""){
             //$LocationId
             $getsight = DB::table('Sight')->select('Latitude','Longitude','SightId')->where('LocationId',$LocationId)->whereNotNull('Latitude')->whereNotNull('Longitude')->limit(1)->get();
-           
+
             if(!$getsight->isEmpty()){
                 $longitude = $getsight[0]->Longitude;
-                $latitude = $getsight[0]->Latitude;   
+                $latitude = $getsight[0]->Latitude;
             }else{
-         
+
                 $getsight = DB::table('Location as l')
                 ->join('Sight as s', 'l.LocationId', '=', 's.LocationId')
                 ->select('s.Latitude','s.Longitude','s.SightId')
@@ -1718,38 +1718,38 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 ->whereNotNull('s.Longitude')
                 ->limit(1)
                 ->get();
-         
-         
-         
+
+
+
                 if(!$getsight->isEmpty()){
                     $longitude = $getsight[0]->Longitude;
-                    $latitude = $getsight[0]->Latitude;   
+                    $latitude = $getsight[0]->Latitude;
                 }
-               
+
             }
-           
+
         }
 
 
           if($longitude !="" && $latitude !=""){
-           
-              $searchradius = 50; 
+
+              $searchradius = 50;
               $attempts = 0;
-              $maxAttempts = 3; 
-              
-     
-          
-    
- 
+              $maxAttempts = 3;
+
+
+
+
+
                 $nearby_sight =  DB::table('Sight_nearby_sights')->where('Sid',$sightid)->orderby('distance','asc')->get();
                 $nearbyatt = DB::table('Sight_nbsight')->where('Sid',$sightid)->get();
             	$nearby_hotel =  DB::table('Sight_nearby_hotels')->where('SightId',$sightid)->get();
 
              }
-          		  
+
                 //start experience
-              
-              
+
+
                 $get_experience = DB::table('ExperienceItninerary as e')
                 ->join('Experience as exp', 'exp.ExperienceId', '=', 'e.ExperienceId')
                 ->leftJoin('ExperienceReview as rr', 'exp.ExperienceId', '=', 'rr.ExperienceId')
@@ -1762,15 +1762,15 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 ->get();
               //  end experience
           }
-     
-                $Sight_image = DB::table('Sight_image') 
-				->select('Sight_image.Image')	
+
+                $Sight_image = DB::table('Sight_image')
+				->select('Sight_image.Image')
                 ->where('Sightid',$sightid)
                 ->get();
-                
+
      return view('sightdetails')->with('searchresult',$searchresults)
 	 ->with('get_experience', $get_experience)
-     ->with('sightreviews',$sightreviews) 
+     ->with('sightreviews',$sightreviews)
      ->with('faq',$faq)
      ->with('sloc',$pt)
      ->with('locationPatent',$locationPatent)
@@ -1784,10 +1784,10 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
     ->with('type','explore')
     ->with('lname',$lname)
     ->with('get_nearby_rest',$get_nearby_rest);
-       
+
     }
       public function save_sight_nb_hotel(request $request){
-     
+
         $latitude = $request->get('Latitude');
         $longitude = $request->get('Longitude');
         $sightId = $request->get('sightId');
@@ -1797,26 +1797,26 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         $nearrest =0;
         if($latitude != "" && $longitude !=""){
             $get_nearby_hotel = DB::table('Sight_nearby_hotels')->where('SightId',$sightId)->get();
-        
-    
+
+
             if (!$get_nearby_hotel->count() >= 4) {
 
                 $nbh = 1;
-                $searchradius = 50; 
-                $nearby_hotel = DB::table("TPHotel")   
-                    ->join('Temp_Mapping as m','m.LocationId','=','TPHotel.location_id')   
-                    //->join('Location as l','l.LocationId','=','m.Tid')       
+                $searchradius = 50;
+                $nearby_hotel = DB::table("TPHotel")
+                    ->join('Temp_Mapping as m','m.LocationId','=','TPHotel.location_id')
+                    //->join('Location as l','l.LocationId','=','m.Tid')
                    ->select('m.slugid','TPHotel.id', 'TPHotel.name','TPHotel.location_id','TPHotel.slug','TPHotel.address','TPHotel.pricefrom','TPHotel.stars','TPHotel.hotelid',
-                        DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                        * cos(radians(TPHotel.Latitude)) 
-                        * cos(radians(TPHotel.longnitude) - radians(" . $longitude . ")) 
-                        + sin(radians(" . $latitude . ")) 
+                        DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                        * cos(radians(TPHotel.Latitude))
+                        * cos(radians(TPHotel.longnitude) - radians(" . $longitude . "))
+                        + sin(radians(" . $latitude . "))
                         * sin(radians(TPHotel.Latitude))) AS distance"))
                     ->having('distance', '<=', $searchradius)
                     ->orderBy('distance')
                     ->limit(4)
                     ->get();
-         
+
                 if(!$nearby_hotel->isEmpty()){
 
                     foreach ($nearby_hotel as $nearby_hotels) {
@@ -1825,13 +1825,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         $LocationId = $nearby_hotels->slugid;
                         $distance = round($nearby_hotels->distance,2);
                         $address = $nearby_hotels->address;
-                     
+
                         $id = $nearby_hotels->id;
-						
+
 						$pricefrom = $nearby_hotels->pricefrom;
                         $stars = $nearby_hotels->stars;
                         $hotel_id = $nearby_hotels->hotelid;
-                        
+
                         $data3= array(
                             'name'=>$Title,
                             'slug'=>$slug,
@@ -1842,51 +1842,51 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                             'address'=>$address,
                             'SightId'=>$sightId,
                             'dated'=>now(),
-							
-							
+
+
 							'pricefrom'=>$pricefrom,
                             'stars'=>$stars,
                             'hotel_id'=>$hotel_id,
                         );
-            
-                
+
+
                         $insertdata3 = DB::table('Sight_nearby_hotels')->insert($data3);
                     //   return print_r($data2);
                     }
-        
-                
+
+
                 }
             }
 
     //end nearby hotel
-      
-            
+
+
 
             //Nearby Attractions
 
             $get_nearby_sight = DB::table('Sight_nbsight')->where('Sid',$sightId)->get();
-        
-    
+
+
             if (!$get_nearby_sight->count() >= 4) {
-                
+
                 $nearatt = 1;
-                $sradius = 50; 
+                $sradius = 50;
                 $nearbyatt = DB::table("Sight")
                 ->leftJoin('SightTiming','SightTiming.SightId','=','Sight.SightId')
                 ->leftJoin('SightCategory', 'SightCategory.SightId', '=', 'Sight.SightId')
                 ->leftJoin('Category', 'Category.CategoryId', '=', 'SightCategory.CategoryId')
                 ->leftJoin('Location as l', 'l.LocationId', '=', 'Sight.LocationId')
                     ->select('Sight.SightId', 'Sight.Title','l.slugid','Sight.Slug','Sight.Address','SightTiming.timings','Sight.TAAggregateRating','Category.Title as ctitle',
-                        DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                        * cos(radians(Sight.Latitude)) 
-                        * cos(radians(Sight.Longitude) - radians(" . $longitude . ")) 
-                        + sin(radians(" . $latitude . ")) 
+                        DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                        * cos(radians(Sight.Latitude))
+                        * cos(radians(Sight.Longitude) - radians(" . $longitude . "))
+                        + sin(radians(" . $latitude . "))
                         * sin(radians(Sight.Latitude))) AS distance"))
-                    
+
                     ->having('distance', '<=', $sradius)
 					 ->where('Sight.SightId', '!=', $sightId)
                     ->orderBy('distance')
-                    ->limit(4)                    
+                    ->limit(4)
                     ->get();
 
        //  return print_r($nearbyatt );
@@ -1895,8 +1895,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                     $recordWithLargestDistance = $nearbyatt->last();
 
                     // Access the distance using $recordWithLargestDistance->distance
-                    $largestDistance = round($recordWithLargestDistance->distance, 2);                
-    
+                    $largestDistance = round($recordWithLargestDistance->distance, 2);
+
                     if ($largestDistance < 1) {
                         $within = 1;
                     } elseif ($largestDistance < 5) {
@@ -1908,8 +1908,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                     } elseif ($largestDistance < 50) {
                         $within = 50;
                     } else {
-                      
-                        $within = null; 
+
+                        $within = null;
                     }
 
                     foreach ($nearbyatt as $nearbyatts) {
@@ -1917,14 +1917,14 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         $Slug = $nearbyatts->Slug;
                         $Title = $nearbyatts->Title;
                         $LocationId = $nearbyatts->slugid;
-                        $distance = round($nearbyatts->distance,2);                     
+                        $distance = round($nearbyatts->distance,2);
                         $id = $nearbyatts->SightId;
                         $ctitle = $nearbyatts->ctitle;
                         $Address = $nearbyatts->Address;
                         $timings = $nearbyatts->timings;
                         $TAAggregateRating = $nearbyatts->TAAggregateRating;
-                     
-                        
+
+
 
 
 
@@ -1942,36 +1942,36 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                             'TAAggregateRating'=>$TAAggregateRating,
                             'dated'=>now(),
                         );
-            
-                      
+
+
                         $insertdata3 = DB::table('Sight_nbsight')->insert($data1);
                     //   return print_r($data2);
                     }
-        
-                
+
+
                 }
             }
 
             //Nearby Attractions
 
 
-           
-            //nearby restaurant 
+
+            //nearby restaurant
 
             $get_nearby_rest = DB::table('Sight_nearby_restaurant')->where('SightId',$sightId)->get();
-        
-    
+
+
             if (!$get_nearby_rest->count() >= 4) {
-               
+
                 $nearrest =1;
-                $restradus = 5; 
+                $restradus = 5;
                 $nearby_rest = DB::table("Restaurant as r")
                 ->leftJoin('RestaurantReview as rr', 'r.RestaurantId', '=', 'rr.RestaurantId')
                 ->select('r.Title','r.TATrendingScore','r.slugid','r.RestaurantId','r.Slug',
-                        DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                        * cos(radians(r.Latitude)) 
-                        * cos(radians(r.Longitude) - radians(" . $longitude . ")) 
-                        + sin(radians(" . $latitude . ")) 
+                        DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                        * cos(radians(r.Latitude))
+                        * cos(radians(r.Longitude) - radians(" . $longitude . "))
+                        + sin(radians(" . $latitude . "))
                         * sin(radians(r.Latitude))) AS distance"),
                         DB::raw("COUNT(rr.RestaurantReviewId) as review_count"))
                 ->groupBy("r.RestaurantId")
@@ -1983,7 +1983,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 if(!$nearby_rest->isEmpty()){
 
                     $data_rest = [];
-   
+
                     foreach ($nearby_rest as $restaurant) {
                         $data_rest[] = [
                             'SightId' => $sightId,
@@ -1997,27 +1997,27 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                             'review_count' => $restaurant->review_count,
                         ];
                     }
-        
+
                     DB::table('Sight_nearby_restaurant')->insert($data_rest);
-        
-                
+
+
                 }
             }
 
 
 
-            //end nearby restaurant 
-          
-    
-        
+            //end nearby restaurant
+
+
+
         }
-      
+
         if($nbh == 1 ||  $nbs == 1 || $nearatt==1 || $nearrest==1){
-                     
+
            $nearby_hotel =  DB::table('Sight_nearby_hotels')->where('SightId',$sightId)->get();
            $html3 = view('explore_results.sight_nearby_hotels',['nearby_hotel'=>$nearby_hotel])->render();
 
-      
+
            $nearbyatt =  DB::table('Sight_nbsight')->where('Sid',$sightId)->get();
            $nearbyattCount = $nearbyatt->count();
            $html4 = view('explore_results.nearby_attraction',['nearbyatt'=>$nearbyatt,'nearbyattCount'=> $nearbyattCount])->render();
@@ -2036,17 +2036,17 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
     public function landing()
     {
        // $searchresults = DB::select("CALL landingpage($slug)");
-      
+
         //echo "<pre>";
        // print_r($searchresults);
 
         print_r(now());
-        
+
 
        return view('landingpage');
     }
-	public function hotel_list($segment,request $request) 
-    { 
+	public function hotel_list($segment,request $request)
+    {
     $id = null;
     $slug = null;
     $desiredId = null;
@@ -2060,29 +2060,29 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		}
    // return $amenity;
     // Split segment by '-' to separate the ID and slug
-    $parts = explode('-', $segment); 
+    $parts = explode('-', $segment);
     if (count($parts) > 1) {
-        $id = array_shift($parts); 
-        $slug = implode('-', $parts); 
+        $id = array_shift($parts);
+        $slug = implode('-', $parts);
     }
-    
+
    $metadata =collect();
     $filterPattern = '/(fl[a-z]+[0-9a-zA-Z_]+)/';
-    
-    
+
+
 		preg_match_all($filterPattern, $slug, $matches);
 
 		if (!empty($matches[0])) {
 			foreach ($matches[0] as $filter) {
-			
-				$filterType = substr($filter, 0, 3); 
-				$filterValue= substr($filter, 3); 
 
-				
+				$filterType = substr($filter, 0, 3);
+				$filterValue= substr($filter, 3);
+
+
 				$slug = str_replace($filter, '', $slug);
 			}
 
-		
+
 			$slug = trim($slug, '-');
 		}
 
@@ -2090,7 +2090,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		$slgid = $id;
 		$desiredId = $id;
 		$agencyData =[];
-  
+
         $searchresultscount=0;
         $guest =null;
         $Tid =null;
@@ -2102,66 +2102,66 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         $lname ="";
         $hlid="";
         $pagetype="";
-  
+
         $chkin = $request->get('checkin');
         $checout = $request->get('checkout');
-  
+
         $count_result = null;
-  
+
         if( $chkin !="" && $checout !=""){
   			 session()->forget('filterd');
             $pagetype="withdate";
             $chkin = $this->formatDate($chkin);
-            $checout = $this->formatDate($checout);   
-            $getval =  $chkin .'_'. $checout;            
-            $rooms = $request->get('rooms'); 
-            $guest = $request->get('guest')  ?: 1; 
-            $slug = $segment; 
-            $locationid =  $request->get('locationid')?: $request->get('lid'); 
+            $checout = $this->formatDate($checout);
+            $getval =  $chkin .'_'. $checout;
+            $rooms = $request->get('rooms');
+            $guest = $request->get('guest')  ?: 1;
+            $slug = $segment;
+            $locationid =  $request->get('locationid')?: $request->get('lid');
             session([
                 'checkin' => $getval,
                 'rooms' => $rooms,
                 'guest' => $guest,
 				 'slug' => $slug,
                 'slugid'=>$locationid,
-            ]);         
-            $fullname = "";           
-            $tplocationid =$locationid;            
+            ]);
+            $fullname = "";
+            $tplocationid =$locationid;
             $getloclink = DB::table('Temp_Mapping')
                 ->select('LocationId', 'Tid','cityName','countryName','fullName')
                 ->where('slugid', $locationid)
                 ->first();
-  
+
             // return   print_r($getloclink);
             if ($getloclink) {
                 $locationid = $getloclink->LocationId;
-                $tplocationid = $locationid;   
+                $tplocationid = $locationid;
                 $Tid = $getloclink->Tid;
-            }              
-  
-  
-            $locationPatent =[];     
-          
+            }
+
+
+            $locationPatent =[];
+
 			$metadata = DB::table('Location')->select('HotelTitleTag','HotelMetaDescription','MetaTagTitle','MetaTagDescription')->where('slugid', $slgid)->get();
-			
-            $gethoteltype = DB::table('TPHotel_types')->orderby('hid','desc')->get(); 
-          
+
+            $gethoteltype = DB::table('TPHotel_types')->orderby('hid','desc')->get();
+
           //  $getloc = DB::table('TPLocations')->select('fullName','cityName','countryName')->where('id',$locationid)->first();
-  
+
             if (!$getloclink) {
                 abort(404, 'Not FOUND');
-            }       
+            }
             if($fullname ==""){
                 $fullname = $getloclink->fullName;
-            } 
+            }
             $lname = $getloclink->cityName;
             $countryName = $getloclink->countryName;
-      
+
             $countryname  = $getloclink->countryName;
 
             $getloclink =collect();
-            $getcontlink =collect(); 
-  
+            $getcontlink =collect();
+
             //start session
             $searchEntry = [
                 'checkin' => $chkin,
@@ -2171,155 +2171,155 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 'slug' => $segment,
                 'locationid' => $desiredId,
                 'fullname' => $fullname,
-            ];   
-            $recentSearches = session('recent_searches', []);       
+            ];
+            $recentSearches = session('recent_searches', []);
             $exists = false;
             foreach ($recentSearches as $entry) {
                 if ($entry['locationid'] == $searchEntry['locationid']) {
                     $exists = true;
                     break;
                 }
-            }            
+            }
             if (!$exists) {
-                $recentSearches[] = $searchEntry;          
+                $recentSearches[] = $searchEntry;
                 if (count($recentSearches) > 4) {
                     $recentSearches = array_slice($recentSearches, -4);
                 }
                 session(['recent_searches' => $recentSearches]);
             }
-            //  $end =  date("H:i:s");  
+            //  $end =  date("H:i:s");
             //  return $start.'=='.$end;
             //end session
-  
+
             //api code
-            $checkinDate =  $chkin;         
-            $checkoutDate = $checout;       
-            $adultsCount = $guest;              
-            $customerIP = '49.156.89.145'; 
-            $childrenCount = '1'; 
+            $checkinDate =  $chkin;
+            $checkoutDate = $checout;
+            $adultsCount = $guest;
+            $customerIP = '49.156.89.145';
+            $childrenCount = '1';
             $chid_age = '10';
-            $lang = 'en'; 
-            $currency ='USD'; 
-            $waitForResult ='0'; 
+            $lang = 'en';
+            $currency ='USD';
+            $waitForResult ='0';
             $iata= $tplocationid;
-            $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-            $TRAVEL_PAYOUT_MARKER = "299178"; 
-            $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-                $checkinDate.":". 
+            $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+            $TRAVEL_PAYOUT_MARKER = "299178";
+            $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+                $checkinDate.":".
                 $checkoutDate.":".
-                $chid_age.":". 
-                $childrenCount.":". 
-                $iata.":".  
-                $currency.":". 
-                $customerIP.":".             
-                $lang.":". 
-                $waitForResult; 
+                $chid_age.":".
+                $childrenCount.":".
+                $iata.":".
+                $currency.":".
+                $customerIP.":".
+                $lang.":".
+                $waitForResult;
             $signature = md5($SignatureString);
-  
-            $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;       
-  
+
+            $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
+
             $response = Http::withoutVerifying()->get($url);
-  
+
             if ($response->successful()) {
                 $data = json_decode($response);
                 if(!empty($data)){
-                    $searchId = $data->searchId; 
+                    $searchId = $data->searchId;
                     $limit = 40;
                     $offset=0;
                     $roomsCount=0;
                     $sortAsc=0;
                     $sortBy='stars';
                     $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                    $sig2 =  md5($SignatureString2); 
-                    $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=40&sortBy=stars&sortAsc=0&roomsCount=0&offset=0&marker=299178&signature='.$sig2;                    
-                   
-                    
-                    //new code  
-  
-                      $maxAttempts = 6; 
+                    $sig2 =  md5($SignatureString2);
+                    $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=40&sortBy=stars&sortAsc=0&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
+
+
+                    //new code
+
+                      $maxAttempts = 6;
                       $retryInterval = 2;
                       $status = 0; // Default status
-  
+
                       try {
                           // Make the HTTP request with retries
                           $response2 = Http::withoutVerifying()
                               ->timeout(0)
                               ->retry($maxAttempts, $retryInterval)
                               ->get($url2);
-                      
-                       
+
+
                           $responseData = $response2->json();
-                      
-                       
+
+
                           if (isset($responseData['errorCode']) && $responseData['errorCode'] === 4) {
-                              $status = 4; 
+                              $status = 4;
                           } else {
-                              $status = 1; 
+                              $status = 1;
                           }
-                      
+
                           // If the status indicates a successful search
                       if ($status == 1 && $response2->successful()) {
-                                        
-                          $hotel = json_decode($response2);   
+
+                          $hotel = json_decode($response2);
 						  //start agency code
-                          $agencyData = []; 
+                          $agencyData = [];
                           foreach ($hotel->result as $hotelData) {
                               foreach ($hotelData->rooms as $room) {
                                   $agencyName = $room->agencyName;
-                              
+
                                   if (!in_array($agencyName, $agencyData)) {
                                       $agencyData[] = $agencyName;
                                   }
                               }
                           }
                            //end agency code
-    
-                          $idArray = array_column($hotel->result, 'id');         
+
+                          $idArray = array_column($hotel->result, 'id');
                           $idArray = array_filter($idArray, function ($ids) {
                               return isset($ids);
-                          });  
-                          $idArray = array_unique($idArray);  
-						  
+                          });
+                          $idArray = array_unique($idArray);
+
                            $searchresults = DB::table('TPHotel as h')
       ->select('h.hotelid','h.id', 'h.name', 'h.slug','h.stars','h.rating', 'h.amenities', 'h.distance','h.slugid','h.room_aminities','h.CityName','h.short_description','h.Latitude','h.longnitude','h.MicroSummary',
                              // DB::raw('GROUP_CONCAT(DISTINCT a.name ORDER BY a.name SEPARATOR ", ") as amenity_names'))
 			      DB::raw('GROUP_CONCAT(CONCAT(a.shortName, "|", a.image) ORDER BY a.name SEPARATOR ", ") as amenity_info'))
                                 ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0'))
-                              ->whereIn('h.hotelid',$idArray) 
-                              ->whereNotNull('h.slugid') 
-                              ->groupBy('h.hotelid', 'h.id', 'h.name', 'h.slug', 'h.stars', 'h.rating', 'h.amenities', 'h.distance', 'h.slugid', 'h.room_aminities', 'h.CityName') 
+                              ->whereIn('h.hotelid',$idArray)
+                              ->whereNotNull('h.slugid')
+                              ->groupBy('h.hotelid', 'h.id', 'h.name', 'h.slug', 'h.stars', 'h.rating', 'h.amenities', 'h.distance', 'h.slugid', 'h.room_aminities', 'h.CityName')
                               ->get();
-						  
+
                           $count_result = count($searchresults);
-                       }   
-                      
+                       }
+
                   } catch (\Exception $e) {
-                          
+
                           $searchresults =collect();
                   }
-  
-                       
-                    
-                    
+
+
+
+
                    // end new code
-  
+
                 }
-  
+
             } else {
-  
+
                 //  return 2;
             }
-			
+
   			  /*breadcrumb*/
             $getloclink =collect();
-  
-            $getloclink = DB::table('Location as l')         
+
+            $getloclink = DB::table('Location as l')
             ->select('l.LocationLevel','l.ParentId','l.LocationId','l.Slug')
             ->where('l.slugid', $desiredId)
             ->limit(1)
             ->get();
-  
-            $getcontlink =collect();  
+
+            $getcontlink =collect();
             $getcontlink = DB::table('Country as co')
                 ->join('Location as l', 'l.CountryId', '=', 'co.CountryId')
                 ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
@@ -2332,10 +2332,10 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
               //  $Tid = $getloclink[0]->Tid;
                // $locationid = $getloclink[0]->LocationId;
                 $getlocationexp = DB::table('Location')->select('slugid','LocationId','Name','Slug')->where('LocationId',  $getloclink[0]->LocationId)->get();
-  
+
                 if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
                     $loopcount =  $getloclink[0]->LocationLevel;
-  
+
                     $lociID = $getloclink[0]->ParentId;
                     for ($i = 1; $i < $loopcount; $i++) {
                         $getparents = DB::table('Location')->select('slugid','LocationId','Name','Slug','ParentId')->where('LocationId', $lociID)->get();
@@ -2349,101 +2349,101 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                                 $lociID = $getparents[0]->ParentId;
                             }
                         } else {
-                            break; 
+                            break;
                         }
                     }
                 }
             }
 
             /*breadcrumb*/
-  
+
         }else{
-            $pagetype="withoutdate";     
-            $getloc = DB::table('Temp_Mapping as tm')  
-                // ->leftjoin('TPLocations as l', 'l.id', '=', 'tm.LocationId')   
+            $pagetype="withoutdate";
+            $getloc = DB::table('Temp_Mapping as tm')
+                // ->leftjoin('TPLocations as l', 'l.id', '=', 'tm.LocationId')
                 // ,'l.location'
                 ->select('tm.LocationId','tm.cityName','tm.countryName')
                 ->where('tm.slugid', $desiredId)
                 ->where('tm.slug', $slug)
-                ->limit(1)	  
+                ->limit(1)
                 ->get();
-  
+
             if($getloc->isEmpty()){
                 if($id){
-                    $checkgetloc = DB::table('Temp_Mapping as tm')       
+                    $checkgetloc = DB::table('Temp_Mapping as tm')
                         ->select('tm.slugid','tm.slug')
-                        ->where('tm.Tid', $id)   
-                        ->limit(1)      
-                        ->get();        
-                    if(!$checkgetloc->isEmpty()){    
+                        ->where('tm.Tid', $id)
+                        ->limit(1)
+                        ->get();
+                    if(!$checkgetloc->isEmpty()){
                         $id =  $checkgetloc[0]->slugid;
-                        $slug = $checkgetloc[0]->slug; 
+                        $slug = $checkgetloc[0]->slug;
                         return redirect()->route('hotel.list', [$id.'-'.$slug]);
                     }
                     // Redirect to the new URL
-                    $checkgetloc2 = DB::table('Temp_Mapping as tm')              
+                    $checkgetloc2 = DB::table('Temp_Mapping as tm')
                         ->select('tm.slugid','tm.slug')
                         ->where('tm.LocationId', $id)
-                        ->get(); 
-                    if(!$checkgetloc2->isEmpty()){    
+                        ->get();
+                    if(!$checkgetloc2->isEmpty()){
                         $id =  $checkgetloc2[0]->slugid;
-                        $slug = $checkgetloc[0]->slug;                
+                        $slug = $checkgetloc[0]->slug;
                         return redirect()->route('hotel.list', [$id.'-'.$slug]);
                     }
-  
+
                 }
                 abort(404,'Not found');
             }
-            if(!$getloc->isEmpty()){    
+            if(!$getloc->isEmpty()){
                 $desiredId =  $getloc[0]->LocationId;
                 $lname = $getloc[0]->cityName;
                 $countryname = $getloc[0]->countryName;
             }
-  
+
             $locationid =  $desiredId;
-  
-  
-            // header searchbar link 
-            $hlid =$desiredId;   
-  
+
+
+            // header searchbar link
+            $hlid =$desiredId;
+
             $locationgeo ="";
-  
-           
-  
-            $gethoteltype = DB::table('TPHotel_types')->orderby('hid','desc')->get();       
-  
+
+
+
+            $gethoteltype = DB::table('TPHotel_types')->orderby('hid','desc')->get();
+
             $getloclink =collect();
-  
-  
+
+
             $getloclink = DB::table('Temp_Mapping as tm')
                 ->join('Location as l', 'l.LocationId', '=', 'tm.Tid')
                 ->select('l.LocationLevel','l.ParentId','l.LocationId','l.Slug','tm.Tid')
                 ->where('tm.LocationId', $desiredId)
                 ->limit(1)
                 ->get();
-  
-  
+
+
             $getcontlink =collect();
-  
+
             $getcontlink = DB::table('Country as co')
                 ->join('Location as l', 'l.CountryId', '=', 'co.CountryId')
                 ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
                 ->select('co.CountryId','co.Name','co.slug','cont.Name as cName','cont.CountryCollaborationId as contid')
                 ->where('l.LocationId', $getloclink[0]->LocationId)
                 ->get();
-  
-  
-  
-  
+
+
+
+
             $locationPatent = [];
             if(!$getloclink->isEmpty()){
                 $Tid = $getloclink[0]->Tid;
                 $locationid = $getloclink[0]->LocationId;
                 $getlocationexp = DB::table('Location')->select('slugid','LocationId','Name','Slug')->where('LocationId', $locationid)->get();
-  
+
                 if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
                     $loopcount =  $getloclink[0]->LocationLevel;
-  
+
                     $lociID = $getloclink[0]->ParentId;
                     for ($i = 1; $i < $loopcount; $i++) {
                         $getparents = DB::table('Location')->select('slugid','LocationId','Name','Slug','ParentId')->where('LocationId', $lociID)->get();
@@ -2457,32 +2457,32 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                                 $lociID = $getparents[0]->ParentId;
                             }
                         } else {
-                            break; 
+                            break;
                         }
                     }
                 }
             }
-  
-  
+
+
          $metadata = DB::table('Location')->select('HotelTitleTag','HotelMetaDescription','MetaTagTitle','MetaTagDescription')->where('slugid', $slgid)->get();
-            
-         $searchresults = DB::table('TPHotel as h')		
+
+         $searchresults = DB::table('TPHotel as h')
 		->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with amenities
 		->select(
-			'h.hotelid', 
-			'h.id', 
-			'h.name', 
-			'h.slug', 
-			'h.stars', 
-			'h.pricefrom', 
-			'h.rating', 
-			'h.amenities', 
-			'h.distance', 
-			'h.image', 		
-			'h.about', 
-			'h.room_aminities', 
-			'h.shortFacilities', 
-			'h.slugid', 
+			'h.hotelid',
+			'h.id',
+			'h.name',
+			'h.slug',
+			'h.stars',
+			'h.pricefrom',
+			'h.rating',
+			'h.amenities',
+			'h.distance',
+			'h.image',
+			'h.about',
+			'h.room_aminities',
+			'h.shortFacilities',
+			'h.slugid',
 			'h.CityName',
 		    'h.short_description',
 			 'h.ReviewSummary',
@@ -2494,10 +2494,10 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		)
 		->where('h.slugid', $slgid)
 		->whereNotNull('h.slugid') ;
-		
+
 			if (!empty($st)) {
 				$searchresults->where('h.stars', $st);
-			}         
+			}
 			if (!empty($amenity)) {
 
 				$searchresults->whereExists(function($subquery) use ($amenity) {
@@ -2515,24 +2515,24 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		$count_result = count($searchresults);
 
 
-  
+
         }
-  
-  
-  
+
+
+
         //return print_r($gethoteltype);
-  
+
         $type = "hotel";
         return view('hotel_listing')->with('searchresults',$searchresults)->with('hotels',$hotel)
 			  ->with('metadata',$metadata)
 			 ->with('agencyData',$agencyData)
 			->with('st',$st)
             ->with('amenity',$amenity)
-            ->with('pagetype',$pagetype)  
+            ->with('pagetype',$pagetype)
             ->with('gethoteltype',$gethoteltype)
             ->with('lname',$lname)
             ->with('countryname',$countryname)
-            // ->with('locationgeo',$locationgeo)   
+            // ->with('locationgeo',$locationgeo)
             ->with('id',$id)
             ->with('locationPatent',$locationPatent)
             ->with('getlocationexp',$getlocationexp)
@@ -2541,13 +2541,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->with('type',$type)
             ->with('hlid',$hlid)
             ->with('slgid',$slgid )
-            ->with('locationid',$locationid ) 
+            ->with('locationid',$locationid )
             ->with('count_result',$count_result)
-			->with('slugdata',$explocname);    
-    } 
- 
+			->with('slugdata',$explocname);
+    }
+
     public function getwithoutdatedata(Request $request) {
-        $pagetype = "withoutdate";    
+        $pagetype = "withoutdate";
         $desiredId = $request->get('locationid');
         $lname = $request->get('lname');
          $st="";
@@ -2558,27 +2558,27 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         if($request->get('amenity') !=""){
             $amenity = trim(str_replace('_',' ',$request->get('amenity')) );
         }
-       
-       
+
+
        if($amenity ==""){
         // Define the base query
         $query = DB::table('TPHotel as h')
             ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with amenities
             ->select(
-                'h.hotelid', 
-                'h.id', 
-                'h.name', 
-                'h.slug', 
-                'h.stars', 
-                'h.pricefrom', 
-                'h.rating', 
-                'h.amenities', 
-                'h.distance', 
-                'h.image', 
-                'h.about', 
-                'h.room_aminities', 
-                'h.shortFacilities', 
-                'h.slugid', 
+                'h.hotelid',
+                'h.id',
+                'h.name',
+                'h.slug',
+                'h.stars',
+                'h.pricefrom',
+                'h.rating',
+                'h.amenities',
+                'h.distance',
+                'h.image',
+                'h.about',
+                'h.room_aminities',
+                'h.shortFacilities',
+                'h.slugid',
                 'h.CityName',
 				'h.short_description',
 				'h.ReviewSummary',
@@ -2590,29 +2590,29 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->whereNotNull('h.slugid');
             if ($st !="") {
 				$query->where('h.stars', $st);
-			}	 
+			}
        $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc');
-        $query->groupBy('h.id');      
+        $query->groupBy('h.id');
         $searchresults = $query->paginate(30);
       }
 
         if($amenity !=""){
             $query = DB::table('TPHotel as h')
             // ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.facilities)'), '>', DB::raw('0')) // Join with amenities
-            ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with 
+            ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with
             ->select(
-                'h.hotelid', 
-                'h.id', 
-                'h.name', 
-                'h.slug', 
-                'h.stars', 
-                'h.pricefrom', 
-                'h.facilities', 
-                'h.rating',              
-                'h.distance', 
-                'h.image', 
-                'h.about', 
-                'h.slugid', 
+                'h.hotelid',
+                'h.id',
+                'h.name',
+                'h.slug',
+                'h.stars',
+                'h.pricefrom',
+                'h.facilities',
+                'h.rating',
+                'h.distance',
+                'h.image',
+                'h.about',
+                'h.slugid',
                 'h.CityName',
                 'h.short_description',
                 'h.ReviewSummary',
@@ -2624,9 +2624,9 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->whereNotNull('h.slugid');
             if (!empty($st)) {
                 $query->where('h.stars', $st);
-            }         
+            }
             if (!empty($amenity)) {
-               
+
                 $query->whereExists(function($subquery) use ($amenity) {
                     $subquery->select(DB::raw(1))
                         ->from('TPHotel_amenities as a2')
@@ -2634,19 +2634,19 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         ->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
                 });
             }
-        
+
             $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc');
             $query->groupBy('h.id');
             $searchresults = $query->paginate(30);
         }
-    
-      
+
+
         $paginationLinks = $searchresults->appends($request->except(['_token']))->links('hotellist_pagg.default');
-    
-     
+
+
         $count_result = $searchresults->total();
-    
-       
+
+
         return view('frontend.hotel.hoteldata_withoutdate', [
             'count_result' => $count_result,
             'searchresults' => $searchresults,
@@ -2659,33 +2659,33 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $lname = $request->get('lname');
             $countryname = $request->get('countryname');
                $Tid = $request->get('Tid');
-         
+
 		$LocationId = $Tid;
 		   $start  =  date("H:i:s");
       //  return $desiredId;
-		
+
 		   $searchresults = Hotel::leftJoin('TPHotel_types as ty', 'ty.hid', '=', 'TPHotel.propertyType')
     ->select('TPHotel.hotelid', 'TPHotel.id', 'TPHotel.name', 'TPHotel.address', 'TPHotel.slug', 'TPHotel.cityId', 'TPHotel.iata', 'TPHotel.location_id as loc_id', 'TPHotel.stars', 'TPHotel.pricefrom', 'TPHotel.rating', 'TPHotel.popularity', 'TPHotel.amenities', 'TPHotel.distance', 'TPHotel.image', 'ty.type as propertyType')
     ->where('TPHotel.location_id', $desiredId)
-	->orderBy('TPHotel.hotelid','asc')		   
+	->orderBy('TPHotel.hotelid','asc')
      ->paginate(10);
 		   $end  =  date("H:i:s");
      //     return   $start.'--'.$end;
               $url = 'ho-'.$id;
               $searchresults->appends(request()->except(['_token', 'locationid', 'lname', 'countryname', 'id']));
-         
+
               $searchresults->setPath($url);
               $paginationLinks = $searchresults->links('hotellist_pagg.default');
-               
+
          return view('frontend.hotel.get_hotel_listing_result_withoutdate')->with('searchresults',$searchresults)->with('lname',$lname)->with('countryname',$countryname)->with('LocationId',$LocationId);
 
     }
- 
-     public function getSignature(request $request){ 
+
+     public function getSignature(request $request){
        $cityId = $request->get('lid');
        $hotelId = $request->get('hid');
        $cityName = $request->get('cityName') ;
-  
+
        $guests = Session()->get('guest');
        $rooms = Session()->get('rooms');
 
@@ -2698,38 +2698,38 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         $checkin = Session()->get('checkin');
 
         if($cmbdate === $checkin ||  empty($checkout) && !empty($checkin)){
-        
+
             $expdate = explode('_', $checkin);
-        
-            $checkin_date = trim($expdate[0]); 
-            $checkout_date = trim($expdate[1]); 
-           
-       
+
+            $checkin_date = trim($expdate[0]);
+            $checkout_date = trim($expdate[1]);
+
+
             $date_stchin = strtotime($checkin_date);
             $chkin = date("Y-m-d", $date_stchin);
 
             $date_chout= strtotime($checkout_date);
             $checout = date("Y-m-d", $date_chout);
 
-            
+
         }else{
             if(!empty($stchin) && !empty($checkout)){
-                
+
                 $date_stchin = strtotime($stchin);
                 $chkin = date("Y-m-d", $date_stchin);
 
                 $date_chout= strtotime($checkout);
                 $checout = date("Y-m-d", $date_chout);
-				
+
 			     $cmbdate = $chkin.'_'.$checout;
 
   				 session()->put('checkin',$cmbdate);
-				
-              
+
+
             }else{
                $checkinTimestamp = strtotime("+1 day");
                 $chkin = date("Y-m-d", $checkinTimestamp);
-            
+
                 // Get the checkout date by adding 4 days
                 $checkoutTimestamp = strtotime("+5 days", $checkinTimestamp);
                 $checout = date("Y-m-d", $checkoutTimestamp);
@@ -2738,55 +2738,55 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
        if(empty($chkin) && empty($checout)){
             return 0;
        }
-    
-    
+
+
 
 
         //new code start
-        $checkinDate = $chkin;         
-        $checkoutDate = $checout;       
-        $adultsCount = 2; //$guests;              
-        $customerIP = '49.156.89.145'; 
-        $childrenCount = '1'; 
+        $checkinDate = $chkin;
+        $checkoutDate = $checout;
+        $adultsCount = 2; //$guests;
+        $customerIP = '49.156.89.145';
+        $childrenCount = '1';
         $chid_age = '10';
-        $lang = 'en'; 
-        $currency ='USD'; 
-        $waitForResult ='0'; 
-        $iata=$hotelId; 
-        
-        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-        $TRAVEL_PAYOUT_MARKER = "299178"; 
+        $lang = 'en';
+        $currency ='USD';
+        $waitForResult ='0';
+        $iata=$hotelId;
 
-     
- 
-       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-        $checkinDate.":". 
+        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+        $TRAVEL_PAYOUT_MARKER = "299178";
+
+
+
+       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+        $checkinDate.":".
         $checkoutDate.":".
-        $chid_age.":". 
-        $childrenCount.":". 
-        $currency.":". 
-        $customerIP.":". 
-        $iata.":".       
-        $lang.":". 
-        $waitForResult; 
- 
-      
+        $chid_age.":".
+        $childrenCount.":".
+        $currency.":".
+        $customerIP.":".
+        $iata.":".
+        $lang.":".
+        $waitForResult;
+
+
       $signature = md5($SignatureString);
    //  $signature = '3193e161e98200459185e43dd7802c2c';
 
-     $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+     $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
-     
-    
+
+
           $response = Http::withoutVerifying()->get($url);
-    
+
         if ($response->successful()) {
-           
-          
+
+
           $data = json_decode($response);
             if(!empty($data)){
-              $searchId = $data->searchId;    
-            
+              $searchId = $data->searchId;
+
 
             $limit =10;
             $offset=0;
@@ -2795,50 +2795,50 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $sortBy='price';
 
             $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                 $sig2 =  md5($SignatureString2);    
+                 $sig2 =  md5($SignatureString2);
 
             $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=10&sortBy=price&sortAsc=1&roomsCount=10&offset=0&marker=299178&signature='.$sig2;
    // $response2 = Http::withoutVerifying()->get($url2);
-				
+
 		   $maxAttempts = 5;
 		   $retryInterval = 1; // seconds
            $response2 = Http::withoutVerifying()
-           ->timeout(0) 
+           ->timeout(0)
            ->retry($maxAttempts, $retryInterval)
-           ->get($url2);   
+           ->get($url2);
             $jsonResponse = json_decode($response2, true);
-            
-				
+
+
             if (isset($jsonResponse['errorCode']) && $jsonResponse['errorCode'] === 4) {
                 $jsonResponse['data_status'] = 4;
-                   
-            } 
-      
+
+            }
+
          return   view('hotel_result',['hotels'=>$jsonResponse]);
-          
+
             }else{
                 return 'search id not found';
             }
-                         
+
         } else {
-          
+
             return 2;
         }
- 
+
     }
 
    //HOTEL DETAIL Page
 		//start hotel detail
-       public function hotel_detail($id,Request $request) { 
+       public function hotel_detail($id,Request $request) {
 
-            $currentTime  = now(); 
+            $currentTime  = now();
             $checkin = $request->get('checkin');
             $checkout = $request->get('checkout');
-    
-         
+
+
             $TPRoomtype = collect();
             $gethotel = collect();
-    
+
             $rooms = [];
             $uniqueAmenities =[];
             $locid = 0;
@@ -2848,25 +2848,25 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $ctname = "";
             $LocationId =null;
             $location_slugid=null;
-            $parts = explode('-', $id);   
+            $parts = explode('-', $id);
             if (count($parts) >= 3) {
                 $LocationId = $parts[0];
                 $location_slugid = $parts[0];
-                $hotelid = $parts[1];           
+                $hotelid = $parts[1];
                 $slg = implode('-', array_slice($parts, 2));
                 $slug = str_replace('!', '#', $slg);
             }
-        
-           $getloclink = DB::table('Temp_Mapping as m')    
+
+           $getloclink = DB::table('Temp_Mapping as m')
            ->select('m.LocationId','m.cityName')
            ->where('m.slugid', $LocationId)
            ->get();
            if(!$getloclink->isEmpty()){
-            $locid = $getloclink[0]->LocationId;           
-           }   
+            $locid = $getloclink[0]->LocationId;
+           }
            $hlid =$locid;
-    
-        
+
+
            $searchresults = DB::table('TPHotel as h')
            ->select('h.name','h.location_id','h.id','h.hotelid','h.metaTagTitle','h.MetaTagDescription','h.Latitude','h.longnitude','h.stars','h.address','h.pricefrom','h.about','h.location_score','h.room_aminities',
             'h.amenities','h.shortFacilities','h.Phone','h.Email','h.Website', 'h.photoCount','h.cntRooms','h.Languages','h.maxprice','h.minprice','h.checkIn','h.checkOut','l.cityName'   ,'h.photosByRoomType','h.propertyTypeId','h.GreatForScore','h.GreatFor','h.facilities','h.rating','h.ratingcount','h.photoCount','h.ReviewSummary','h.ReviewSummaryLabel','h.Spotlights','h.ThingstoKnow','h.slugid','h.slug')
@@ -2874,13 +2874,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->where('h.id', $hotelid)
             ->where('h.slugid', $location_slugid)
             ->where('h.slug', $slug)
-            ->get()->toArray(); 
-    
+            ->get()->toArray();
+
          //   return  print_r( $searchresults);
-    
+
             if (empty($searchresults)) {
-                    if ($LocationId) {                  
-                    $redirect = DB::table('Temp_Mapping as m')           
+                    if ($LocationId) {
+                    $redirect = DB::table('Temp_Mapping as m')
                     ->select('m.slugid')
                     ->where('m.Tid', $LocationId)
                     ->get();
@@ -2889,41 +2889,41 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         return redirect('hd-' .$locid.'-'.$hotelid . '-' . $slug);
                     }
                     // Redirect to the new URL
-                    $checkgetloc2 = DB::table('Temp_Mapping as tm')			
+                    $checkgetloc2 = DB::table('Temp_Mapping as tm')
                         ->select('tm.slugid')
-                        ->where('tm.LocationId', $LocationId)                
+                        ->where('tm.LocationId', $LocationId)
                         ->get();
-    
-    
-                    if(!$checkgetloc2->isEmpty()){    
+
+
+                    if(!$checkgetloc2->isEmpty()){
                         $locid =  $checkgetloc2[0]->slugid;
                         return redirect('hd-' .$locid.'-'.$hotelid . '-' . $slug);
                     }
                     // Redirect to the new URL
-                    
+
                     }
                 abort(404, 'Hotel not found');
             }
              $shortfacilityIds = explode(',', $searchresults[0]->shortFacilities);
                 $shortFacilities = DB::table('TPHotel_amenities')
-                ->whereIn('id', $shortfacilityIds)             
-                ->get(); 
-           
+                ->whereIn('id', $shortfacilityIds)
+                ->get();
+
 
           $facilityIds = explode(',', $searchresults[0]->facilities); // Convert comma-separated IDs to array
 
           $facilityNames = DB::table('TPHotel_amenities')
               ->whereIn('id', $facilityIds)
-             
-              ->get(); 
-          
-      
+
+              ->get();
+
+
            $hotid= 0;
            $getroomtype =collect();
            $getreview = collect();
            $getquest =collect();
         $getreview =  DB::table('HotelReview')->where('HotelId',$hotelid)->get();
-    
+
            if(!empty($searchresults)){
                $hotid = $searchresults[0]->hotelid;
                $hoid = $searchresults[0]->id;
@@ -2932,19 +2932,19 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                if (!empty($photosByRoomType)) {
                     foreach ($photosByRoomType as $key => $value) {
                         $roomtyids[] = $key;
-                    }    
-                    $getroomtype = DB::table('TPRoom_types')->select('rid','type')->whereIn('rid', $roomtyids)->get(); 
+                    }
+                    $getroomtype = DB::table('TPRoom_types')->select('rid','type')->whereIn('rid', $roomtyids)->get();
                }
-    
+
            }
-    
-        
-           $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ; 
+
+
+           $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ;
           $response = Http::withoutVerifying()->get($url);
-          $images = $response->json();   
-           
+          $images = $response->json();
+
            //nearby attraction
-     
+
          $within = null;
          $nearby_hotel = collect();
          $nearby_sight = collect();
@@ -2952,43 +2952,43 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
          $nearby_rest =collect();
          $get_experiences =collect();
          $sighid = null;
-         if(!empty($searchresults)){        
+         if(!empty($searchresults)){
            $latitude = $searchresults[0]->Latitude;
            $longitude = $searchresults[0]->longnitude ;
            $location_id = $searchresults[0]->location_id ;
-    
-       
+
+
            $restradus= 1;
-           $Tid =null; 
+           $Tid =null;
          }
-        
-           
-        $getloclink =collect();       
-        $getcontlink =collect();   
+
+
+        $getloclink =collect();
+        $getcontlink =collect();
         $getlocationexp =collect();
-     
+
         $locationPatent = [];
         $getloclink = DB::table('Temp_Mapping as tm')
         ->join('Location as l', 'l.LocationId', '=', 'tm.Tid')
         ->select('l.LocationId','l.LocationLevel','l.ParentId','l.CountryId')
         ->where('tm.LocationId', $locid)
         ->get();
-    
+
          if(!$getloclink->isEmpty() ){
              $getcontlink = DB::table('Country as co')
              ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
              ->select('co.CountryId','co.slug','co.Name','cont.Name as cName','cont.CountryCollaborationId as contid')
              ->where('co.CountryId', $getloclink[0]->CountryId)
              ->get();
-             
+
              if(!$getloclink->isEmpty()){
-             
+
                   $locationid = $getloclink[0]->LocationId;
                      $getlocationexp = DB::table('Location')->select('slugid','LocationId','Name','Slug')->where('LocationId', $locationid)->get();
-                 
+
                  if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
-     
-                     $loopcount =  $getloclink[0]->LocationLevel;            
+
+                     $loopcount =  $getloclink[0]->LocationLevel;
                      $lociID = $getloclink[0]->ParentId;
                      for ($i = 1; $i < $loopcount; $i++) {
                          $getparents = DB::table('Location')->select('slugid','Name','Slug','ParentId')->where('LocationId', $lociID)->get();
@@ -3002,38 +3002,38 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                              $lociID = $getparents[0]->ParentId;
                          }
                          } else {
-                             break; 
+                             break;
                          }
                      }
-     
+
                  }
              }
-        
-        
+
+
         }
-     
+
             $amenity_desc = collect();
-    
+
             $matching_amenities =[];
             $amenity_desc =[];
-        
-       
-          //end     
-       
-    
+
+
+          //end
+
+
         $rooms =[];
         $pgtype = '';
         $Roomdesc =[];
         $filteredAmenitiesData =[];
         // $TPRoomtype = DB::table('TPRoomtype')->select('Roomdesc')->where('hotelid',$hotid)->get();
-    
+
           $TPRoomtype1 = DB::table('TPRoomtype_tmp')->select('*')
           ->where('hotelid',$hotid)->get()->toArray();
           if(!empty($TPRoomtype1))
           {
-              foreach ($TPRoomtype1 as $key => $value) 
+              foreach ($TPRoomtype1 as $key => $value)
               {
-                  foreach ($value as $key1 => $value1) 
+                  foreach ($value as $key1 => $value1)
                   {
                       if($value1==1)
                       {
@@ -3047,22 +3047,22 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
               $filteredAmenitiesData = array_diff(array_unique($amenitiesListNew), $valuesToRemove);
           }
           $pgtype = '';
-          if($checkin !=""  &&   $checkout !=""){   
+          if($checkin !=""  &&   $checkout !=""){
               $pgtype = 'withdate';
           }else{
               $pgtype = 'withoutdate';
           }
           $type = "hotel";
           $lname = $searchresults[0]->cityName;
-		   
-		
-		   
-		   //start price code 
+
+
+
+		   //start price code
 			$getprice =collect();
 			$hotelid = $searchresults[0]->hotelid;
 
 			$getprice =DB::table('hotelbookingstemp')->where('hotelid',$hotelid )->orderby('price','asc')->get();
-		//end price code 
+		//end price code
            return view('hotel_detail')->with('searchresult',$searchresults)
            ->with('images',$images)
            ->with('review',$getreview)
@@ -3095,28 +3095,28 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->with('facilityNames',$facilityNames)
 			->with('shortFacilities',$shortFacilities)
 			->with('getprice',$getprice);
-    
+
         }
-           
+
     public function hotel_detailfaqs(request $request){
-     
+
         $hotelid = $request->get('hotelid');
 
         $hname = $request->get('hname');
         $hid = $request->get('hid');
-        
+
         $nearby_sight =  DB::table('TPhotel_neaby_sight')->select('radius','distance','LocationId','SightId','slug','name','TAAggregateRating','category')->where('hotelid',$hid)->get();
 
         $get_experiences =collect();
         if(!$nearby_sight->isEmpty() ){
-            
+
             $sighid = $nearby_sight[0]->SightId;
             $location_id = $nearby_sight[0]->LocationId;
             $mapping =  DB::table('Temp_Mapping')->select('Tid')->where('slugid',$location_id)->get();
 
-     
+
             if(!$mapping->isEmpty()){
-                $Tid = $mapping[0]->Tid;             
+                $Tid = $mapping[0]->Tid;
                 $get_experiences = DB::table('ExperienceItninerary as e')
                 ->join('Experience as exp', 'exp.ExperienceId', '=', 'e.ExperienceId')
                 ->leftJoin('ExperienceReview as rr', 'exp.ExperienceId', '=', 'rr.ExperienceId')
@@ -3127,17 +3127,17 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 ->orderBy('exp.TAAggregationRating', 'desc')
                 ->limit(4)
                 ->get();
-            
-                
+
+
             }
-        
+
        }
 
-         
+
         //  $nearby_hotel =  DB::table('TPNearby_hotel')->where('hid',$hotelid)->get();
 
 
-                     
+
          $getquest =  DB::table('HotelQuestion')->select('User_Name','CreatedDate','Question','updatedOn','Listing','Answer')->where('HotelId',$hid)->get();
 
          $getreview =  DB::table('HotelReview')->where('HotelId',$hid)->get();
@@ -3149,7 +3149,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
          $html4 = view('frontend.hotel.hotel_review_result',['review'=>$getreview])->render();
 
          $html5 = view('frontend.hotel.hotel_detail_nearby_exp',['get_experience'=>$get_experiences,'hname'=>$hname])->render();
-         
+
          $html1 = (string) $html1;
      //    $html2 = (string) $html2;
          $html3 = (string) $html3;
@@ -3158,7 +3158,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
          return response()->json([ 'html1' => $html1,'html3'=>$html3,'html4'=>$html4,'html5'=>$html5]);
     }
 
- 
+
     public function hotel_detail_perfect_sight(request $request){
 
         $hname = $request->get('hname');
@@ -3172,7 +3172,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
     }
     public function hoteldetailnearbyrest(request $request){
-     
+
         $latitude = $request->get('latitude');
         $longitude = $request->get('longnitude');
         $tid = $request->get('tid');
@@ -3183,20 +3183,20 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         $nearby_rest =  DB::table('TPhotel_nearby_restaurant')->where('hotelid',$hid)->get();
         $nearby_hotel =  DB::table('TPNearby_hotel')->where('hid',$hid)->get();
 
-        
+
          $html1 = view('frontend.hotel.hotel_detail_nearbyrest',['nearby_rest'=>$nearby_rest])->render();
 
          $html2 = view('frontend.hotel.hotel_detail_nearby_hotel',['nearby_hotel'=>$nearby_hotel,'hname'=>$hname])->render();
-       
+
 
          $html1 = (string) $html1;
          $html2 = (string) $html2;
-           
+
          return response()->json(['html1' => $html1, 'html2' => $html2]);
     }
 
     public function add_hoteldetail_nearbyrest(request $request){
-     
+
         $latitude = $request->get('latitude');
         $longitude = $request->get('longnitude');
         $hid = $request->get('hid');
@@ -3210,10 +3210,10 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $nearby_rest = DB::table("Restaurant as r")
             ->leftJoin('RestaurantReview as rr', 'r.RestaurantId', '=', 'rr.RestaurantId')
             ->select('r.Title','r.TATrendingScore','r.slugid','r.RestaurantId','r.Slug',
-                    DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                    * cos(radians(r.Latitude)) 
-                    * cos(radians(r.Longitude) - radians(" . $longitude . ")) 
-                    + sin(radians(" . $latitude . ")) 
+                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                    * cos(radians(r.Latitude))
+                    * cos(radians(r.Longitude) - radians(" . $longitude . "))
+                    + sin(radians(" . $latitude . "))
                     * sin(radians(r.Latitude))) AS distance"),
                     DB::raw("COUNT(rr.RestaurantReviewId) as review_count"))
             ->groupBy("r.RestaurantId")
@@ -3223,7 +3223,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->get();
             if (!$nearby_rest->isEmpty()) {
                $data = [];
-   
+
                foreach ($nearby_rest as $restaurant) {
                    $data[] = [
                        'hotelid' => $hid,
@@ -3237,42 +3237,42 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                        'review_count' => $restaurant->review_count,
                    ];
                }
-   
+
                DB::table('TPhotel_nearby_restaurant')->insert($data);
            }
-     
-   
-   
+
+
+
             $nearby_restdata =  DB::table('TPhotel_nearby_restaurant')->where('hotelid',$hid)->get();
-       
+
             $html1 = view('frontend.hotel.hotel_detail_nearbyrest',['nearby_rest'=>$nearby_rest,'restradus'=>$restradus])->render();
-   
-         
-   
+
+
+
             $html1 = (string) $html1;
-          
-   
+
+
             return response()->json([ 'html1' => $html1]);
         }
 
-      
+
     }
 
   // add hotel detail description
 
 
   public function insert_hotel_desction(request $request){
-    
-    $timeout = PHP_INT_MAX; 
+
+    $timeout = PHP_INT_MAX;
  //   $checkinDate = date('Y-m-d');
 
     $checkin = $request->get('checkin');
     $checkout = $request->get('checkout');
     $hid = $request->get('hid');
     $chkin = $checkin;
-    $checout = $checkout;       
-    
-       $guests = 2; 
+    $checout = $checkout;
+
+       $guests = 2;
        $rooms = 1;
 
        $stchin = $checkin;
@@ -3283,48 +3283,48 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 
        //new code start
-       $checkinDate = $checkin;         
-       $checkoutDate = $checkout;       
-       $adultsCount = 2; //$guests;              
-       $customerIP = '49.156.89.145'; 
-       $childrenCount = '1'; 
+       $checkinDate = $checkin;
+       $checkoutDate = $checkout;
+       $adultsCount = 2; //$guests;
+       $customerIP = '49.156.89.145';
+       $childrenCount = '1';
        $chid_age = '10';
-       $lang = 'en'; 
-       $currency ='USD'; 
-       $waitForResult ='0'; 
-       $iata=$hid; 
-       
-       $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-       $TRAVEL_PAYOUT_MARKER = "299178"; 
+       $lang = 'en';
+       $currency ='USD';
+       $waitForResult ='0';
+       $iata=$hid;
 
-       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-       $checkinDate.":". 
+       $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+       $TRAVEL_PAYOUT_MARKER = "299178";
+
+       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+       $checkinDate.":".
        $checkoutDate.":".
-       $chid_age.":". 
-       $childrenCount.":". 
-       $currency.":". 
-       $customerIP.":". 
-       $iata.":".       
-       $lang.":". 
-       $waitForResult; 
+       $chid_age.":".
+       $childrenCount.":".
+       $currency.":".
+       $customerIP.":".
+       $iata.":".
+       $lang.":".
+       $waitForResult;
 
 
        $signature = md5($SignatureString);
-    
 
-       $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+
+       $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
 
 
        $response = Http::withoutVerifying()->get($url);
 
        if ($response->successful()) {
-           
-       
+
+
        $data = json_decode($response);
            if(!empty($data)){
-           $searchId = $data->searchId;    
-           
+           $searchId = $data->searchId;
+
 
            $limit =10;
            $offset=0;
@@ -3333,16 +3333,16 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
            $sortBy='price';
 
            $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-           $sig2 =  md5($SignatureString2);    
+           $sig2 =  md5($SignatureString2);
 
            $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=10&sortBy=price&sortAsc=1&roomsCount=10&offset=0&marker=299178&signature='.$sig2;
 
            $maxAttempts = 4;
-           $retryInterval = 1; 
+           $retryInterval = 1;
            $response2 = Http::withoutVerifying()
-           ->timeout(0) 
+           ->timeout(0)
            ->retry($maxAttempts, $retryInterval)
-           ->get($url2);   
+           ->get($url2);
 
            $jsonResponse = json_decode($response2, true);
 
@@ -3350,7 +3350,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                $hotels = $jsonResponse['result'];
                $rooms = [];
                $roomsData = [];
-      
+
                foreach ($hotels as $hotel) {
                    if (isset($hotel['rooms']) && is_array($hotel['rooms'])) {
 
@@ -3366,22 +3366,22 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                    }
                }
 
-               $getdata =  DB::table('TPRoomtype')->where('hotelid',$hid)->get();           
+               $getdata =  DB::table('TPRoomtype')->where('hotelid',$hid)->get();
                 if(!$getdata->isEmpty()){
                     $roomData = [];
                     foreach ($rooms as $room) {
                         $desc = $room['desc'];
                         $options = $room['options'];
-                        $roomData[$desc] = $options;    
+                        $roomData[$desc] = $options;
 
                     }
-                    $decodedRoomDesc = json_decode($getdata[0]->Roomdesc, true); 
+                    $decodedRoomDesc = json_decode($getdata[0]->Roomdesc, true);
                     $difference = array_diff_key($roomData, $decodedRoomDesc);
 
                     if (empty($difference)) {
                         return "match"; // All data matches
                     } else {
-                    
+
                         $updateData = [];
                         foreach ($difference as $desc => $options) {
                             $updateData[$desc] = $options;
@@ -3392,52 +3392,52 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                             'Roomdesc'=>$updatedData
                         );
                     //   return $roomty;
-                    
+
                     return     $getdata =DB::table('TPRoomtype')->where('hotelid',$hid)->update($roomty);
-                    
+
                     }
-                        
-                
-                        
+
+
+
                 }else{
                     $roomData = [];
                     foreach ($rooms as $room) {
                         $desc = $room['desc'];
                         $options = $room['options'];
-                        $roomData[$desc] = $options;    
+                        $roomData[$desc] = $options;
 
                     }
                     $roomData = json_encode($roomData);
                     $roomty = array(
-                                
+
                         'Roomdesc'=>$roomData,
                         'hotelid'=>$hid
                     );
-                    
+
                      return   $getdata =DB::table('TPRoomtype')->insert($roomty);
 
-                    
-                    
+
+
                 }
-            
-                
 
-    
-             
 
-            }   
+
+
+
+
+            }
 
            //end new code
-               
-       
-       
+
+
+
            }
-                       
+
        }
-   
 
 
-    }  
+
+    }
 
 
 
@@ -3446,52 +3446,52 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 // end add hotel detail description
 	//end hotel detail section
 	  public function saveTphotel_nearby(request $request){
-  
+
         $latitude = $request->get('Latitude');
-        $longitude = $request->get('longitude');     
-        $hotelid = $request->get('hotelid');     
+        $longitude = $request->get('longitude');
+        $hotelid = $request->get('hotelid');
         $locationid = $request->get('locationid');
         $stars = $request->get('stars');
 
-        $nbs =0; 
+        $nbs =0;
         $nbh = 0;
         $ns =0;
 
         $nb_sighttable = DB::table('TPhotel_neaby_sight')->where('hotelid',$hotelid)->get();
-         
+
            if($latitude != "" && $longitude !=""){
                if (!$nb_sighttable->count() >= 4) {
                    $sredius= 50;
-                    $nearby_sights = DB::table("Sight")  
-                            ->join('Location as l','l.LocationId','=','Sight.LocationId') 
-                            ->leftjoin('Category as c','c.CategoryId','=','Sight.CategoryId')                      
+                    $nearby_sights = DB::table("Sight")
+                            ->join('Location as l','l.LocationId','=','Sight.LocationId')
+                            ->leftjoin('Category as c','c.CategoryId','=','Sight.CategoryId')
                             ->select('Sight.SightId', 'l.slugid','Sight.Title','Sight.LocationId','Sight.Slug',
                             'c.Title as catname','Sight.TAAggregateRating',
                             'Sight.Latitude','Sight.Longitude',
-                                    DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                                * cos(radians(Sight.Latitude)) 
-                                * cos(radians(Sight.Longitude) - radians(" . $longitude . ")) 
-                                + sin(radians(" . $latitude . ")) 
+                                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                                * cos(radians(Sight.Latitude))
+                                * cos(radians(Sight.Longitude) - radians(" . $longitude . "))
+                                + sin(radians(" . $latitude . "))
                                 * sin(radians(Sight.Latitude))) AS distance"))
                             ->groupBy("Sight.SightId")
-                            ->having('distance', '<=', $sredius)                               
+                            ->having('distance', '<=', $sredius)
                             ->orderBy('distance')
                             ->limit(4)
-                            ->where('Sight.IsMustSee',1)              
+                            ->where('Sight.IsMustSee',1)
                             ->get();
- 
-              
+
+
                if (!$nearby_sights->isEmpty()) {
                    $nbs =1;
                    foreach ($nearby_sights as $nearby_sight) {
                        $sightId = $nearby_sight->SightId;
                        $slug = $nearby_sight->Slug;
-                       $Title = $nearby_sight->Title;                       
+                       $Title = $nearby_sight->Title;
                        $catname = $nearby_sight->catname;
                        $TAAggregateRating = $nearby_sight->TAAggregateRating;
                        $LocationId = $nearby_sight->slugid;
                        $distance = round($nearby_sight->distance,2);
-               
+
                        $data= array(
                            'SightId'=>  $sightId,
                            'name'=>$Title,
@@ -3504,51 +3504,51 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                            'category'=>$catname,
                            'TAAggregateRating'=>$TAAggregateRating
                        );
-           
+
                        $insertdata = DB::table('TPhotel_neaby_sight')->insert($data);
                    }
                }
-   
-   
-   
-   
+
+
+
+
            }
-            
-           
-                
-              
-   
-   
-          
+
+
+
+
+
+
+
             $get_nearby_hotel = DB::table('TPNearby_hotel')->where('hid',$hotelid)->get();
-        
+
          if (!$get_nearby_hotel->count() >= 5) {
            //  return print_r($get_nearby_hotel);
-                $searchradius = 10; 
-             $nearby_hotel = DB::table("TPHotel as h")  
-               ->join('Temp_Mapping as m','m.LocationId','=','h.location_id')  
-            //   ->join('Location as l','l.LocationId','=','m.Tid')         
+                $searchradius = 10;
+             $nearby_hotel = DB::table("TPHotel as h")
+               ->join('Temp_Mapping as m','m.LocationId','=','h.location_id')
+            //   ->join('Location as l','l.LocationId','=','m.Tid')
                ->select('h.id','m.slugid','h.name','h.location_id','h.slug','h.address','h.pricefrom','h.stars','h.hotelid as hotid',
-                       DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                   * cos(radians(h.Latitude)) 
-                   * cos(radians(h.longnitude) - radians(" . $longitude . ")) 
-                   + sin(radians(" . $latitude . ")) 
-                   * sin(radians(h.Latitude))) AS distance"))     
-               ->having('distance', '<=', $searchradius)    
-               ->where('h.location_id',$locationid) 
+                       DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                   * cos(radians(h.Latitude))
+                   * cos(radians(h.longnitude) - radians(" . $longitude . "))
+                   + sin(radians(" . $latitude . "))
+                   * sin(radians(h.Latitude))) AS distance"))
+               ->having('distance', '<=', $searchradius)
+               ->where('h.location_id',$locationid)
                ->where('h.id', '!=', $hotelid)
-               ->orWhere('h.stars',$stars)            
+               ->orWhere('h.stars',$stars)
                ->orderBy('distance')
-               ->limit(6)    
-       
+               ->limit(6)
+
                ->get();
                 $savedCount = 0;
            // return print_r($nearby_hotel);
             if(!$nearby_hotel->isEmpty()){
-              
+
                 $nbh =1;
-              
-   
+
+
                foreach ($nearby_hotel as $nearby_hotels) {
                         $id = $nearby_hotels->id;
                    if($id != $hotelid){
@@ -3560,8 +3560,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                        $address = $nearby_hotels->address;
                        $stars = $nearby_hotels->stars;
                        $pricefrom = $nearby_hotels->pricefrom;
-                   
-                       
+
+
                        $data3= array(
                            'name'=>$Title,
                            'slug'=>$slug,
@@ -3576,8 +3576,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                            'hid'=>$hotelid,
                            'dated'=>now(),
                        );
-   
-               
+
+
                        $insertdata3 = DB::table('TPNearby_hotel')->insert($data3);
                        $savedCount++;
                        if ($savedCount >= 5) {
@@ -3585,79 +3585,79 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                        }
                    }
                }
-    
-            
+
+
            }
          }
-               
-               
+
+
         }
-   
+
      if( $nbs ==1 || $nbh == 1){
-       
+
            $updated_data = DB::table('TPhotel_neaby_sight')->where('hotelid',$hotelid)->get();
            $html_view = view('hotel_detail_result.Near_by_Attractions', ['nearby_sight' => $updated_data])->render();
 
            $nearby_hotel =  DB::table('TPNearby_hotel')->where('hid',$hotelid)->get();
-           $html3 = view('hotel_detail_result.nearby_hotels',['nearby_hotel'=>$nearby_hotel])->render();    
+           $html3 = view('hotel_detail_result.nearby_hotels',['nearby_hotel'=>$nearby_hotel])->render();
            $html3 = (string) $html3;
                // Return the updated data and HTML as a JSON response
            return response()->json([ 'html' => $html_view,'html3'=>$html3]);
        }
-    
-       
-    
+
+
+
       }
 
      public function similarhotel(request $request){
            $locid =  $request->get('lid');
 
-        //new code start    
-        $chkin = date("Y-m-d");   
-        $checkinDate = date("Y-m-d",strtotime($chkin . ' +2 days'));            
-        $checkoutDate = date("Y-m-d", strtotime($chkin . ' +8 days'));         
-        $adultsCount = 2; //$guests;              
-        $customerIP = '49.156.89.145'; 
-        $childrenCount = '1'; 
+        //new code start
+        $chkin = date("Y-m-d");
+        $checkinDate = date("Y-m-d",strtotime($chkin . ' +2 days'));
+        $checkoutDate = date("Y-m-d", strtotime($chkin . ' +8 days'));
+        $adultsCount = 2; //$guests;
+        $customerIP = '49.156.89.145';
+        $childrenCount = '1';
         $chid_age = '10';
-        $lang = 'en'; 
-        $currency ='USD'; 
-        $waitForResult ='0'; 
-        $iata=$locid; 
-        
-        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-        $TRAVEL_PAYOUT_MARKER = "299178"; 
+        $lang = 'en';
+        $currency ='USD';
+        $waitForResult ='0';
+        $iata=$locid;
 
-     
- 
-       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-        $checkinDate.":". 
+        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+        $TRAVEL_PAYOUT_MARKER = "299178";
+
+
+
+       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+        $checkinDate.":".
         $checkoutDate.":".
-        $chid_age.":". 
-        $childrenCount.":". 
-        $iata.":".  
-        $currency.":". 
-        $customerIP.":".             
-        $lang.":". 
-        $waitForResult; 
- 
+        $chid_age.":".
+        $childrenCount.":".
+        $iata.":".
+        $currency.":".
+        $customerIP.":".
+        $lang.":".
+        $waitForResult;
+
     //  return $SignatureString;
       $signature = md5($SignatureString);
    //  $signature = '3193e161e98200459185e43dd7802c2c'; iata=HKT
 
-     $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+     $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
-     
-    
+
+
           $response = Http::withoutVerifying()->get($url);
-    
+
         if ($response->successful()) {
-           
-          
+
+
           $data = json_decode($response);
             if(!empty($data)){
-              $searchId = $data->searchId;    
-            
+              $searchId = $data->searchId;
+
 
             $limit =5;
             $offset=0;
@@ -3666,19 +3666,19 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $sortBy='price';
 
               $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                 $sig2 =  md5($SignatureString2);    
+                 $sig2 =  md5($SignatureString2);
 
                  $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=5&sortBy=price&sortAsc=1&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
 
                     $response2 = Http::withoutVerifying()->get($url2);
                          $hotel = json_decode($response2, true);
-          
+
             }else{
                 return 'search id not found';
             }
-                         
+
         } else {
-          
+
             return 2;
         }
 
@@ -3686,21 +3686,21 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         return view('filter_similar_hotel',['gethotel'=>$hotel,'locid'=>$locid]);
     }
 
-    
 
-	public function filter_hotel_list(request $request) 
-	{ 
+
+	public function filter_hotel_list(request $request)
+	{
 		$locationid = $request->get('locationid');
 
 		$minPrice = $request->get('priceFrom');
-		$priceTo = $request->get('priceTo');        
-		$typeHotel = $request->get('hoteltype');    
-		$starRating = $request->get('starRating');       
+		$priceTo = $request->get('priceTo');
+		$typeHotel = $request->get('hoteltype');
+		$starRating = $request->get('starRating');
 		$mnt = $request->get('mnt');
 
 		$amenities = [];
 		if(is_string($mnt)){
-			$amenities = explode(',', $mnt);    
+			$amenities = explode(',', $mnt);
 		}
 
 		$typeHotels = [];
@@ -3725,9 +3725,9 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		if($starRating ==1){
 			$st = 0;
 		}
-		// [$searchresults] = DB::selectResultSets( 
-		//     "CALL getHotelsListFiltered('$id','$minPrice','$priceTo','$typeHotel','$userrating','$starRating','$distance','$neibourhood')" 
-		//     ); 
+		// [$searchresults] = DB::selectResultSets(
+		//     "CALL getHotelsListFiltered('$id','$minPrice','$priceTo','$typeHotel','$userrating','$starRating','$distance','$neibourhood')"
+		//     );
 		$searchresults =collect();
 
 		if (!empty($minPrice) && !empty($priceTo) && !empty($amenities) && !empty($user_rating) && !empty($starRating) && !empty($typeHotels) && $address ) {
@@ -3738,7 +3738,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
 				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
-				->where('h.location_id', $locationid)          
+				->where('h.location_id', $locationid)
 				->where('h.distance', '<=', $distance)
 				->where('h.stars', $starRating)
 				->where(function ($query) use ($typeHotels) {
@@ -3758,32 +3758,14 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				->where('h.Pincode', $address)
 				->limit(10)
 				->get();
-		} elseif (!empty($starRating) && !empty($amenities) && !empty($starRating)) { 
+		} elseif (!empty($starRating) && !empty($amenities) && !empty($starRating)) {
 
 			$searchresults = DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
 						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')     
-				->where('h.location_id', $locationid)
-				->where('h.distance', '<=', $distance)
-				->where('h.stars', $starRating)				
-				->where(function ($query) use ($amenities) {
-					foreach ($amenities as $amenity) {
-						$query->where('h.amenities', 'LIKE', $amenity . '%');
-					}
-				})
-				->limit(10)
-				->get();
-		} elseif (!empty($starRating) && !empty($amenities)) { 
-
-			$searchresults = DB::table('TPHotel as h')
-				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
-						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
-						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
-				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')     
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
 				->where('h.location_id', $locationid)
 				->where('h.distance', '<=', $distance)
 				->where('h.stars', $starRating)
@@ -3794,7 +3776,25 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				})
 				->limit(10)
 				->get();
-		} elseif (!empty($amenities) && !empty($user_rating) ) { 
+		} elseif (!empty($starRating) && !empty($amenities)) {
+
+			$searchresults = DB::table('TPHotel as h')
+				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
+						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
+						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
+				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
+				->where('h.location_id', $locationid)
+				->where('h.distance', '<=', $distance)
+				->where('h.stars', $starRating)
+				->where(function ($query) use ($amenities) {
+					foreach ($amenities as $amenity) {
+						$query->where('h.amenities', 'LIKE', $amenity . '%');
+					}
+				})
+				->limit(10)
+				->get();
+		} elseif (!empty($amenities) && !empty($user_rating) ) {
 
 			$searchresults= DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
@@ -3815,14 +3815,14 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				->limit(10)
 				->get();
 
-		}elseif (!empty($starRating) ) { 
+		}elseif (!empty($starRating) ) {
 
 			$searchresults = DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
 						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')     
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
 				->where('h.location_id', $locationid)
 				->where('h.distance', '<=', $distance)
 				->where('h.stars', $starRating)
@@ -3871,7 +3871,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				->get();
 
 
-		} elseif (!empty($amenities)) { 
+		} elseif (!empty($amenities)) {
 
 			$searchresults = DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
@@ -3903,27 +3903,27 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				})
 				->limit(10)
 				->get();
-		} elseif (!empty($starRating)) { 
+		} elseif (!empty($starRating)) {
 
 			$searchresults = DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
 						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')     
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
 				->where('h.location_id', $locationid)
 				->where('h.distance', '<=', $distance)
 				->where('h.stars', $starRating)
 				->limit(10)
 				->get();
-		} elseif (!empty($address)) { 
+		} elseif (!empty($address)) {
 
 			$searchresults = DB::table('TPHotel as h')
 				->select('h.hotelid', 'h.id', 'h.location_id as loc_id', 'h.name', 'h.address', 'h.slug', 'h.distance', 'h.stars', 'h.pricefrom', 'h.rating',
 						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')            
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
 				->where('h.location_id', $locationid)
 				->where('h.distance', '<=', $distance)
 				->where('h.address', 'LIKE', $address . '%')
@@ -3936,9 +3936,9 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 						 'h.photos', 'h.facilities', 'h.amenities', 'h.shortFacilities',
 						 'l.fullName', 'l.countryName', 'l.cityName', 'ty.type as propertyType')
 				->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')            
+				->leftjoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
 				->where('h.location_id', $locationid)
-				->where('h.distance', '<=', $distance)     
+				->where('h.distance', '<=', $distance)
 				->limit(10)
 				->get();
 		}
@@ -3955,8 +3955,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		}
 
 
-		return view('filter_hotel_list')->with('searchresults',$searchresults)->with('lname',$lname)->with('countryname',$countryName); 
-	} 
+		return view('filter_hotel_list')->with('searchresults',$searchresults)->with('lname',$lname)->with('countryname',$countryName);
+	}
 
 	public function getfilteredhotellist(request $request){
 
@@ -3974,7 +3974,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		if(session()->has('checkin')){
 			$getval = session('checkin');
 			$value=  explode('_',$getval);
-			$chkin = $value[0]; 
+			$chkin = $value[0];
 			$checout = $value[1];
 
 		}else{
@@ -4008,76 +4008,76 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 	      DB::table('hotelbookingstemp')->truncate();
 
 			//new code start
-			$checkinDate =  $chkin;         
-			$checkoutDate = $checout;       
-			$adultsCount = $guest;              
-			$customerIP = '49.156.89.145'; 
-			$childrenCount = '1'; 
+			$checkinDate =  $chkin;
+			$checkoutDate = $checout;
+			$adultsCount = $guest;
+			$customerIP = '49.156.89.145';
+			$childrenCount = '1';
 			$chid_age = '10';
-			$lang = 'en'; 
-			$currency ='USD'; 
-			$waitForResult ='0'; 
+			$lang = 'en';
+			$currency ='USD';
+			$waitForResult ='0';
 			$iata= $locationid ;//24072
 
-			$TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-			$TRAVEL_PAYOUT_MARKER = "299178"; 
-			$SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-				$checkinDate.":". 
+			$TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+			$TRAVEL_PAYOUT_MARKER = "299178";
+			$SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+				$checkinDate.":".
 				$checkoutDate.":".
-				$chid_age.":". 
-				$childrenCount.":". 
-				$iata.":".  
-				$currency.":". 
-				$customerIP.":".             
-				$lang.":". 
-				$waitForResult; 
+				$chid_age.":".
+				$childrenCount.":".
+				$iata.":".
+				$currency.":".
+				$customerIP.":".
+				$lang.":".
+				$waitForResult;
 
 			$signature = md5($SignatureString);
 
-			$url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;       
+			$url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
 			$response = Http::withoutVerifying()->get($url);
 
 			if ($response->successful()) {
 				$data = json_decode($response);
 				if(!empty($data)){
-					$searchId = $data->searchId; 
+					$searchId = $data->searchId;
 					$limit = 0;
 					$offset=0;
 					$roomsCount=0;
 					$sortAsc=0;
 					$sortBy='stars';
 					$SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-					$sig2 =  md5($SignatureString2); 
-					$url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=0&sortBy=stars&sortAsc=0&roomsCount=0&offset=0&marker=299178&signature='.$sig2;                    
-					$maxAttempts = 3; 
+					$sig2 =  md5($SignatureString2);
+					$url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=0&sortBy=stars&sortAsc=0&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
+					$maxAttempts = 3;
 					$retryInterval = 1;
-					$response2 = Http::withoutVerifying()->timeout(0)->retry($maxAttempts, $retryInterval)->get($url2); 
+					$response2 = Http::withoutVerifying()->timeout(0)->retry($maxAttempts, $retryInterval)->get($url2);
 
 					$responseData = $response2->json();
 
-					// $end =  date("H:i:s");  
+					// $end =  date("H:i:s");
 
 					//     return $start.'=='.$end;
 					if ($responseData['status'] === 'error' && $responseData['errorCode'] === 409) {
 						$status = 4;
-						return 'Search is not finished.';            
+						return 'Search is not finished.';
 					}else{
 						$status = 1;
 					}
 
 
-					if ($response2->successful()) {                 
-						$hotel = json_decode($response2);          
-						$idArray = array_column($hotel->result, 'id');         
+					if ($response2->successful()) {
+						$hotel = json_decode($response2);
+						$idArray = array_column($hotel->result, 'id');
 						$idArray = array_filter($idArray, function ($id) {
 							return isset($id);
-						});  
+						});
 						$idArray = array_unique($idArray);
 
 						//  $limitedIdArray = array_slice($idArray, 0, 100);
 					  $searchresults = DB::table('TPHotel as h')
-                                    ->select('h.hotelid', 'h.id', 'h.name', 'h.slug', 'h.stars', 'h.rating', 
+                                    ->select('h.hotelid', 'h.id', 'h.name', 'h.slug', 'h.stars', 'h.rating',
                                       'h.amenities', 'h.distance', 'h.slugid', 'h.room_aminities','h.Latitude','h.longnitude','h.CountryName','h.CityName','h.short_description',
                                               DB::raw('GROUP_CONCAT(CONCAT(a.shortName, "|", a.image) ORDER BY a.name SEPARATOR ", ") as amenity_info'))
                                     ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0'))
@@ -4086,7 +4086,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                                     ->groupBy('h.id')
 						            ->orderby('h.stars','desc')
                                     ->paginate(30)
-                                    ->withQueryString();                      
+                                    ->withQueryString();
 
 						$url = 'filter_availble_hotel.html';
 						$searchresults->appends(request()->except(['_token']));
@@ -4101,7 +4101,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 
 
-						//	|| $adults != $session_adult_count 
+						//	|| $adults != $session_adult_count
 
 
 						// Clear specific session values
@@ -4116,8 +4116,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 						Session::put('table_guestcount', $adults);
 						Session::put('data_save', '1');
 						Session::put('lo_id', $Tid);
-						
-					
+
+
 
 						// If session values are different, proceed with inserting data
 						if (!empty($hotel->result)) {
@@ -4153,7 +4153,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 										'guest' => $adults, // Use $adults here to match the session variable
 										'price' => $price,
 										'agency_id' => $agencyId,
-										
+
 									];
 								}
 							}
@@ -4178,7 +4178,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 						$hotelIds = array_unique($searchresults->pluck('hotelid')->toArray()) ;
 						$hotelpricedata = DB::table('hotelbookingstemp')
 							->whereIn('hotelid', $hotelIds)
-							->get();						 
+							->get();
 						  $uniqueAgencies =null;
                         if(!$hotelpricedata->isEmpty()){
                             $uniqueAgencies = $hotelpricedata->pluck('agency_name')->unique();
@@ -4193,18 +4193,18 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 							'checkoutDate' => $checkoutDate,
 							'count_result' => $count_result,
 						])->render();
-						
+
 						//return print_r(	session()->all());
  					if (!session()->has('filterd')) {
 						// Return JSON response
-						
+
 						return response()->json([
 							'html' => $html,
 							'count_result' => $count_result,
 							 'uniqueAgencies' => $uniqueAgencies,
 						]);
 					}
-						
+
 					}
 
 
@@ -4225,18 +4225,18 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 				->get();
 			$hotelIds = array_unique($hotelpricedata->pluck('hotelid')->toArray()) ;
           //  $uniqueAgencies = $hotelpricedata->pluck('agency_name')->unique();
-			   
-	
+
+
   		  $getagenc = DB::table('hotelbookingstemp as h')
 			->leftJoin('TPHotel as t', 't.hotelid','=','h.hotelid')
 			->select('agency_name')
 			->get();
-      
+
 			$uniqueAgencies =null;
 			if(!$getagenc->isEmpty()){
 				$uniqueAgencies = $getagenc->pluck('agency_name')->unique();
 			}
-			
+
 			$searchresults = DB::table('TPHotel as h')
 			->select(
 				'h.hotelid',
@@ -4266,7 +4266,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 			$paginationLinks = $searchresults->links('hotellist_pagg.default');
 			$hotelpage = 'hotelpage';
 
-			$count_result =  $searchresults->total();       
+			$count_result =  $searchresults->total();
 
 			$html = view('frontend.hotel.get_filtered_hotels', [
 				'hotels' => $hotelpricedata,
@@ -4293,68 +4293,68 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
 
 	}
-	// dowload logo and update min max price 
-	
+	// dowload logo and update min max price
+
 
 	public function donload_agencyimg(request  $request){
 
 
     $chkin = $request->get('checkin');
     $checout = $request->get('checkout');
-   
-     $rooms = $request->get('rooms'); 
-     $guest = $request->get('guest'); 
 
-     $locationid =  $request->get('locationid'); 
-  
+     $rooms = $request->get('rooms');
+     $guest = $request->get('guest');
+
+     $locationid =  $request->get('locationid');
+
      $searchresults =collect();
 
 
      //new code start
-     $checkinDate =  $chkin;         
-     $checkoutDate = $checout;       
-     $adultsCount = $guest;              
-     $customerIP = '49.156.89.145'; 
-     $childrenCount = '1'; 
+     $checkinDate =  $chkin;
+     $checkoutDate = $checout;
+     $adultsCount = $guest;
+     $customerIP = '49.156.89.145';
+     $childrenCount = '1';
      $chid_age = '10';
-     $lang = 'en'; 
-     $currency ='USD'; 
-     $waitForResult ='0'; 
+     $lang = 'en';
+     $currency ='USD';
+     $waitForResult ='0';
      $iata= $locationid ;//24072
-     
-     $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-     $TRAVEL_PAYOUT_MARKER = "299178"; 
 
-  
+     $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+     $TRAVEL_PAYOUT_MARKER = "299178";
 
-    $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-     $checkinDate.":". 
+
+
+    $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+     $checkinDate.":".
      $checkoutDate.":".
-     $chid_age.":". 
-     $childrenCount.":". 
-     $iata.":".  
-     $currency.":". 
-     $customerIP.":".             
-     $lang.":". 
-     $waitForResult; 
+     $chid_age.":".
+     $childrenCount.":".
+     $iata.":".
+     $currency.":".
+     $customerIP.":".
+     $lang.":".
+     $waitForResult;
 
 
    $signature = md5($SignatureString);
 //  $signature = '3193e161e98200459185e43dd7802c2c'; iata=HKT
 
-  $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+  $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
-  
- 
+
+
        $response = Http::withoutVerifying()->get($url);
- 
+
      if ($response->successful()) {
-        
-       
+
+
        $data = json_decode($response);
          if(!empty($data)){
-           $searchId = $data->searchId;    
-         
+           $searchId = $data->searchId;
+
 
          $limit =0;
          $offset=0;
@@ -4363,43 +4363,43 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
          $sortBy='price';
 
            $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-              $sig2 =  md5($SignatureString2);    
+              $sig2 =  md5($SignatureString2);
 
               $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=0&sortBy=price&sortAsc=1&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
-                     
+
                      $gethoteltype =collect();
                  $response2 = Http::withoutVerifying()->timeout(30)->get($url2);
             //    $response2 = Http::timeout(30)->retry(3, 100)->get($url2);
             sleep(5);
-                  
+
              $responseData = $response2->json();
                  if ($responseData['status'] === 'error' && $responseData['errorCode'] === 4) {
                     $status = 4;
                     return 'Search is not finished.';
                     //  $response2 = Http::withoutVerifying()->get($url2);
-                    
+
                 }else{
                     $status = 1;
                 }
-            
+
              $maxRetries = 10; // Set a maximum number of retries
             //	$retryInterval = 5; // Set the interval between retries in seconds
 
                 //for ($i = 0; $i < $maxRetries; $i++) {
-                    
+
                 //}
-                 if ($response2->successful()) {         
-       
+                 if ($response2->successful()) {
+
                      $hotel = json_decode($response2);
-                     
+
                      $idArray = array();
-                
-                     foreach ($hotel->result as $hotelInfo) {                          
-                         if (isset($hotelInfo->id)) {                           
+
+                     foreach ($hotel->result as $hotelInfo) {
+                         if (isset($hotelInfo->id)) {
                              $idArray[] = $hotelInfo->id;
                          }
                      }
-                     
+
                      $getpricenull = DB::table('TPHotel as h')
                      ->select('h.hotelid','h.minprice','h.maxprice')
                      ->whereIn('h.hotelid', $idArray)
@@ -4408,10 +4408,10 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                                ->orWhereNull('h.maxprice');
                      })
                      ->get();
-                 
+
                         foreach ($hotel->result as $searchresult) {
 
-                        $hotelid = $searchresult->id;      
+                        $hotelid = $searchresult->id;
                      //   $getprice =  DB::table('TPHotel')->select('minprice','maxprice')->where('hotelid',$hotelid)->get();
                         // $minprice =  $getprice[0]->minprice;
                         // $maxprice =  $getprice[0]->maxprice;
@@ -4420,52 +4420,52 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         if($getpricenull->isEmpty()){
                             $minPriceTotal = $searchresult->minPriceTotal;
                             $maxPrice = $searchresult->maxPrice;
-    
+
                             $price=array(
                                 'minprice'=>$minPriceTotal,
                                 'maxprice'=> $maxPrice,
                             );
-    
+
                            DB::table('TPHotel')->where('hotelid',$hotelid)->update($price);
                         }
                       }
-					 
+
                      foreach ($hotel->result as $searchresult) {
 
                         foreach ($searchresult->rooms as $room) {
-                          
+
 
                             $agencyId =  $room->agencyId;
-                    
+
                             $getagency = DB::table('agencies')->where('agencyId', $agencyId)->get();
-                    
+
                             if ($getagency->isEmpty()) {
                                 $imagePath = 'public/agency-image/' . $agencyId . '.png';
-                    
-                              if (!File::exists($imagePath)) {                                  
+
+                              if (!File::exists($imagePath)) {
                                 $imageUrl = 'http://pics.avs.io/hl_gates/100/100/' . $agencyId . '.png';
                                 $storagePath = 'public/agency-image/' . $agencyId . '.png';
-                            
+
                                 $response = Http::withoutVerifying()->get($imageUrl);
-                            
+
                                 if ($response->successful()) {
-                                 
-                                    File::put($storagePath, $response->body());                                
-                              
+
+                                    File::put($storagePath, $response->body());
+
                                     DB::table('agencies')->insert([
                                         'agencyId' => $agencyId,
                                         'agencyName' => $room->agencyName,
                                         'imageUrl' => $imageUrl,
                                         'imagepath' => 'agency/' . $agencyId . '.png',
                                     ]);
-                            
-                              
+
+
                                     continue;
                                 } else {
-                                  
+
                                     return "Failed to download the image for agency ID $agencyId.";
                                 }
-                            } else {                             
+                            } else {
                                 return "Image for agency ID $agencyId already exists.";
                             }
 
@@ -4474,111 +4474,111 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                         }
 
 
-                        
+
                     }
                     //end
 
 
-                     // end download logo 
-               
-         
-             
+                     // end download logo
+
+
+
                  }
-          
-       
+
+
          }else{
              return 'search id not found';
          }
-                      
+
      } else {
-       
+
          return 2;
      }
 
 
-} 
+}
 
 //end save logo
-	
-	
+
+
    public function filter_availble_hotel_old(request $request){
        $getval = $request->get('checkin') .'-'.$request->get('checkout');
        $chkin = $request->get('checkin');
        $checout = $request->get('checkout');
-	
+
         // $value=  explode('-',$getval);
-        // $checkin = $value[0]; 
+        // $checkin = $value[0];
         // $checkout = $value[1];
-        $rooms = $request->get('rooms'); 
-        $guest = $request->get('guest'); 
-        $lid =  $request->get('lid'); 
+        $rooms = $request->get('rooms');
+        $guest = $request->get('guest');
+        $lid =  $request->get('lid');
       //  $rooms = $request->get('child1');
       //  $guest = $request->get('child2');
             // if (session()->has('checkin')) {
             //     session()->forget('checkin');
             // }
-            
-          
+
+
         session(['checkin' => $getval]);
         session(['rooms' => $rooms]);
         session(['guest' => $guest]);
 
-    
-      //  $id='675'; 
+
+      //  $id='675';
         // if (!empty($getval)) {
         //    $chkin =  date('Y-m-d',strtotime( $checkin));
         //    $checout =  date('Y-m-d',strtotime( $checkout));
-            
+
         // } else {
         //     return 0;
         // }
 
- 
-        //new code start
-        $checkinDate =  $chkin;         
-        $checkoutDate = $checout;       
-        $adultsCount = 2; //$guests;              
-        $customerIP = '49.156.89.145'; 
-        $childrenCount = '1'; 
-        $chid_age = '10';
-        $lang = 'en'; 
-        $currency ='USD'; 
-        $waitForResult ='0'; 
-        $iata= 24072;// $lid ; 
-        
-        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-        $TRAVEL_PAYOUT_MARKER = "299178"; 
 
-     
- 
-       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-        $checkinDate.":". 
+        //new code start
+        $checkinDate =  $chkin;
+        $checkoutDate = $checout;
+        $adultsCount = 2; //$guests;
+        $customerIP = '49.156.89.145';
+        $childrenCount = '1';
+        $chid_age = '10';
+        $lang = 'en';
+        $currency ='USD';
+        $waitForResult ='0';
+        $iata= 24072;// $lid ;
+
+        $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+        $TRAVEL_PAYOUT_MARKER = "299178";
+
+
+
+       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+        $checkinDate.":".
         $checkoutDate.":".
-        $chid_age.":". 
-        $childrenCount.":". 
-        $iata.":".  
-        $currency.":". 
-        $customerIP.":".             
-        $lang.":". 
-        $waitForResult; 
- 
+        $chid_age.":".
+        $childrenCount.":".
+        $iata.":".
+        $currency.":".
+        $customerIP.":".
+        $lang.":".
+        $waitForResult;
+
     //  return $SignatureString;
       $signature = md5($SignatureString);
    //  $signature = '3193e161e98200459185e43dd7802c2c'; iata=HKT
-//locationId 
-     $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+//locationId
+     $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
-     
-    
+
+
           $response = Http::withoutVerifying()->get($url);
-    
+
         if ($response->successful()) {
-           
-          
+
+
           $data = json_decode($response);
             if(!empty($data)){
-              $searchId = $data->searchId;    
-            
+              $searchId = $data->searchId;
+
 
             $limit =10;
             $offset=0;
@@ -4587,46 +4587,46 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $sortBy='price';
 
               $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                 $sig2 =  md5($SignatureString2);    
+                 $sig2 =  md5($SignatureString2);
 
                  $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=10&sortBy=price&sortAsc=1&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
 
                     $response2 = Http::withoutVerifying()->get($url2);
-					
-                    if ($response2->successful() ) {         
-              
+
+                    if ($response2->successful() ) {
+
                         $hotel = json_decode($response2);
-					
-				
+
+
     				 //     $responseContent = $response2->body();
 					//  if (strpos($responseContent, 'errorCode: 4') !== false) {
 							// Handle the case when the response contains "errorCode: 4"
 						//	$hotel['data_status'] = 4;
-						
-						//} 
 
-            
+						//}
+
+
                         return view('hotel_list_api_result',['hotels'=> $hotel,'TRAVEL_PAYOUT_TOKEN'=>$TRAVEL_PAYOUT_TOKEN,'locid'=>$locationid]);
                     }
-             
-          
+
+
             }else{
                 return 'search id not found';
             }
-                         
+
         } else {
-          
+
             return 2;
         }
 
-        // [$searchresults] = DB::selectResultSets( 
-        //     "CALL getHotelsListFiltered('$id','$minPrice','$priceTo','$typeHotel','$userrating','$starRating','$distance','$neibourhood')" 
-        //     ); 
-          
+        // [$searchresults] = DB::selectResultSets(
+        //     "CALL getHotelsListFiltered('$id','$minPrice','$priceTo','$typeHotel','$userrating','$starRating','$distance','$neibourhood')"
+        //     );
+
 
         // return view('filter_hotel_list')->with('searchresults',$searchresults);
     }
-  
+
 
 public function add_hoteldata()
 {
@@ -4635,12 +4635,12 @@ public function add_hoteldata()
 
     if ($response->successful()) {
         $hotelsData = $response->json();
-      
+
 
         if (isset($hotelsData['pois'])) {
-          
+
             $hotels = $hotelsData['pois'];
-          
+
             foreach ($hotels as $hotel) {
                 // Store the hotel data in the 'hotels' table
         //      echo   $hotel['location']['lon'];
@@ -4651,15 +4651,15 @@ public function add_hoteldata()
                 //         'name' => $hotel['name'],
                 //     'rating' => $hotel['rating'],
                 //     'category' => $hotel['category'],
-                //     'lat' => $hotel['location']['lat'],  
+                //     'lat' => $hotel['location']['lat'],
                 //     'lon' => $hotel['location']['lon'],
                 //     'type' => "Point",
                 //     'created_at' => now(),
                 //     'updated_at' => now(),
                 // ]);
             }
-         
-           
+
+
         } else {
             $this->error('No hotels data found in the API response.');
         }
@@ -4672,8 +4672,8 @@ public function addLocationfaqfont(request $request){
 
     $locationid = $request->get('locationIdValue');
 
-   
-    
+
+
 
     $getloc = DB::table('Location')->where('LocationId',$locationid)->get();
       $lname = $getloc[0]->Name;
@@ -4710,12 +4710,12 @@ $getkidsoutdoor = DB::table('Sight as s')
     ->join('Location as l','l.LocationId','=','s.LocationId')
     ->where('s.LocationId', $locationid)
     ->where('s.TATotalReviews', '>', 20)
-    ->whereIn('s.CategoryId', $categoryIdsks)  
-    ->select('s.Title','s.SightId','s.Slug','l.slugid')  
+    ->whereIn('s.CategoryId', $categoryIdsks)
+    ->select('s.Title','s.SightId','s.Slug','l.slugid')
     ->limit(5)
     ->get();
 
-  
+
 $outkids_site = [];
 
 foreach ($getkidsoutdoor as $ks) {
@@ -4782,7 +4782,7 @@ if (!$existingEntry_outdoor) {
 
 
 
-      //dt   
+      //dt
       $gettopatt = DB::table('Sight as s')
       ->join('Location as l','l.LocationId','=','s.LocationId')
       ->select('s.Title','s.SightId','s.Slug','l.slugid')
@@ -4790,8 +4790,8 @@ if (!$existingEntry_outdoor) {
       ->where('s.TATotalReviews', '>', 20)
       ->orderby('s.TAAggregateRating','desc')
       ->limit(5)
-      ->get(); 
-          
+      ->get();
+
           $sightIds = [];
 
           foreach ($gettopatt as $gettopatts) {
@@ -4801,10 +4801,10 @@ if (!$existingEntry_outdoor) {
               ];
           }
 
-        
+
 
   if (!$existingEntry) {
- 
+
       if(!empty($sights)){
       $data = array(
           'LocationId'=>$locationid,
@@ -4819,7 +4819,7 @@ if (!$existingEntry_outdoor) {
   }else{
       'record already exist';
       if(!empty($sights)){
-  
+
       $data = array(
           'LocationId'=>$locationid,
           'slugid'=>$gettopatt[0]->slugid,
@@ -4828,7 +4828,7 @@ if (!$existingEntry_outdoor) {
           'listing'=>json_encode($sights),
           'CreatedDate' => now(),
       );
-    
+
        DB::table('LocationQuestion')->where('LocationId',$locationid)->where('Question', 'What are the top attractions to visit in ' . $lname)->update($data);
     }
   }
@@ -4837,12 +4837,12 @@ if (!$existingEntry_outdoor) {
 
   $get_out_cat = DB::table('Category')->where('ParentId', 1238)->get();
 
-  $ctids = []; 
-  
+  $ctids = [];
+
   foreach ($get_out_cat as $cat) {
       $ctids[] = $cat->CategoryId;
   }
- 
+
   $getoutdoor = DB::table('Sight as s')
       ->join('Location as l','l.LocationId','=','s.LocationId')
       ->select('s.Title','s.SightId','s.Slug','l.slugid',)
@@ -4852,10 +4852,10 @@ if (!$existingEntry_outdoor) {
       ->orderBy('s.TAAggregateRating', 'desc')
       ->limit(5)
       ->get();
-  
-      
+
+
   $outdoorloc = [];
-  
+
   foreach ($getoutdoor as $sight) {
       $outdoorloc[] = [
           'name' => $sight->Title,
@@ -4864,7 +4864,7 @@ if (!$existingEntry_outdoor) {
   }
 
   /* delete faq if exist*/
- 
+
 
     DB::table('LocationQuestion')
    ->where('LocationId', $locationid)
@@ -4905,12 +4905,12 @@ if (!$existingEntry_outdoor) {
       // childern
       $get_child_loc = DB::table('Category')->where('ParentId', 1349)->orWhere('ParentId', 1353)->get();
 
-      $catid = []; 
-      
+      $catid = [];
+
       foreach ($get_child_loc as $get_child_loc) {
           $catid[] = $get_child_loc->CategoryId;
       }
-  
+
       $getsights_child = DB::table('Sight as s')
       ->join('Location as l','l.LocationId','=','s.LocationId')
       ->select('s.Title','s.SightId','s.Slug','l.slugid',)
@@ -4920,10 +4920,10 @@ if (!$existingEntry_outdoor) {
           ->orderBy('s.TAAggregateRating', 'desc')
           ->limit(5)
           ->get();
-      
-          
+
+
       $child_loc = [];
-      
+
       foreach ($getsights_child as $getsights_childs) {
           $child_loc[] = [
               'name' => $getsights_childs->Title,
@@ -4931,7 +4931,7 @@ if (!$existingEntry_outdoor) {
           ];
       }
 
-       
+
       $alredyexist = DB::table('LocationQuestion')
       ->where('LocationId', $locationid)
       ->where('Question', 'What are the most popular things to do in '. $lname. ' with children')
@@ -4966,11 +4966,11 @@ if (!$existingEntry_outdoor) {
       return view('get_faq_data',['faq'=>$faq,'lname'=>$lname,'locid'=>$locationid]);
   }
 
-  
-  
+
+
   //end  sight faq
-	
-	
+
+
 //start sight faq
 
      public function addsightfaqfront(request $request){
@@ -4986,7 +4986,7 @@ if (!$existingEntry_outdoor) {
             ->where('SightId', $sightid)
             ->where('Faquestion', 'When is ' . $Sname . ' open')
             ->exists();
-    
+
         if(!$gettiming->isEmpty()){
 
             if (!$existingEntry) {
@@ -5020,17 +5020,17 @@ if (!$existingEntry_outdoor) {
         //        $data = array(
         //         'Name' => $Name,
         //         'Email' => $email,
-        //         'ReviewDescription' => $request->get('review'), 
+        //         'ReviewDescription' => $request->get('review'),
         //         'ReviewRating' => $request->get('rating'),
         //         'SightId' =>$request->get('sightId'),
         //     );
 
         //     } else {
-                
+
         //         $data = array(
         //             'Name' => $request->get('name'),
         //             'Email' => $request->get('email'),
-        //             'ReviewDescription' => $request->get('review'), 
+        //             'ReviewDescription' => $request->get('review'),
         //             'ReviewRating' => $request->get('rating'),
         //             'SightId' =>$request->get('sightId'),
         //         );
@@ -5039,18 +5039,18 @@ if (!$existingEntry_outdoor) {
         //    if($result){
         //     return 'Review added successfully.';
         //    }
-            
+
               $uploadedFiles = $request->file('files');
-              
+
            $data = array(
             'Name' => $request->get('name'),
             'Email' => $request->get('email'),
-            'ReviewDescription' => $request->get('review'), 
+            'ReviewDescription' => $request->get('review'),
             'IsRecommend' => $request->get('rating'),
             'SightId' =>$request->get('sightId'),
             'CreatedDate' => now(),
            );
-    
+
             $result = DB::table('SightReviews')->insertGetId($data);
 
             if(!empty($uploadedFiles)){
@@ -5058,33 +5058,33 @@ if (!$existingEntry_outdoor) {
                     if ($image->isValid()) {
                         $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
                         $image->move(public_path('review-images'), $imageName);
-            
-            
+
+
                         $data = [
                             'SightReviewId'=>$result,
-                            'Image' => $imageName,    
-                            'created_at'=>now(),              
+                            'Image' => $imageName,
+                            'created_at'=>now(),
                         ];
-            
+
                         $getreview = DB::table('sight_review_image')->insert($data);
                     }
                 }
              }
-            if($result){         
+            if($result){
               $getrv = DB::table('SightReviews')->where('SightId',$request->get('sightId'))->get();
              if(!$getrv->isEmpty()){
                 $totalReviews = $getrv->count();
                 $recommendedCount = $getrv->where('IsRecommend', 1)->count();
-                $notRecommendedCount = $totalReviews - $recommendedCount;                
+                $notRecommendedCount = $totalReviews - $recommendedCount;
                 $positiveReviews = $recommendedCount;
                 $negativeReviews = $notRecommendedCount;
                 $averageRating = ($positiveReviews * 5 + $negativeReviews * 1) / $totalReviews;
                $averageRatingPercentage = round(($averageRating / 5) * 100, 2);
                $averageRatingPercentage = floor($averageRatingPercentage);
              }
-             
-         
-               $reviewhtml =  view('updated_sight_review',[ 'sightreviews'=>$getrv])->render();              
+
+
+               $reviewhtml =  view('updated_sight_review',[ 'sightreviews'=>$getrv])->render();
                return response()->json(['reviewhtml'=>$reviewhtml,'positiveReviews'=>$positiveReviews,'negativeReviews'=>$negativeReviews,'averageRatingPercentage'=>$averageRatingPercentage]);
             }
         }
@@ -5098,7 +5098,7 @@ if (!$existingEntry_outdoor) {
             //    $data = array(
             //     'Name' => $Name,
             //     'Email' => $email,
-            //     'Description' => $request->get('review'), 
+            //     'Description' => $request->get('review'),
             //     'Rating' => $request->get('rating'),
             //     'HotelId' =>$request->get('hotelid'),
             //     'UserId' => 0,
@@ -5106,28 +5106,28 @@ if (!$existingEntry_outdoor) {
             // );
 
             // } else {
-     
+
             //     $data = array(
             //         'Name' => $request->get('name'),
             //         'Email' => $request->get('email'),
-            //         'Description' => $request->get('review'), 
+            //         'Description' => $request->get('review'),
             //         'Rating' => $request->get('rating'),
             //         'HotelId' =>$request->get('hotelid'),
             //         'UserId' => 0,
             //         'IsActive'=>0,
             //     );
-              
+
             // }
             // $result = DB::table('HotelReview')->insert($data);
             // if($result){
             //  return 'Review added successfully.';
-            // } 
-              
+            // }
+
 
             $data = array(
                 'Name' => $request->get('name'),
                 'Email' => $request->get('email'),
-                'Description' => $request->get('review'), 
+                'Description' => $request->get('review'),
                 'Rating' => $request->get('rating'),
                 'HotelId' =>$request->get('hotelid'),
                 'UserId' => 0,
@@ -5137,11 +5137,11 @@ if (!$existingEntry_outdoor) {
             $result = DB::table('HotelReview')->insert($data);
             if($result){
              //return 'Review added successfully.';
-            } 
-			
-			
+            }
+
+
 			//send email to hotel
-			
+
 			  $hotel = DB::table('TPHotel')->where('id', $request->get('hotelid'))->first();
 
             // Customize the email subject and body
@@ -5149,10 +5149,10 @@ if (!$existingEntry_outdoor) {
 			return	$subject = 'New Review for ' . $hotel->name;
 				$body = 'A new review has been added for ' . $hotel->name . '. Rating: ' . $request->get('rating') . '. Review: ' . $request->get('review');
 
-			
-				
+
+
 				$to = 'priyathakur141997@gmail.com';
-			   // $to = $request->get('hotel_email'); 
+			   // $to = $request->get('hotel_email');
 
 				try {
 					// Attempt to send the email
@@ -5170,34 +5170,34 @@ if (!$existingEntry_outdoor) {
 				}
 
 			}
-			
+
 			//end send email
-                
+
         }
-        
+
        // aad reviews end
-	
- 
+
+
  // add reviews end
 
         /*--------------------Restaurant page------------------*/
-  
+
        public function restaurant($id){
 
-     
+
             $rest_id =null;
             $locationID=null;
             $slug ="";
-          
-        
-     
+
+
+
             $parts = explode('-', $id);
             $locationID = $parts[0];
-            $rest_id = $parts[1]; 
+            $rest_id = $parts[1];
             array_shift($parts);
-            array_shift($parts);    
+            array_shift($parts);
             $slug = implode('-', $parts);
-     
+
             $rest =  DB::table('Restaurant as r')
              ->select('r.*','l.Slug as LSlug','l.Name as Lname','c.Name as Cname','l.slugid')
              ->leftjoin('Location as l','l.LocationId','=','r.LocationId')
@@ -5206,16 +5206,16 @@ if (!$existingEntry_outdoor) {
              ->where('r.slug',$slug)
              ->where('l.Slugid',$locationID)
              ->get();
-     
+
              if($rest->isEmpty()){
                   $checkgetloc =  DB::table('Location as lo')
                   ->select('lo.slugid')
                  ->where('lo.LocationId',$locationID)
-                 ->get(); 
-                 
-                      if(!$checkgetloc->isEmpty()){    
-                         $id =  $checkgetloc[0]->slugid;				 
-     
+                 ->get();
+
+                      if(!$checkgetloc->isEmpty()){
+                         $id =  $checkgetloc[0]->slugid;
+
                          return redirect()->route('restaurant_detail', [$id.'-'.$rest_id.'-'.$slug]);
                       }
                  abort('404','url not found');
@@ -5224,32 +5224,32 @@ if (!$existingEntry_outdoor) {
                 $locationID = $rest[0]->LocationId;
              }
 
-             
+
 		       $breadcumb  = DB::table('Location as l')
-               ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')        
+               ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')
                ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
                ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-               ->where('l.LocationId', $locationID)	
+               ->where('l.LocationId', $locationID)
                ->get()
                ->toArray();
-     
+
                 $getcuisine = DB::table('RestaurantCuisineAssociation')
               ->join('RestaurantCuisine','RestaurantCuisineAssociation.RestaurantCuisineId','=','RestaurantCuisine.RestaurantCuisineId')->where('RestaurantCuisineAssociation.RestaurantId',$rest_id)->get();
-     
+
               $getfetures=collect();
               $restreview=collect();
               $getfetures = DB::table('RestaurantFeatureAssociation')
               ->join('RestaurantFeature','RestaurantFeature.RestaurantFeatureId','=','RestaurantFeatureAssociation.RestaurantFeatureId')->where('RestaurantFeatureAssociation.RestaurantId',$rest_id)->get();
-              
+
               $getspecialdt = DB::table('RestaurantSpecialDietAssociation')
               ->join('RestaurantSpecialDiet','RestaurantSpecialDiet.RestaurantSpecialDietId','=','RestaurantSpecialDietAssociation.RestaurantSpecialDietId')->where('RestaurantSpecialDietAssociation.RestaurantId',$rest_id)->get();
-     
+
               $near_restaurant = [];
               if (!$rest->isEmpty()) {
                   if (!empty($rest[0]->Longitude)) {
                       $longitude = $rest[0]->Longitude;
                       $latitude = $rest[0]->Latitude;
-              
+
                       $searchradius = 5;
                       $near_restaurant = DB::table('Restaurant as r')
                             ->leftjoin('Location as l','l.LocationId','=','r.LocationId')
@@ -5263,12 +5263,12 @@ if (!$existingEntry_outdoor) {
                   }
               }
                $restreview =  DB::table('RestaurantReview')->where('RestaurantId',$rest_id    )->limit(8)->get();
-         
-               
+
+
                  $gethoteltype = DB::table('TPHotel_types')->orderby('hid','asc')->get();
-                     
-     
-                //get tplocation 
+
+
+                //get tplocation
                  $gethotellistiid =collect();
                  $gethotellistiid = DB::table('Temp_Mapping as tm')
                  ->select('tpl.*')
@@ -5276,11 +5276,11 @@ if (!$existingEntry_outdoor) {
                  ->where('tm.Tid',$locationID)
                  ->get();
                  $CountryId ="";
-     
+
                    if($gethotellistiid->isEmpty()){
-       
+
                    $lid = DB::table('Location')->where('LocationId',$locationID)->get();
-     
+
                    if(!$lid->isEmpty()){
                      $CountryId = $lid->CountryId;
                    }
@@ -5288,7 +5288,7 @@ if (!$existingEntry_outdoor) {
                    ->select('l.LocationId')
                    ->where('l.CountryId', $CountryId)
                    ->get();
-               
+
                      foreach ($countryLocations as $location) {
                          $gethotellistiid = DB::table('Temp_Mapping as tm')
                              ->select('tpl.*')
@@ -5296,7 +5296,7 @@ if (!$existingEntry_outdoor) {
                              ->join('Location as l', 'l.locationId', '=', 'tm.Tid')
                              ->where('l.LocationId', $location->LocationId)
                              ->get();
-                     
+
                          // If records are found, break the loop
                          if (!$gethotellistiid->isEmpty()) {
                              // Do something with $gethotellistiid
@@ -5304,11 +5304,11 @@ if (!$existingEntry_outdoor) {
                          }
                      }
                  }
-            
-          //end get tplocation 
+
+          //end get tplocation
          //get location parent
           $getparent = DB::table('Location')->where('LocationId', $locationID)->get();
-     
+
           $locationPatent = [];
          if (!$getparent->isEmpty()){
           if ( $getparent[0]->LocationLevel != 1) {
@@ -5326,16 +5326,16 @@ if (!$existingEntry_outdoor) {
                       $lociID = $getparents[0]->ParentId;
                    }
                   } else {
-                      break; 
+                      break;
                   }
               }
           }
          }
           //end get location Parent
-     
+
                 return view('restaurant',['rest'=> $rest,'getcuisine'=> $getcuisine,'getfetures'=>$getfetures,'near_restaurant'=>$near_restaurant,'restreview'=>$restreview,'getspecialdiet'=>$getspecialdt,'gethotellistiid'=>$gethotellistiid,'locationPatent'=>$locationPatent,'breadcumb'=>$breadcumb]);
              }
-	
+
         public function add_rest_review(Request $request) {
             $desc = $request->input('desc');
             $uploadedFiles = $request->file('files');
@@ -5343,16 +5343,16 @@ if (!$existingEntry_outdoor) {
             $email = $request->input('email');
             $rating = $request->input('rating');
             $restid = $request->input('restid');
-          
+
             $data1 = [
-                'RestaurantId' => $restid,            
+                'RestaurantId' => $restid,
                 'Rating' => $rating,
                 'Description'=> $desc,
                 'Email' =>$email,
                 'Name'  =>$name,
                 'CreatedOn'=>now(),
             ];
-        
+
              $add = DB::table('RestaurantReview')->insertGetId($data1);
 
          if(!empty($uploadedFiles)){
@@ -5360,22 +5360,22 @@ if (!$existingEntry_outdoor) {
                 if ($image->isValid()) {
                     $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
                     $image->move(public_path('rest-img'), $imageName);
-        
-        
+
+
                     $data = [
                        'RestaurantReviewId'=>$add,
-                        'Image' => $imageName,    
-                        'created_at'=>now(),              
+                        'Image' => $imageName,
+                        'created_at'=>now(),
                     ];
-        
+
                     $getreview = DB::table('Restaurant_review_image')->insert($data);
                 }
             }
          }
-            
-         
+
+
             $restreview =  DB::table('RestaurantReview')->where('RestaurantId',$restid)->limit(8)->get();
-    
+
             return view('updated_rest_review',['restreview'=>$restreview]);
         }
   //restaurant
@@ -5383,7 +5383,7 @@ if (!$existingEntry_outdoor) {
 
             $getrest = DB::table('Restaurant')->where('LocationId',$id)->get();
             $getsight = DB::table('Sight')->where('LocationId',$id)->where('IsMustSee',1)->limit(1)->get();
-            
+
             $specialdiet = collect(); // Initialize a new Laravel Collection
 
             if (!$getrest->isEmpty()) {
@@ -5394,85 +5394,85 @@ if (!$existingEntry_outdoor) {
                         ->select('RestaurantSpecialDiet.*')
                         ->where('RestaurantSpecialDietAssociation.RestaurantId', $value->RestaurantId)
                         ->get();
-                    
+
                     $specialdiet = $specialdiet->concat($specialdietsForRestaurant);
                 }
             }
-            
+
             // Now you can convert the Laravel Collection to an array and print it
-          
-           
+
+
             $experience = DB::table('Experience')->where('LocationId',$id)->limit(1)->get();
             return view('restaurant_listing',['getrest'=>$getrest,'specialdiet'=>$specialdiet,'getsight'=>$getsight,'experience'=>$experience]);
         }
 
-        
+
 
         public function search_rest(request $request)
-        {          
-    
-            if(request('search')){     
-    
+        {
+
+            if(request('search')){
+
                 $searchText = request('search');
                 $lastSpaceIndex = strrpos($searchText, ' ');
-                
+
                 if($lastSpaceIndex != ""){
                     $locationText = trim(substr($searchText, 0, $lastSpaceIndex));
                      $countryText = trim(substr($searchText, $lastSpaceIndex + 1));
                 }
-        
-                
+
+
                 $query = DB::table('Location AS l')
                     ->select('l.LocationId AS id', DB::raw("CONCAT(l.Name, ', ', c.Name) AS displayName"),DB::raw("CONCAT(l.Slug, '-', c.Name) AS Slug"))
                     ->join('Country AS c', 'l.CountryId', '=', 'c.CountryId')
                     ->where('l.Slug', 'LIKE', $searchText . '%') // First match against location names
                     ->orWhere('l.Slug', 'LIKE', ','. $searchText. '%')
                     ->limit(5);
-    
+
                     $locations = $query->get();
-    
-                  
-                
+
+
+
                 if (empty($locations)) {
-                  
-    
+
+
                     $query = DB::table('Location AS l')
                     ->select('l.LocationId AS id', DB::raw("CONCAT(l.Name, ', ', c.Name) AS displayName"),DB::raw("CONCAT(l.Slug, '-', c.Name) AS Slug"))
                     ->join('Country AS c', 'l.CountryId', '=', 'c.CountryId')
                     ->where('l.Name', 'LIKE', '%' . $locationText . '%')
                     ->where('c.Name', 'LIKE', '%' . $countryText . '%')
                     ->limit(5);
-                    $locations = $query->get();       
-    
+                    $locations = $query->get();
+
                 }
-         
+
                 $result = [];
                 if(!empty($locations)){
                     foreach ($locations as $loc) {
                         $result[] = ['id'=>$loc->id, 'Slug' => $loc->Slug,'value' => $loc->displayName,];
                         }
                 }else{
-            
+
                      $result[]  = [ 'value' => "Result not founds"];
                 }
-    
-    
+
+
                 return view('restaurant_search_result',['searchresults' => $result]);
-    
-    
+
+
              }
-    
-    
+
+
         }
 
         public function recenthistory_restaurant(Request $request){
-    
+
             // if (Session::has('lastsearch')) {
             //     $serializedData = Session::get('lastsearch');
             //     $search = unserialize($serializedData);
             //     $lastFive = array_slice($search, -5);
             // $result = [];
-    
+
             //     foreach ($lastFive as $value) {
             //         $result[] = [
             //             'id' => $value['id'],
@@ -5480,7 +5480,7 @@ if (!$existingEntry_outdoor) {
             //             'value' => $value['Name'],
             //         ];
             //     }
-        
+
             // }else{
                 $searcht = array(
                     array(
@@ -5499,9 +5499,9 @@ if (!$existingEntry_outdoor) {
                         'Name' => 'Dubai,United Arab Emirates'
                     )
                 );
-                
+
                 $result = array();
-                
+
                 foreach ($searcht as $item) {
                     $result[] = array(
                         'id' => $item['id'],
@@ -5509,25 +5509,25 @@ if (!$existingEntry_outdoor) {
                         'value' => $item['Name']
                     );
                 }
-                
-                
+
+
            // }
-       
+
             return view('restaurant_search_result', ['searchresults' => $result]);
-       
+
         }
 
          public function filterrestbycat(request $request){
             $locId = $request->input('locationId');
             $catname = $request->input('catid');
-            
-           
+
+
             $getids = DB::table('RestaurantSpecialDiet')
                 ->where('Name', $catname)
                 ->pluck('RestaurantSpecialDietId');
-            
+
             if (!empty($getids)) {
-                
+
                 $getrest = DB::table('Restaurant')
                     ->join('RestaurantSpecialDietAssociation', 'RestaurantSpecialDietAssociation.RestaurantId', '=', 'Restaurant.RestaurantId')
                     ->whereIn('RestaurantSpecialDietAssociation.RestaurantSpecialDietId', $getids)
@@ -5535,23 +5535,23 @@ if (!$existingEntry_outdoor) {
                     ->select('Restaurant.*')
                     ->get();
             } else {
-              
+
                 $getrest = [];
             }
-          
+
             if ($catname == "Must See") {
-                $getrest = DB::table('Restaurant')                 
+                $getrest = DB::table('Restaurant')
                     ->where('LocationId', $locId)
                     ->where('IsMustSee', 1)
                     ->select('Restaurant.*')
-                    ->get() ; 
+                    ->get() ;
             }
-                
-           
+
+
             $experience = DB::table('Experience')->where('LocationId',$locId)->limit(1)->get();
 
-            // return view('filter_restby_cat',['getrest'=>$getrest,'experience'=>$experience]);     
-            
+            // return view('filter_restby_cat',['getrest'=>$getrest,'experience'=>$experience]);
+
               // Extract latitude and longitude into a separate array
         $locationData = [];
         if(!empty($getrest)){
@@ -5565,35 +5565,35 @@ if (!$existingEntry_outdoor) {
                 }
             }
         }
-      
+
 
         // Encode data as JSON
-        $locationDataJson = json_encode($locationData);       
-            return response()->json(['mapData' => $locationDataJson, 'htmlView' => view('filter_restby_cat', ['getrest'=>$getrest,'experience'=>$experience])->render()]);     
-        
-    
+        $locationDataJson = json_encode($locationData);
+            return response()->json(['mapData' => $locationDataJson, 'htmlView' => view('filter_restby_cat', ['getrest'=>$getrest,'experience'=>$experience])->render()]);
+
+
         }
-	
+
 	/*timing */
-      public function editSighttiming(Request $request){             
+      public function editSighttiming(Request $request){
 
             $selectedDaysIds = $request->input('selectedDays', []);
-            $selectedCount = count($selectedDaysIds); 
+            $selectedCount = count($selectedDaysIds);
             $uncheckedCount = 7 - $selectedCount;
             $mainhours = $request->input('mainhours');
             // Determine if open 24 hours or closed
             $open24Hours = $request->input('open24Hours') == 1 ? 1 : 0;
             $closed = $request->input('closed') == 1 ? 7 : $uncheckedCount;
-        
+
             // Get opening and closing times from the request
             $openingTimes = $request->input('openingTimes', []);
             $closingTimes = $request->input('closingTimes', []);
-        
+
             // Validate array sizes
             if (count($openingTimes) !== count($closingTimes)) {
                 return response()->json(['error' => 'Invalid data'], 400);
             }
-        
+
             // Mapping array for day IDs to day names
             $dayIdToName = [
                 'r1' => 'sun',
@@ -5604,10 +5604,10 @@ if (!$existingEntry_outdoor) {
                 'r6' => 'fri',
                 'r7' => 'sat'
             ];
-        
+
             // Create an array to store the time data
             $timeData = [];
-        
+
             // Loop through all days and set their timing data
            if($open24Hours == 1){
                 $sameTime = [
@@ -5643,7 +5643,7 @@ if (!$existingEntry_outdoor) {
             }
 
             }
-        
+
             // Create the final JSON object
             $jsonData = [
                 'time' => $timeData,
@@ -5652,9 +5652,9 @@ if (!$existingEntry_outdoor) {
                     'closed' => $closed
                 ]
             ];
-        
+
             $jsonString = json_encode($jsonData);
-        
+
             // Check if the record exists and update or insert accordingly
             $gettiming = DB::table('SightTiming')->where('SightId', $request->input('sightid'))->first();
             if($gettiming === null){
@@ -5674,43 +5674,43 @@ if (!$existingEntry_outdoor) {
                 ];
                 DB::table('SightTiming')->where('SightId', $request->input('sightid'))->update($data);
             }
-        
+
             // Fetch the updated timing data
             $gettiming = DB::table('SightTiming')->where('SightId', $request->input('sightid'))->get();
-        
+
             return view('updated_timing', ['gettiming' => $gettiming]);
         }
-        
+
 	//end timing
-	
-	
+
+
 	public function add_sight_images(Request $request)
-	{       
+	{
 	  $sightid = $request->input('sight_id');
-            
+
             foreach ($request->file('files') as $key => $file) {
                 $title = $request->input('title')[$key];
                 $originalName = $file->getClientOriginalName();
               //  $extension = $file->getClientOriginalExtension(); // Get the file extension
-        
-                $randomNumber = rand(1000, 9999); 
+
+                $randomNumber = rand(1000, 9999);
                 $filename = time() . '_' . $randomNumber . '_' . $originalName; // Use the original name for display purposes
                 $file->move('public/sight-images', $filename);
-        
+
                 $data = [
                     'title' => $title,
                     'Image' => $filename,
                     'Sightid' => $sightid,
                   // Save the extension to the database
                 ];
-        
+
                 DB::table('Sight_image')->insert($data);
             }
-            $Sight_image = DB::table('Sight_image')  
+            $Sight_image = DB::table('Sight_image')
             ->where('Sightid',$sightid)
             ->get();
-            
-        
+
+
             return view('sight_image',['Sight_image'=>$Sight_image]);
 	}
 	public function about_us(){
@@ -5736,54 +5736,54 @@ if (!$existingEntry_outdoor) {
 	public function privacy_policy(){
 		return view('privacy_policy');
 	}
-	
+
 	public function hotel_homepage(){
         return view('hotel_homepage');
      }
-     
+
 
      public function list_hotelsloc(Request $request)
-     {          
-     
-              
-              
+     {
+
+
+
           if (request('search')) {
              $searchText = request('search');
                 $city = request('city');
-     
+
            // $locations = Cache::remember($cacheKey, 600, function() use ($searchText) {
-         
+
              $query = DB::table('Location as l')
              ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
              ->select('l.slugid AS id', DB::raw("CONCAT(l.Name, ', ', l.country) AS displayName"), 'l.Slug')
              ->distinct()
-             ->where('l.Name', 'LIKE', $searchText . '%')       
+             ->where('l.Name', 'LIKE', $searchText . '%')
              ->limit(5);
               $locations = $query->get();
-              
-              
-              //check parent 
-              if ($locations->isEmpty()) {  
+
+
+              //check parent
+              if ($locations->isEmpty()) {
                  $query = DB::table('Location AS l')
-                     ->select('l.slugid AS id', 
-                             DB::raw('REPLACE(CONCAT(l.Name, ", ", l.country), "-district", "") as displayName'), 
+                     ->select('l.slugid AS id',
+                             DB::raw('REPLACE(CONCAT(l.Name, ", ", l.country), "-district", "") as displayName'),
                              'l.Slug as Slug')
-                    ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')           
+                    ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
                      ->leftjoin('Location as parent', 'parent.LocationId', '=', 'l.ParentId')
                      ->leftjoin('Location as parent2', 'parent2.LocationId', '=', 'parent.ParentId')
                      ->leftjoin('Location as parent3', 'parent3.LocationId', '=', 'parent2.ParentId')
                      ->leftjoin('Location as parent4', 'parent4.LocationId', '=', 'parent3.ParentId')
                      ->where(function($query) use ($searchText) {
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent.Name, ""), " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
-                         
+
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
                  $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
                      $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent3.Name, ""), " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
-     
+
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(parent4.Name, ""), " ", IFNULL(parent2.Name, ""), " ", IFNULL(parent.Name, ""), " ", IFNULL(parent4.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE', '%' . $searchText . '%');
-     
+
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ",IFNULL(parent.Name, ""), " ",IFNULL(parent2.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE',  $searchText . '%');
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ",IFNULL(parent2.Name, ""), " ",IFNULL(parent.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE',  $searchText . '%');
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ",IFNULL(parent.Name, ""), " ", IFNULL(l.Name, ""))'), 'LIKE',  $searchText . '%');
@@ -5793,74 +5793,74 @@ if (!$existingEntry_outdoor) {
                          $query->orWhere(DB::raw('CONCAT(l.Name, " ", IFNULL(l.Name, ""))'), 'LIKE',  $searchText . '%');
                      })
                      ->limit(5);
-     
+
                  $locations = $query->get();
-     
-     
+
+
           }
-     
+
               //end check parent
-     
+
          //start parent
-              
-              
-                   
+
+
+
        if ($locations->isEmpty()) {
-       
+
          $searchWords = explode(' ', $searchText);
-     
+
              $gp= DB::table('Location');
-     
+
              foreach ($searchWords as $word) {
                  $gp->where('Slug', 'LIKE', '%' . $word . '%');
              }
-     
+
              $getpare = $gp->get();
-           
+
              $ParentId = "";
              if(!$getpare->isEmpty()){
                  $locname = $getpare[0]->Name;
                  $ParentId = $getpare[0]->ParentId;
                  $query = DB::table('Location AS l')
-                 ->select('l.slugid AS id', 
-                         DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'), 
+                 ->select('l.slugid AS id',
+                         DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'),
                          'l.Slug as Slug')
-                 ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')        
+                 ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
                  ->where('l.LocationId', $ParentId)
                  ->limit(5);
                  $locations = $query->get();
              }
          }
-     
-          if ($locations->isEmpty()) {           
+
+          if ($locations->isEmpty()) {
              $getpare2 = DB::table('Location')->where('LocationId', $ParentId)->get();
              $ParentId2="";
-             if(!$getpare2->isEmpty()){           
+             if(!$getpare2->isEmpty()){
                  $ParentId2 = $getpare2[0]->ParentId;
                  $LocationLevel = $getpare2[0]->LocationLevel;
                  if($LocationLevel != 1){
                  $query = DB::table('Location AS l')
-                 ->select('l.slugid AS id', 
-                         DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.Name), "-district", "") as displayName'), 
+                 ->select('l.slugid AS id',
+                         DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.Name), "-district", "") as displayName'),
                          'l.Slug as Slug')
-                 ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')        
+                 ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
                  ->where('l.LocationId',$ParentId2)
                  ->limit(5);
                  $locations = $query->get();
                  }
              }
          }
-     
-         if ($locations->isEmpty()) {  
-                 $ParentId3="";         
+
+         if ($locations->isEmpty()) {
+                 $ParentId3="";
                  $getpare3 = DB::table('Location')->where('LocationId', $ParentId2)->get();
                  if(!$getpare3->isEmpty()){
                      $ParentId3 = $getpare3[0]->ParentId;
                      $LocationLevel = $getpare3[0]->LocationLevel;
                      if($LocationLevel != 1){
                      $query = DB::table('Location AS l')
-                     ->select('l.slugid AS id', 
-                             DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'), 
+                     ->select('l.slugid AS id',
+                             DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'),
                              'l.Slug as Slug')
                      ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
                    //  ->join('Temp_Mapping as mp','mp.Tid','=','l.LocationId')
@@ -5871,17 +5871,17 @@ if (!$existingEntry_outdoor) {
                      }
                  }
          }
-     
-         if ($locations->isEmpty()) {  
-             $ParentId4="";         
+
+         if ($locations->isEmpty()) {
+             $ParentId4="";
              $getpare4 = DB::table('Location')->where('LocationId', $ParentId3)->get();
              if(!$getpare4->isEmpty()){
                  $ParentId4 = $getpare3[0]->ParentId;
                  $LocationLevel = $getpare4[0]->LocationLevel;
                  if($LocationLevel != 1){
                      $query = DB::table('Location AS l')
-                     ->select('l.slugid AS id', 
-                             DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'), 
+                     ->select('l.slugid AS id',
+                             DB::raw('REPLACE(CONCAT("' . $locname . '", ", ", l.country), "-district", "") as displayName'),
                              'l.Slug as Slug')
                    ->join('TPHotel as h', 'h.LocationId', '=', 'l.LocationId')
                    //  ->join('Country as c', 'c.CountryId', '=', 'l.CountryId')
@@ -5893,17 +5893,17 @@ if (!$existingEntry_outdoor) {
                  }
              }
          }
-     
+
        //end parent id
         //start hotel
              $h = 0;
-             if ($locations->isEmpty()) {  
-                 
+             if ($locations->isEmpty()) {
+
                    $query = DB::table('TPHotel AS h')
                      ->select(
-                         'h.id AS hid', 
-                         DB::raw('REPLACE(CONCAT(h.name, ", ", h.CityName), "-district", "") as displayName'), 
-                         'h.slug AS Slug', 
+                         'h.id AS hid',
+                         DB::raw('REPLACE(CONCAT(h.name, ", ", h.CityName), "-district", "") as displayName'),
+                         'h.slug AS Slug',
                          'h.slugid AS id',
                          'h.CityName'
                      )
@@ -5914,23 +5914,23 @@ if (!$existingEntry_outdoor) {
                    //  ->orderByRaw('CASE WHEN LOWER(h.CityName) = ? THEN 1 ELSE 2 END', [strtolower($city)])
                      ->distinct()
                      ->limit(5);
-                 
+
                      $locations = $query->get();
-     
+
                  $h =1;
-         
+
               }
-         //end hotel 
-     //seach location country  
-          
-                   
-         
+         //end hotel
+     //seach location country
+
+
+
              $result = [];
              if (!empty($locations)) {
                  if($h==1){
                          foreach ($locations as $loc) {
                              $result[] = ['id' => $loc->id, 'Slug' =>$loc->hid.'-'.$loc->Slug, 'value' => $loc->displayName,'hotel'=>1];
-                             
+
                            }
                      }else{
                          foreach ($locations as $loc) {
@@ -5944,51 +5944,51 @@ if (!$existingEntry_outdoor) {
           //   return view('hotel_loc_result', ['searchresults' => $result]);
          }
      }
-     
+
 public function recenthotels(Request $request){
-    
-  
+
+
         $searcht = array(
             array(
                 'id' => 1255000400080007,
                 'key' => 'fuegen-austria',
                 'Name' => 'Fuegen,Austria'
             ),
-         
+
         );
-        
+
         $result = array();
-        
+
         foreach ($searcht as $item) {
             $result[] = array(
                 'id' => $item['id'],
                 'Slug' => $item['key'],
                 'value' => $item['Name']
             );
-        
-        
-        
+
+
+
     }
     return response()->json($result);
    // return view('hotel_loc_result', ['searchresults' => $result]);
 
 }
-	
 
 
-	
+
+
 	public function insert_data(){
-   
-    $timeout = PHP_INT_MAX; 
 
-    $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-    $TRAVEL_PAYOUT_MARKER = "299178"; 
+    $timeout = PHP_INT_MAX;
 
-    $batchSize = 1; 
+    $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+    $TRAVEL_PAYOUT_MARKER = "299178";
+
+    $batchSize = 1;
     $delaySeconds = 130;
     $delayafterloop = 60;
     $offset = 0;
-		
+
     $getamenties = "http://engine.hotellook.com/api/v2/static/amenities/en.json?token=".$TRAVEL_PAYOUT_TOKEN;
     $allmnt = Http::withoutVerifying()->timeout($timeout)->get($getamenties);
     $mnt = json_decode($allmnt);
@@ -6008,35 +6008,35 @@ public function recenthotels(Request $request){
         // Select a batch of records with a limit and offset
         $data = DB::table('TPHotel')
             ->select('location_id')
-        //    ->orderBy('location_id', 'desc')         
-			->where('amenities',null) 
+        //    ->orderBy('location_id', 'desc')
+			->where('amenities',null)
 			->where('location_id','!=',1677251)
 			 ->distinct()
-            ->limit($batchSize)            
+            ->limit($batchSize)
             ->get();
         // Select a batch of records with a limit and offset
-      
+
         if ($data->isEmpty()) {
             // No more records to process, exit the loop
 			dd('empty data');
             break;
-			
+
         }
 
     $englishNames = [];
 
-   
+
       if(empty($data)){
 	  	dd('data is empty');
 	  }
 
      foreach ($data as $cont) {
-         $cid = $cont->location_id;      
-    
+         $cid = $cont->location_id;
+
 			 $getval = "http://engine.hotellook.com/api/v2/static/hotels.json?locationId=$cid&token=".$TRAVEL_PAYOUT_TOKEN;
 			 $gethot = Http::withoutVerifying()->timeout($timeout)->get($getval);
 			 $dt2 = json_decode($gethot);
-		 
+
                 $rLimit = $gethot->header('X-RateLimit-Limit');
 				$rateLRemaining = $gethot->header('X-RateLimit-Remaining');
 				$rateLReset = $gethot->header('X-RateLimit-Reset');
@@ -6046,98 +6046,98 @@ public function recenthotels(Request $request){
 				 $restSeconds = max($resetTimest - time(), 0); // Time in seconds until the limit resets
 				 sleep($restSeconds);
 			  }
-		 
-		 
+
+
                if (is_object($dt2) && property_exists($dt2, 'hotels')) {
                    $hotels = $dt2->hotels;
            $j =1;
                    // Insert the fetched hotel data into your database here
-			  $b =1;	   
-         foreach ($hotels as $hotel) {  
-			
+			  $b =1;
+         foreach ($hotels as $hotel) {
+
 			 $b++;
-						
-					
+
+
 					      $hid = $hotel->id;
 				 $check_amenti = DB::table('TPHotel')
 					->select('location_id')
 					->where('hotelid',$hid)
-					->whereNotNull('amenities') 
+					->whereNotNull('amenities')
 					->get();
 
           if ($check_amenti->isEmpty()) {
-			
-			  
+
+
                  //start mnt
                        $facilities = $hotel->facilities;
                        $amenitiesNames = [];
-                    
-			  
+
+
 			           $languageString = [];
                        $roomsaminityString = [];
                        $propertymntString = [];
 			  			$languages =[];
 						 $roommnt = [];
-			
+
                         foreach ($facilities as $facilityId) {
                            $matchingAmenity = array_filter($mnt, function ($amenity) use ($facilityId) {
                                return $amenity->id == $facilityId;
                            });
-                       
-                      
-                     
-                           if (!empty($matchingAmenity)) { 
+
+
+
+                           if (!empty($matchingAmenity)) {
                                $amenityName = reset($matchingAmenity)->name;
                                $groupName = reset($matchingAmenity)->groupName;
-							 
+
                                $amenitiesNames[] = $amenityName;
-							   
+
 							 $roomsaminity[$groupName] = $amenityName;
 							$roommnt = json_encode($roomsaminity);
-							   
+
                                if($groupName  == "Staff languages"){
                                 $languages [] = $amenityName;
                                }
 
-							  
-							   
-							  
-							
+
+
+
+
                            }
                        }
                        $languageString = implode(', ', $languages);
                        $amenitiesString = implode(', ', $amenitiesNames);
-			  
-			          
+
+
                       //end mnt
 
-			  
+
 
                     date_default_timezone_set('Asia/Kolkata');
                     //start ct
                     $ctid =$hotel->cityId;
-              
-    
-                    
-				
-                    
+
+
+
+
+
                        $star =$hotel->stars;
                        $pricefrom = $hotel->pricefrom;
                        $rating = $hotel->rating;
                        $name = $hotel->name;
                        $hname =  $name->en;
                        $address = $hotel->address;
-                      
+
                        $hadd = $address->en;
                        $popularity = $hotel->popularity;
-    
+
                        $propertyType = $hotel->propertyType;
                        $checkIn = $hotel->checkIn;
                        $checkOut = $hotel->checkOut;
-    
-                       $distance = $hotel->distance;                    
+
+                       $distance = $hotel->distance;
                        $photoCount = $hotel->photoCount;
-                  
+
                        $photos = $hotel->photos;
                        $photosJSON = json_encode($photos);
                        $photosByRoomType = $hotel->photosByRoomType;
@@ -6145,25 +6145,25 @@ public function recenthotels(Request $request){
                        $yearRenovated = $hotel->yearRenovated;
                        $cntRooms = $hotel->cntRooms;
                        $cntSuites = $hotel->cntSuites;
-                      
-    
+
+
                        $shortFacilities = $hotel->shortFacilities;
                        $loc = $hotel->location;
                        $lon = $loc->lon;
                        $lat = $loc->lat;
                        $link = $hotel->link;
-           
-    
-                        $dt = array(                     
-                                         
+
+
+                        $dt = array(
+
                             'pricefrom' =>$pricefrom,
-                            'rating' => $rating,                            
+                            'rating' => $rating,
                             'popularity' => $popularity,
                             'propertyTypeId' =>  $propertyType,
                             'propertyType' => $propertyType,
                             'checkIn' => $checkIn,
                             'checkOut' => $checkOut,
-                            'distance' => $distance,                           
+                            'distance' => $distance,
                             'photos' => $photosJSON,
                             'photosByRoomType' => json_encode($photosByRoomType),
                             'photosByRoomTypeNames' => json_encode($photosByRoomType),
@@ -6198,90 +6198,90 @@ public function recenthotels(Request $request){
                             'CategoryId' => null,
   							'Languages' => $languageString,
 							'room_aminities' => $roommnt,
-							
+
                         );
-    
+
                         DB::table('TPHotel')->where('hotelid',$hid)->update($dt);
- 
+
 	 sleep($delayafterloop);
 				}
-					   
+
                $j++;
                    }
-				   
-				   
+
+
                } else {
                    echo "No 'hotels' found in the response for name: $name\n";
                }
-       
-            
+
+
            }
  sleep($delaySeconds);
            $offset += $batchSize;
         } while (true);
 
         }
-	
-	
-	
+
+
+
 	    public function update_location_geo(){
-         
-     
+
+
             $chunkSize = 2;
             $delaySeconds =2;
             $offset =0;
- 
+
              //start session code
              $maxRequestsPerDay = 5000;
-            //  session_start(); 
+            //  session_start();
             //     $sessions = session()->all();
-            //    //	return print_r($sessions); 
+            //    //	return print_r($sessions);
             //  if (!session()->has('requestsMade')) {
             //     $_SESSION['requestsMade'] = 0;
- 
+
             //     }
-           
+
             //     if (!session()->has('lastResetDate')) {
             //     $_SESSION['lastResetDate'] = date('Y-m-d');
             // }
            //session end
-    
-          
+
+
             $skipOuterLoop = false;
-            
-            while (true) {    
+
+            while (true) {
                  //session start
                 // if (date('Y-m-d') !== $_SESSION['lastResetDate']) {
                 //     $_SESSION['requestsMade'] = 0;
                 //     $_SESSION['lastResetDate'] = date('Y-m-d');
                 // }
-            
+
                 //session end
-              
+
                     $locations = DB::table('Location as l')
                     ->select('l.LocationId','l.LocationLevel','l.ParentId','l.Name as Place','c.Name as country',DB::raw('(SELECT IFNULL(l1.Name,"") FROM Location as l1 where l1.LocationId=l.ParentId) as Address') )
-                    ->join('Country as c','c.CountryId','=','l.CountryId')   
-                    ->where('l.lat',null) 
+                    ->join('Country as c','c.CountryId','=','l.CountryId')
+                    ->where('l.lat',null)
                     ->offset($offset)
                     ->limit($chunkSize)
                     ->orderby('LocationId','desc')
                     ->get();
- 
-           
+
+
     //   return print_r($locations);
- 
+
                 if ($locations->isEmpty()) {
-             
+
                     break;
                 }
-            
+
                 foreach ($locations as $location) {
                     $place = $location->Place;
                     $Address = $location->Address;
                     $country = $location->country;
-                
-       
-                    
+
+
+
                     $add = "";
                     if ($place !== "") {
                         $add .= $place;
@@ -6289,9 +6289,9 @@ public function recenthotels(Request $request){
                     if (!empty($Address)) {
                         $add .= ',' . $Address;
                     }
-                    
+
                  $add .= ',' . $country;
-                    
+
                  //pk.5afe8ffa47e9ad018968fd02a9c3e0ec
                  //pk.58953ccedd458eeabd120ef183e78efb
                 $api = "https://us1.locationiq.com/v1/search?key=pk.5afe8ffa47e9ad018968fd02a9c3e0ec&q=$add&format=json&limit=1";
@@ -6299,7 +6299,7 @@ public function recenthotels(Request $request){
                           //session
                         //        session(['requestsMade' => session('requestsMade', 0) + 1]);
                          //session
-                    
+
                    $getdata = Http::withoutVerifying()->get($api);
                     $decode = json_decode($getdata, true);
                    if (isset($decode['error']) && $decode['error'] == 'Unable to geocode') {
@@ -6307,7 +6307,7 @@ public function recenthotels(Request $request){
                                         $skipOuterLoop = true;
                                         break;
                   }
- 
+
                 //    print_r($location);
                 //      return print_r($decode);
 
@@ -6316,52 +6316,52 @@ public function recenthotels(Request $request){
                         // Set the flag to true and break out of the inner loop
                       return $decode['error'];
                     }
-                    
-                    
-                    //session start 
+
+
+                    //session start
                    // if ($locations->isEmpty() || $_SESSION['requestsMade'] >= $maxRequestsPerDay) {
                    //     break;
                    // }
                     //sesstion end
-                    
-                 
+
+
                    if ($skipOuterLoop) {
-                      
-                    $skipOuterLoop = false; 
-                    continue; 
-                       
+
+                    $skipOuterLoop = false;
+                    continue;
+
                 }
- 
+
                     if (is_array($decode)) {
                         foreach ($decode as $value) {
-                       
+
                           $lat = null;
                           $long =  null;
- 
+
                           if (is_array($value) && isset($value['lat'])) {
                             $lat = $value['lat'];
                            }
                            if (is_array($value) && isset($value['lon'])) {
                             $long = $value['lon'];
                            }
- 
+
                           $countpt = $location->LocationLevel;
-                          $par = $countpt +1;  
-                            
-                            
+                          $par = $countpt +1;
+
+
                         if (is_array($value) && isset($value['display_name'])) {
                               $parts =  explode(',',$value['display_name']);
                          }else{
                              $parts =[];
                         }
-                             
- 
+
+
                                 $countpt = count($parts);
                                 $countpt = count($parts);
- 
-        
+
+
             //	    echo '-------'. $long;
-                
+
                    if($lat != null && $long !=null){
                            $Locname ="";
                                 $variableName="";
@@ -6376,20 +6376,20 @@ public function recenthotels(Request $request){
                                         $parents[$i - 1] = isset($parts[$i]) ? $parts[$i] : null;
                                     }
                                     $parentsString = implode(', ', $parents);
- 
+
                                 //    return  $country_name .'--'.$Locname.'---'.$parentsString;
-                                
+
                             //    }
- 
- 
- 
+
+
+
                                     //      echo $Locname.'--';
                                     //      echo  $country_name .'--';
                                     //    echo $parentsString;
- 
+
                                      date_default_timezone_set('Asia/Kolkata');
                                        $parentid = $location->ParentId;
- 
+
                                        $valuearray = array(
                                         'Lat'=>$lat,
                                         'Longitude'=>$long,
@@ -6399,19 +6399,19 @@ public function recenthotels(Request $request){
                                           $country_name = trim($country_name);
 
 
-                                        if(empty($parentid)){  
+                                        if(empty($parentid)){
 
                                             $update = DB::table('Location as l')
-                                                ->join('Country as c', 'l.CountryId', '=', 'c.CountryId') 
+                                                ->join('Country as c', 'l.CountryId', '=', 'c.CountryId')
                                                 ->where('c.Name', $country_name)
-                                                ->where('l.Name', $Locname) 
+                                                ->where('l.Name', $Locname)
                                                 ->update($valuearray);
-                                        }else{                           
- 
+                                        }else{
+
                                             $parentsString = trim(str_replace(['ë', 'ç'], ['e', 'c'], $parentsString));
 
-                                         
-                                            
+
+
                                             $update = DB::table('Location as l')
                                             ->select('l.LocationId')
                                             ->join('Country as c', 'l.CountryId', '=', 'c.CountryId')
@@ -6419,47 +6419,47 @@ public function recenthotels(Request $request){
                                             ->where('c.Name', $country_name)
                                             ->where('l.Name', $Locname)
                                             ->where('pt.Name', 'LIKE', $parentsString);
- 
+
                                             $getid = $update->get();
                                           //  print_r($getid);
                                             $locId = 0;
                                             if (!$getid->isEmpty()) {
-                                                $firstRecord = $getid->first(); 
-                                                $locId = $firstRecord->LocationId; 
-                                            } 
-    
+                                                $firstRecord = $getid->first();
+                                                $locId = $firstRecord->LocationId;
+                                            }
+
                                              DB::table('Location')->where('LocationId',$locId)->update($valuearray);
                                           // if($locId !=0){
                                           //          return '---'.$locId;
                                          //       }
-                                           
- 
+
+
                                         }
- 
+
                                 }
-                       
+
                         }
                     } else {
-                     
+
                         echo "Error decoding JSON data";
                     }
- 
-                    
+
+
                 }
-      
+
                 sleep($delaySeconds);
-              
+
                 $offset += $chunkSize;
             }
         sleep($delaySeconds);
         }
-	
-	
+
+
 	  //experience
-	
+
    public function experince($id){
     $idSegments = explode('-', $id);
- 
+
     $locationID = 0;
     $sighid ="";
     $location_slug="";
@@ -6484,9 +6484,9 @@ public function recenthotels(Request $request){
     ->select('Experience.*','ExperienceContactDetail.Address','ExperienceContactDetail.Email','ExperienceContactDetail.Phone','c.Name as Cname','l.Slug as LSlug','l.Name as Lname','l.slugid')
     ->Join('Location as l','l.LocationId','=','Experience.LocationId')
     ->leftJoin('Country as c','c.CountryId','=','c.CountryId')
-    ->where('Experience.ExperienceId',$exp_id) 
-    ->where('Experience.Slug',$slug) 
-    ->where('l.slugid',$locationID) 
+    ->where('Experience.ExperienceId',$exp_id)
+    ->where('Experience.Slug',$slug)
+    ->where('l.slugid',$locationID)
     ->limit(1)
     ->get();
     //  ->paginate(1);
@@ -6496,24 +6496,24 @@ public function recenthotels(Request $request){
         $locationID =$getexp[0]->LocationId;
     }
 
-    $languageData = collect(); 
+    $languageData = collect();
     if(!$getexp->isEmpty()){
-  //  foreach ($getexp as $val) {   
-        $languageData = DB::table('ExperienceLanguageAssociation') 
+  //  foreach ($getexp as $val) {
+        $languageData = DB::table('ExperienceLanguageAssociation')
             ->leftJoin('ExperienceLanguage', 'ExperienceLanguage.ExperienceLanguageId', '=', 'ExperienceLanguageAssociation.ExperienceLanguageId')
             ->where('ExperienceLanguageAssociation.ExperienceId', $getexp[0]->ExperienceId)
             ->get();
-        
+
         // Store language data for each experience in the array
-  
+
     //}
 
    }
    $breadcumb  = DB::table('Location as l')
-   ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')        
+   ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')
    ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
    ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-   ->where('l.LocationId', $locationID)	
+   ->where('l.LocationId', $locationID)
    ->get()
    ->toArray();
 
@@ -6529,7 +6529,7 @@ public function recenthotels(Request $request){
             $iteneryday[$val->ExperienceId] = $iten;
         }
     }
-    
+
   // return print_r( $iteneryday );
     $itenerytime = [];
     if(!$getexp->isEmpty()){
@@ -6554,32 +6554,32 @@ public function recenthotels(Request $request){
         if($latitude !="" &&  $longitude !=""){
             //similar experience
             $searchradius = 50;
-            $nearby_exp= DB::table("Experience as exp")           
+            $nearby_exp= DB::table("Experience as exp")
             ->select('ExperienceId', 'Name','Slug','LocationId','slugid','Img1','adult_price',
-                        DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                * cos(radians(exp.Latitude)) 
-                * cos(radians(exp.Longitude) - radians(" . $longitude . ")) 
-                + sin(radians(" . $latitude . ")) 
-                * sin(radians(exp.Latitude))) AS distance"))     
-            ->having('distance', '<=', $searchradius)    
-            ->where('LocationId',$locationID) 
+                        DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                * cos(radians(exp.Latitude))
+                * cos(radians(exp.Longitude) - radians(" . $longitude . "))
+                + sin(radians(" . $latitude . "))
+                * sin(radians(exp.Latitude))) AS distance"))
+            ->having('distance', '<=', $searchradius)
+            ->where('LocationId',$locationID)
             ->whereNotIn('ExperienceId', [$exp_id])
-            //   ->orWhere('stars',$star)            
+            //   ->orWhere('stars',$star)
             ->orderBy('distance')
-            ->limit(5) 
+            ->limit(5)
             ->get();
             //end similar experience
-            
+
         }else{
-            $nearby_exp= DB::table("Experience as exp")   
-           
-            ->select('ExperienceId', 'Name','Slug','LocationId','adult_price','slugid','Img1') 
-            ->where('LocationId',$locationID) 
+            $nearby_exp= DB::table("Experience as exp")
+
+            ->select('ExperienceId', 'Name','Slug','LocationId','adult_price','slugid','Img1')
+            ->where('LocationId',$locationID)
             ->where('ExperienceId','!=', $exp_id)
-            ->limit(5) 
+            ->limit(5)
             ->get();
         }
-          
+
             $getreview = DB::table('ExperienceReview')->where('ExperienceId',$exp_id)->get();
 
 
@@ -6611,7 +6611,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
 
 
-      //get tplocation 
+      //get tplocation
       $gethotellistiid =collect();
       $gethotellistiid = DB::table('Temp_Mapping as tm')
       ->select('tpl.*')
@@ -6631,7 +6631,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         ->select('l.LocationId')
         ->where('l.CountryId', $CountryId)
         ->get();
-    
+
           foreach ($countryLocations as $location) {
               $gethotellistiid = DB::table('Temp_Mapping as tm')
                   ->select('tpl.*')
@@ -6639,7 +6639,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                   ->join('Location as l', 'l.locationId', '=', 'tm.Tid')
                   ->where('l.LocationId', $location->LocationId)
                   ->get();
-          
+
               // If records are found, break the loop
               if (!$gethotellistiid->isEmpty()) {
                   // Do something with $gethotellistiid
@@ -6647,7 +6647,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
               }
           }
       }
- 
+
 
 
 //end get tplocation   Latitude varchar(50)  Longitude
@@ -6656,93 +6656,93 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
     return view('experience',['getexp'=>$getexp,'languageData' => $languageData,'iteneryday'=>$iteneryday,'itenerytime'=>$itenerytime,'reviews'=>$reviews,'gethotellistiid'=>$gethotellistiid,'nearby_exp'=>$nearby_exp,'locationPatent'=>$locationPatent,'getexprv'=>$getexprv,'breadcumb'=>$breadcumb]);
 }
-	//weather 
+	//weather
 	    public function weather(){
             return view('weather');
         }
-      //filter hotel list 
-          public function hotel_all_filters(request $request) 
-        {  
-			  
+      //filter hotel list
+          public function hotel_all_filters(request $request)
+        {
+
 			  session(['filterd' => 1]);
            $locationid = $request->get('locationid');
            $chkin = $request->get('Cin');
            $checout = $request->get('Cout');
-           $rooms = $request->get('rooms'); 
+           $rooms = $request->get('rooms');
            $guest = $request->get('guest');
            $minPrice = $request->get('priceFrom');
-           $priceTo = $request->get('priceTo');        
-           $typeHotel = $request->get('hoteltype');    
-           $starRating = $request->get('starRating');       
+           $priceTo = $request->get('priceTo');
+           $typeHotel = $request->get('hoteltype');
+           $starRating = $request->get('starRating');
            $mnt = $request->get('mnt');
            $Smnt = $request->get('Smnt');
            $agencydt = $request->get('agency');
 
            $sort_field = '';
-           $sort_direction = '';  
+           $sort_direction = '';
            $sort_by = $request->get('sort_by');
-           if($sort_by !=""){ 
+           if($sort_by !=""){
                 if ($sort_by == 'Recommended') {
                     $sort_field = 'h.rating';
-                    $sort_direction = 'desc'; 
-                }                 
+                    $sort_direction = 'desc';
+                }
                 $sort_direction = trim($sort_direction);
            }
-          
-       
-          
+
+
+
             $stars = [];
             if (is_string($starRating)) {
                 $stars = explode(',', $starRating);
             }
             $amenities = [];
             if(is_string($mnt)){
-                $amenities = explode(',', $mnt);    
+                $amenities = explode(',', $mnt);
             }
-    
+
             $Specamenities = [];
             if(is_string($Smnt)){
-                $Specamenities = explode(',', $Smnt);    
+                $Specamenities = explode(',', $Smnt);
             }
-            $typeHotels = []; 
+            $typeHotels = [];
             if (is_string($typeHotel)) {
                 $typeHotels = explode(',', $typeHotel);
             }
             //agency
             $agency =[];
             if(is_string($agencydt)){
-                $agency = explode(',', $agencydt);    
+                $agency = explode(',', $agencydt);
             }
           //  $address = $request->get('address');
             $distance = $request->get('distance');
             if($distance ==0){
                 $distance = "";
             }
-         
+
             $searchresults = DB::table('TPHotel as h')
-           ->join('hotelbookingstemp as hotemp','hotemp.hotelid','=','h.hotelid')                       
+           ->join('hotelbookingstemp as hotemp','hotemp.hotelid','=','h.hotelid')
            ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0'))
            ->select(
                'h.hotelid', 'h.id', 'h.name', 'h.slug', 'h.stars', 'h.rating','h.Latitude','h.longnitude',
                'h.amenities', 'h.distance', 'h.slugid', 'h.room_aminities', 'h.CityName','h.short_description','h.CountryName',
                 DB::raw('GROUP_CONCAT(CONCAT(a.shortName, "|", a.image) ORDER BY a.name SEPARATOR ", ") as amenity_info')
            )
-		->distinct() 
+		->distinct()
            ->whereNotNull('h.slugid');
 			//->distinct('h.id');
-      
+
             if (!empty($stars)) {
                 $searchresults->whereIn('h.stars', $stars);
             }
             if (!empty($typeHotels)) {
                 $searchresults->whereIn('h.propertyType',$typeHotels);
-            }					
+            }
             if (!empty($amenities)) {
                 foreach ($amenities as $amenity) {
                     $searchresults->where('h.amenities', 'LIKE', '%' . $amenity . '%');
                 }
             }
-            //new code 
+            //new code
             if (!empty($agency)) {
                 $searchresults->whereIn('hotemp.agency_name', $agency);
             }
@@ -6753,47 +6753,47 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     }
                 });
             }
-           
+
             if ($minPrice !="" && $priceTo !="") {
                 $searchresults->where('hotemp.price', '>=', $minPrice)
                             ->where('hotemp.price', '<=', $priceTo);
-            } 
-           
+            }
+
             if (!empty($sort_by)) {
 
 				if($sort_by == 'Top-rated'){
 					$searchresults->where('h.rating', '>=', 8.0);
                 }elseif ($sort_by == 'Price: High to Low') {
-                 
+
                     $searchresults->orderBy(DB::raw('(SELECT MIN(hotemp.price) FROM hotelbookingstemp hotemp WHERE hotemp.hotelid = h.hotelid)'), 'desc');
                 }elseif ($sort_by == 'Price: Low to High') {
-                   
-                    $searchresults->orderBy(DB::raw('(SELECT MIN(hotemp.price) FROM hotelbookingstemp hotemp WHERE hotemp.hotelid = h.hotelid)'), 'asc');				
+
+                    $searchresults->orderBy(DB::raw('(SELECT MIN(hotemp.price) FROM hotelbookingstemp hotemp WHERE hotemp.hotelid = h.hotelid)'), 'asc');
                 }else{
                     $searchresults->orderBy($sort_field, $sort_direction);
                 }
-               
-              
+
+
             }else{
 			 $searchresults->orderBy('h.stars', 'desc');
 			}
          //   $searchresults = $searchresults->distinct('h.id')
-			
+
             $searchresults = $searchresults->groupBy('h.id', 'hotemp.price', 'h.hotelid', 'h.name', 'h.slug', 'h.stars', 'h.rating', 'h.amenities', 'h.distance', 'h.slugid', 'h.room_aminities', 'h.CityName');   //groupBy('h.id');
 		//	  $searchresults = $searchresults->distinct('h.hotelid');
             $searchresults = $searchresults->paginate(30)->withQueryString();
-     
-    
+
+
             $sthotelIds = $searchresults->pluck('hotelid')->toArray() ;
-           
+
             $hotelpricedata = DB::table('hotelbookingstemp')
             ->whereIn('hotelid', $sthotelIds)
             ->get();
-              
-          
-            //end new code 
-        
-    
+
+
+            //end new code
+
+
            $resultcount = $searchresults->total();
            $result = view('all_hotel_filter')
                ->with('searchresults',$searchresults)
@@ -6801,30 +6801,30 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 			    ->with('chkin',$chkin)
                 ->with('checout',$checout)
 			    ->with('resultcount',$resultcount)
-			   ->render(); 
-           return response()->json(['result'=>$result,'resultcount'=>$resultcount]);      
-        } 
-	
+			   ->render();
+           return response()->json(['result'=>$result,'resultcount'=>$resultcount]);
+        }
+
 //neighbourhood
 	    public function hotel_neighbourhood(request $request){
        $getval = $request->get('checkin') .'_'.$request->get('checkout');
         $chkin = $request->get('checkin');
         $checout = $request->get('checkout');
-        
-         $rooms = $request->get('rooms'); 
-         $guest = $request->get('guest'); 
-         $slug = $request->get('slug'); 
-         $locationid =  $request->get('locationid'); 
+
+         $rooms = $request->get('rooms');
+         $guest = $request->get('guest');
+         $slug = $request->get('slug');
+         $locationid =  $request->get('locationid');
 	     $neighbourhood="";
-         $neighbourhood =  $request->get('neighborhood'); 
-         
+         $neighbourhood =  $request->get('neighborhood');
+
          if( $locationid == ""){
-            $locationid =  $request->get('lid'); 
+            $locationid =  $request->get('lid');
          }else{
             $locationid = $locationid;
          }
-        
-          $fullname = $request->get('locname'); 
+
+          $fullname = $request->get('locname');
           $countryname ="";
        //   $lname ="";
        $Neighborhood =[];
@@ -6840,7 +6840,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
          ->select('tm.locationId')
          ->where('tm.Tid',$locationid)
          ->get();
-       
+
          if(!$getloc->isEmpty()){
             $locationid = $getloc[0]->locationId;
          }
@@ -6850,10 +6850,10 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
           // $fullname = $Neighborhood[0]->Name;
            }
            $neibhood_name = $Neighborhood[0]->Name;
-          
+
        }
             $getloc = DB::table('TPLocations')->select('fullName','cityName','countryName')->where('id',$locationid)->get();
-                
+
             if(!$getloc->isEmpty()){
                 if($fullname ==""){
                     $fullname = $getloc[0]->fullName;
@@ -6868,14 +6868,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->select('l.*')
             ->where('tm.LocationId',$locationid)
             ->get();
-          
+
             $locationPatent = [];
             if(!$getloclink->isEmpty()){
-            
-                
+
+
                 if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
                     $loopcount =  $getloclink[0]->LocationLevel;
-                 
+
                     $lociID = $getloclink[0]->ParentId;
                     for ($i = 1; $i < $loopcount; $i++) {
                         $getparents = DB::table('Location')->where('LocationId', $lociID)->get();
@@ -6894,7 +6894,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     }
                 }
             }
-     
+
             $hotelpage ="hotelpage";
             $gethoteltype = DB::table('TPHotel_types')->orderby('hid','asc')->get();
             return view('hotel_Neighbourhood',['locid'=>$locationid,'gethoteltype'=>$gethoteltype,'fullname'=>$fullname,'lname2'=>$lname2,'countryname'=>$countryName,'getloclink'=>$getloclink,'locationPatent'=>$locationPatent,'neibhood_name'=>$neibhood_name,'locationid'=>$locationid,'hotelpage'=>$hotelpage]);
@@ -6907,107 +6907,107 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
         $chkin = $request->get('checkin');
         $checout = $request->get('checkout');
-        $rooms = $request->get('rooms'); 
-        $guest = $request->get('guest'); 
-        $slug = $request->get('slug');          
-        $fullname = $request->get('locname'); 
-        $id =   $request->get('neighborhood'); 
-        $locationid =  $request->get('locationid'); 
+        $rooms = $request->get('rooms');
+        $guest = $request->get('guest');
+        $slug = $request->get('slug');
+        $fullname = $request->get('locname');
+        $id =   $request->get('neighborhood');
+        $locationid =  $request->get('locationid');
 
         $Neighborhood = [];
 
         $Neighborhood = DB::table('TPHotelNeighbourhood')
         ->select('hotelid')
         ->where('NeighborhoodID',$id)->get()->toArray();
-    
-        
+
+
         $getloc = DB::table('TPLocations')->select('fullName','cityName','countryName')->where('id',$locationid)->get();
-        $cityName =""; 
-        $countryName =""; 
-        if(!$getloc->isEmpty()){          
+        $cityName ="";
+        $countryName ="";
+        if(!$getloc->isEmpty()){
             $countryName = $getloc[0]->countryName;
             $cityName =$getloc[0]->cityName;
         }
-     
+
          session(['checkin' => $getval]);
          session(['rooms' => $rooms]);
          session(['guest' => $guest]);
-   
+
          //new code start
-         $checkinDate =  $chkin;         
-         $checkoutDate = $checout;       
-         $adultsCount = $guest;              
-         $customerIP = '49.156.89.145'; 
-         $childrenCount = '1'; 
+         $checkinDate =  $chkin;
+         $checkoutDate = $checout;
+         $adultsCount = $guest;
+         $customerIP = '49.156.89.145';
+         $childrenCount = '1';
          $chid_age = '10';
-         $lang = 'en'; 
-         $currency ='USD'; 
-         $waitForResult ='0'; 
+         $lang = 'en';
+         $currency ='USD';
+         $waitForResult ='0';
          $iata= $locationid ;//24072
-         
-         $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-         $TRAVEL_PAYOUT_MARKER = "299178"; 
- 
-      
-  
-        $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-         $checkinDate.":". 
+
+         $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+         $TRAVEL_PAYOUT_MARKER = "299178";
+
+
+
+        $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+         $checkinDate.":".
          $checkoutDate.":".
-         $chid_age.":". 
-         $childrenCount.":". 
-         $iata.":".  
-         $currency.":". 
-         $customerIP.":".             
-         $lang.":". 
-         $waitForResult; 
-  
-  
+         $chid_age.":".
+         $childrenCount.":".
+         $iata.":".
+         $currency.":".
+         $customerIP.":".
+         $lang.":".
+         $waitForResult;
+
+
        $signature = md5($SignatureString);
-    
-      $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;       
-     
+
+      $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
+
            $response = Http::withoutVerifying()->get($url);
-     
+
          if ($response->successful()) {
-            
-           
+
+
            $data = json_decode($response);
              if(!empty($data)){
-               $searchId = $data->searchId;    
-             
- 
+               $searchId = $data->searchId;
+
+
              $limit =0;
              $offset=0;
              $roomsCount=0;
              $sortAsc=1;
              $sortBy='price';
- 
+
                $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                  $sig2 =  md5($SignatureString2);    
- 
+                  $sig2 =  md5($SignatureString2);
+
                   $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=0&sortBy=price&sortAsc=1&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
- 						
+
                          $gethoteltype =collect();
 				     $response2 = Http::withoutVerifying()->timeout(30)->get($url2);
                 //    $response2 = Http::timeout(30)->retry(3, 100)->get($url2);
 
-				      
+
 				 $responseData = $response2->json();
 				 	if ($responseData['status'] === 'error' && $responseData['errorCode'] === 4) {
 						$status = 4;
 						return 'Search is not finished.';
 						//  $response2 = Http::withoutVerifying()->get($url2);
-						
+
 					}else{
 						$status = 1;
 					}
-				
-				 $maxRetries = 10; 
-                     if ($response2->successful()) {         
-           
+
+				 $maxRetries = 10;
+                     if ($response2->successful()) {
+
                          $hotel = json_decode($response2);
-						 
-                     
+
+
                         $idArray = array();
 
                         // Iterate through the $hotel array
@@ -7022,36 +7022,36 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                         $neighborhoodHotelIds = array_map(function ($item) {
                             return $item->hotelid;
                         }, $Neighborhood);
-                        
+
                         // Find common hotel IDs
                         $commonHotelIds = array_intersect($neighborhoodHotelIds, $idArray);
-                        
-                      
-                         // end download logo 
+
+
+                         // end download logo
                             $searchresults = DB::table('TPHotel as h')
                          ->select('h.hotelid','h.id', 'h.name', 'h.address', 'h.slug', 'h.cityId', 'h.iata', 'h.location_id as loc_id','h.stars', 'h.pricefrom', 'h.rating', 'h.popularity', 'h.amenities', 'h.distance', 'h.propertyType')
-                        
-                         ->whereIn('h.hotelid',$commonHotelIds)->paginate(5)  ; 
+
+                         ->whereIn('h.hotelid',$commonHotelIds)->paginate(5)  ;
 
                         $searchresults->appends($request->except('_token'));
-                         $searchresults->setPath('hotel_neighborhood.html');          
-                       
+                         $searchresults->setPath('hotel_neighborhood.html');
+
                          return view('frontend.hotel.get_hotel_landing_result',['hotels'=> $hotel,'locid'=>$locationid,'searchresults'=>$searchresults,'fullname'=>$fullname,'cityName'=>$cityName,'countryname'=>$countryName]);
                      }
-              
-           
+
+
              }else{
                  return 'search id not found';
              }
-                          
+
          } else {
-           
+
              return 2;
          }
      }
-     public function hotel_neiborhood_listing($id,$nid,$slug) 
-     { 
-        $gethoteltype = []; 
+     public function hotel_neiborhood_listing($id,$nid,$slug)
+     {
+        $gethoteltype = [];
          $searchresults=[];
          $neib = DB::table('Neighborhood')->select('Name')->where('NeighborhoodID', $nid)->where('slug',$slug)->where('LocationID',$id)->get();
          if($neib->isEmpty()){
@@ -7059,20 +7059,20 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
          }
          $lname = "";
           $breadcumb  = DB::table('Location as l')
-             ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')    
+             ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')
              ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
              ->leftJoin('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-             ->where('l.LocationId', $id)	
+             ->where('l.LocationId', $id)
              ->get()
              ->toArray();
-         if(!$neib->isEmpty()){ 
+         if(!$neib->isEmpty()){
           $neibhood_name=$neib[0]->Name;
          }
          $neib_ids = DB::table('TPHotelNeighbourhood')->where('NeighborhoodID', $nid)->pluck('hotelid')->toArray();
              $searchresults = DB::table('TPHotel as tph')
              ->join('Temp_Mapping as t','t.LocationId','=','tph.location_id')
              ->select('tph.hotelid', 'tph.id', 'tph.name', 'tph.address', 'tph.slug', 'tph.cityId', 'tph.iata', 'tph.location_id as loc_id', 'tph.stars', 'tph.pricefrom', 'tph.rating', 'tph.popularity', 'tph.amenities', 'tph.distance', 'tph.propertyType','t.slugid')
-           
+
              ->whereIn('hotelid', $neib_ids)
              ->paginate(10);
 
@@ -7084,20 +7084,20 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 $loc = DB::table('TPLocations')
                 ->where('id',$id)
                 ->get();
-                if(!$loc->isEmpty()){ 
+                if(!$loc->isEmpty()){
                     $lname2 =$loc[0]->cityName;
                     $countryname = $loc[0]->countryName;
                 }
              }
-    
-           
+
+
      //   $end  =  date("H:i:s");
-              
+
       //  echo  $start .'---'.$st2 .'---'. $end ;
-     
+
         $gethoteltype = DB::table('TPHotel_types')->orderby('hid','asc')->get();
-          
-    
+
+
         $getloclink =collect();
 
         $getloclink = DB::table('Temp_Mapping as tm')
@@ -7105,14 +7105,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         ->select('l.*')
         ->where('l.LocationId',$id)
         ->get();
-      
+
 	    $locationPatent = [];
         if(!$getloclink->isEmpty()){
-        
-            
+
+
             if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
                 $loopcount =  $getloclink[0]->LocationLevel;
-             
+
                 $lociID = $getloclink[0]->ParentId;
                 for ($i = 1; $i < $loopcount; $i++) {
                     $getparents = DB::table('Location')->where('LocationId', $lociID)->get();
@@ -7133,16 +7133,16 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         }
         $hotelpage ='hotelpage';
          return view('hotel_neiborhood_listing')->with('searchresults',$searchresults)->with('gethoteltype',$gethoteltype)->with('neibhood_name',$neibhood_name)->with('countryname',$countryname)->with('getloclink',$getloclink)->with('locationPatent',$locationPatent)->with('lname2',$lname2)->with('locationid',$id)->with('hotelpage',$hotelpage)->with('breadcumb',$breadcumb);
-     } 
-  public function hotel_landing($lid,$landid,$slug) 
-     { 
-      
+     }
+  public function hotel_landing($lid,$landid,$slug)
+     {
+
         $id = str_replace('ld',' ',$landid);
         $locid =$lid;
-        $gethoteltype = []; 
-        $searchresults=[];    
+        $gethoteltype = [];
+        $searchresults=[];
 
-        $getloc = DB::table('Temp_Mapping as m')            
+        $getloc = DB::table('Temp_Mapping as m')
         ->select('m.LocationId')
         ->where('m.slugid',$lid)
         ->get();
@@ -7151,8 +7151,8 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             $lid = $getloc[0]->LocationId;
         }
 
-        $getlanding = DB::table('TPHotel_landing')       
-        ->select('Amenities','Rating','location_id')        
+        $getlanding = DB::table('TPHotel_landing')
+        ->select('Amenities','Rating','location_id')
         ->where('id', $id)
         ->where('slug', $slug)
         ->where('location_id',$lid)
@@ -7169,43 +7169,43 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             if($getlanding[0]->Amenities !=""){
 
                 // if(is_string($getlanding[0]->Amenities)){
-                //     $amenities = explode(',', $getlanding[0]->Amenities);    
+                //     $amenities = explode(',', $getlanding[0]->Amenities);
                 // }
-               
+
                 if(!empty($getlanding[0]->Amenities)){
                     $amenities = json_decode($getlanding[0]->Amenities);
                 }
             }
             $Rating=[];
-            if($getlanding[0]->Rating !=""){            
-           
+            if($getlanding[0]->Rating !=""){
+
                  $rating[] = $getlanding[0]->Rating;
                 if(!empty($rating)){
                     $Rating[] = json_decode($getlanding[0]->Rating);
                 }
-                
+
 
                 // if (strpos($rating, ',') !== false) {
                 //     $explodedRating = explode(',', $rating);
                 //     $Rating = array();
-                
+
                 //     foreach ($explodedRating as $value) {
                 //         $Rating[] = trim($value);
                 //     }
-                
-            
+
+
                 // } else {
                 //     $Rating[] = $getlanding[0]->Rating;
                 // }
            }
          //  return print_r( $Rating);
-            
+
         }
        $start =  date("H:i:s");
 
-  
+
      $searchresults = DB::table('TPHotel as tph')
-     //->join('Temp_Mapping as m','m.LocationId','=','tph.location_id')   
+     //->join('Temp_Mapping as m','m.LocationId','=','tph.location_id')
     ->select('tph.hotelid', 'tph.id', 'tph.name', 'tph.slug','tph.location_id as loc_id', 'tph.stars', 'tph.pricefrom', 'tph.rating', 'tph.amenities','tph.distance','tph.room_aminities','tph.Languages','tph.slugid')
     ->where('tph.location_id', $locationid);
 	if (!empty($amenities) || !empty($Rating)) {
@@ -7236,30 +7236,30 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 	$searchresults = $searchresults->limit(7)->get();
 
 	     $st2 =  date("H:i:s");
-      
-              
-      
+
+
+
 
         $countryname ="";
         $lname2="";
         $lname ="";
-      
-            
+
+
         $getloc = DB::table('TPLocations')->select('cityName','countryName')->where('id',$locationid)->get();
-            if(!$getloc->isEmpty()){ 
+            if(!$getloc->isEmpty()){
             $lname2 =$getloc[0]->cityName;
             $countryname = $getloc[0]->countryName;
             $lname =$getloc[0]->cityName;
             }
   $end  =  date("H:i:s");
             $neibhood_name =str_replace('-',' ',$slug);
-           
-           
-            
+
+
+
 
         $gethoteltype = DB::table('TPHotel_types')->orderby('hid','asc')->get();
-          
-    
+
+
         $getloclink =collect();
 
         $getloclink = DB::table('Temp_Mapping as tm')
@@ -7270,13 +7270,13 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 	  $breadcumb=[];
         if(!$getloclink->isEmpty()){
         $locationid = $getloclink[0]->LocationId;
-        
-        
+
+
             $breadcumb  = DB::table('Location as l')
-            ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')    
+            ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid','l.slugid')
             ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
             ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-            ->where('l.LocationId', $locationid)	
+            ->where('l.LocationId', $locationid)
             ->get()
             ->toArray();
         }
@@ -7286,11 +7286,11 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         if(!$getloclink->isEmpty()){
             $locationid = $getloclink[0]->LocationId;
             $getlocationexp = DB::table('Location')->select('LocationId','Name','Slug','slugid')->where('LocationId', $locationid)->get();
-            
+
             if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
 
                 $loopcount =  $getloclink[0]->LocationLevel;
-             
+
                 $lociID = $getloclink[0]->ParentId;
                 for ($i = 1; $i < $loopcount; $i++) {
                     $getparents = DB::table('Location')->where('LocationId', $lociID)->get();
@@ -7311,12 +7311,12 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         }
 	$hotelpage ='hotelpage';
          return view('frontend.hotel.hotel_landing')->with('searchresults',$searchresults)->with('gethoteltype',$gethoteltype)->with('sname',$neibhood_name)->with('countryname',$countryname)->with('getloclink',$getloclink)->with('locationPatent',$locationPatent)->with('lname2',$lname2)->with('locationid',$id)->with('locid',$locid)->with('lname',$lname)->with('amenities',$amenities)->with('Rating',$Rating)->with('getloc',$getloc)->with('hotelpage',$hotelpage)->with('getlocationexp',$getlocationexp)->with('breadcumb',$breadcumb);
-     } 
-   //hotel landing with date  
-  //hotel landing with date  
+     }
+   //hotel landing with date
+  //hotel landing with date
    public function hotel_landing_with_date(request $request){
       $start  =  date("H:i:s");
-         $requiredParameters = ['checkin', 'checkout','guest','id'];   
+         $requiredParameters = ['checkin', 'checkout','guest','id'];
         foreach ($requiredParameters as $param) {
             if (!$request->filled($param)) {
                 abort(404, "The '$param' parameter is required.");
@@ -7325,24 +7325,24 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         if (!$request->filled('locationid') && !$request->filled('lid')) {
             abort(404, 'Either locationid or lid is required.');
         }
-      
+
           $getval = $request->get('checkin') .'_'.$request->get('checkout');
 
           $chkin = $request->get('checkin');
           $checout = $request->get('checkout');
-          $rooms = $request->get('rooms'); 
-          $guest = $request->get('guest'); 
-          $slug = $request->get('slug');          
-          $landid =  $request->get('id'); 
+          $rooms = $request->get('rooms');
+          $guest = $request->get('guest');
+          $slug = $request->get('slug');
+          $landid =  $request->get('id');
           $id = str_replace('ld',' ',$landid);
-          $locationid =  $request->get('locationid'); 
-        
-          $fullname = $request->get('locname'); 
+          $locationid =  $request->get('locationid');
+
+          $fullname = $request->get('locname');
           $countryname ="";
           $lname ="";
           $lname2 ="";
           $neibhood_name =str_replace('-',' ',$slug);
-  
+
           $getloc = DB::table('TPLocations')->select('fullName','cityName','countryName')->where('id',$locationid)->get();
             if($getloc->isEmpty()){
                 abort(404,'Not FOUND');
@@ -7356,7 +7356,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
               $countryName = $getloc[0]->countryName;
 
           }
-             
+
           $gethoteltype = DB::table('TPHotel_types')->orderby('hid','asc')->get();
           $searchresults =collect();
 	     $hotelpage = 'hotelpage';
@@ -7367,15 +7367,15 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
           ->select('l.*')
           ->where('tm.LocationId',$locationid)
           ->get();
-	   
+
 	      $breadcumb =[];
           if(!$getloclink->isEmpty()){
             $locationid = $getloclink[0]->LocationId;
             $breadcumb  = DB::table('Location as l')
-            ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')            
+            ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')
             ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
             ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-            ->where('l.LocationId', $locationid)	
+            ->where('l.LocationId', $locationid)
             ->get()
             ->toArray();
         }
@@ -7385,11 +7385,11 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
           if(!$getloclink->isEmpty()){
               $locationid = $getloclink[0]->LocationId;
               $getlocationexp = DB::table('Location')->select('LocationId','Name','Slug')->where('LocationId', $locationid)->get();
-              
+
               if (!$getloclink->isEmpty() &&  $getloclink[0]->LocationLevel != 1) {
-  
+
                   $loopcount =  $getloclink[0]->LocationLevel;
-               
+
                   $lociID = $getloclink[0]->ParentId;
                   for ($i = 1; $i < $loopcount; $i++) {
                       $getparents = DB::table('Location')->where('LocationId', $lociID)->get();
@@ -7408,36 +7408,36 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                   }
               }
           }
-             
-          return view('frontend.hotel.hotel_landing_with_date',['searchresults'=>$searchresults,'locid'=>$locationid,'fullname'=>$fullname,'lname2'=>$lname2,'countryname'=>$countryName,'neibhood_name'=>$neibhood_name,'locationid'=>$locationid,'lname'=>$lname,'gethoteltype'=>$gethoteltype,'hotelpage'=>$hotelpage,'getlocationexp'=>$getlocationexp,'locationPatent'=>$locationPatent,'breadcumb'=>$breadcumb]); 
-        
+
+          return view('frontend.hotel.hotel_landing_with_date',['searchresults'=>$searchresults,'locid'=>$locationid,'fullname'=>$fullname,'lname2'=>$lname2,'countryname'=>$countryName,'neibhood_name'=>$neibhood_name,'locationid'=>$locationid,'lname'=>$lname,'gethoteltype'=>$gethoteltype,'hotelpage'=>$hotelpage,'getlocationexp'=>$getlocationexp,'locationPatent'=>$locationPatent,'breadcumb'=>$breadcumb]);
+
        }
-   
+
        public function get_hotel_landing_result(request $request){
-          
+
         $start  =  date("H:i:s");
         $searchresults =collect();
         $getval = $request->get('checkin') .'_'.$request->get('checkout');
         $chkin = $request->get('checkin');
         $checout = $request->get('checkout');
 
-        $rooms = $request->get('rooms'); 
-        $guest = $request->get('guest'); 
-        $slug = $request->get('slug');          
-        $landid =  $request->get('id'); 
+        $rooms = $request->get('rooms');
+        $guest = $request->get('guest');
+        $slug = $request->get('slug');
+        $landid =  $request->get('id');
          $id = str_replace('ld',' ',$landid);
-        $locationid =  $request->get('locationid'); 
+        $locationid =  $request->get('locationid');
         //new code
         $md  =  date("H:i:s");
         $getlanding = DB::table('TPHotel_landing')->select('Amenities','Rating','location_id')->where('id', $id)->where('slug', $slug)->get();
-		   
+
 
         $amenities=[];
         $Rating=[];
         $locationid = "";
         if(!$getlanding->isEmpty()){
             $locationid = $getlanding[0]->location_id;
-            
+
            $amenities="";
 			$Rating="";
 			$locationid = "";
@@ -7446,7 +7446,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 				if($getlanding[0]->Amenities !=""){
 
 					// if(is_string($getlanding[0]->Amenities)){
-					//     $amenities = explode(',', $getlanding[0]->Amenities);    
+					//     $amenities = explode(',', $getlanding[0]->Amenities);
 					// }
 
 					if(!empty($getlanding[0]->Amenities)){
@@ -7454,7 +7454,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 					}
 				}
 				$Rating='';
-				if($getlanding[0]->Rating !=""){            
+				if($getlanding[0]->Rating !=""){
 
 					 $rating = $getlanding[0]->Rating;
 					if(!empty($rating)){
@@ -7463,58 +7463,58 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 				}
         }
         $end  =  date("H:i:s");
-   
+
        //end new code
-     
-        
+
+
          session(['checkin' => $getval]);
          session(['rooms' => $rooms]);
          session(['guest' => $guest]);
-   
+
          //new code start
-         $checkinDate =  $chkin;         
-         $checkoutDate = $checout;       
-         $adultsCount = $guest;              
-         $customerIP = '49.156.89.145'; 
-         $childrenCount = '1'; 
+         $checkinDate =  $chkin;
+         $checkoutDate = $checout;
+         $adultsCount = $guest;
+         $customerIP = '49.156.89.145';
+         $childrenCount = '1';
          $chid_age = '10';
-         $lang = 'en'; 
-         $currency ='USD'; 
-         $waitForResult ='0'; 
+         $lang = 'en';
+         $currency ='USD';
+         $waitForResult ='0';
          $iata= $locationid ;//24072
-         
-         $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-         $TRAVEL_PAYOUT_MARKER = "299178"; 
-  
-        $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-         $checkinDate.":". 
+
+         $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+         $TRAVEL_PAYOUT_MARKER = "299178";
+
+        $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+         $checkinDate.":".
          $checkoutDate.":".
-         $chid_age.":". 
-         $childrenCount.":". 
-         $iata.":".  
-         $currency.":". 
-         $customerIP.":".             
-         $lang.":". 
-         $waitForResult; 
+         $chid_age.":".
+         $childrenCount.":".
+         $iata.":".
+         $currency.":".
+         $customerIP.":".
+         $lang.":".
+         $waitForResult;
 
           $signature = md5($SignatureString);
-          $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;       
-        
+          $url ='http://engine.hotellook.com/api/v2/search/start.json?cityId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
+
              $response = Http::withoutVerifying()->get($url);
-     
+
          if ($response->successful()) {
              $data = json_decode($response);
              if(!empty($data)){
-               $searchId = $data->searchId;  
+               $searchId = $data->searchId;
              $limit =0;
              $offset=0;
              $roomsCount=0;
              $sortAsc=1;
              $sortBy='price';
- 
+
             $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-             $sig2 =  md5($SignatureString2);    
- 
+             $sig2 =  md5($SignatureString2);
+
             $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=0&sortBy=price&sortAsc=1&roomsCount=0&offset=0&marker=299178&signature='.$sig2;
             $gethoteltype =collect();
             $response2 = Http::withoutVerifying()->timeout(30)->get($url2);
@@ -7525,8 +7525,8 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 }else{
                     $status = 1;
                 }
-                 $maxRetries = 10; 
-                     if ($response2->successful()) { 
+                 $maxRetries = 10;
+                     if ($response2->successful()) {
                         $hotel = json_decode($response2);
                         $idArray = array();
                         foreach ($hotel->result as $hotelInfo) {
@@ -7535,14 +7535,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                             }
                         }
                         $st2  =  date("H:i:s");
-                    
-               
+
+
                                $searchresults = DB::table('TPHotel as tph')
                           ->select('tph.hotelid', 'tph.id', 'tph.name', 'tph.slug','tph.location_id as loc_id', 'tph.stars', 'tph.pricefrom', 'tph.rating', 'tph.amenities','tph.distance','tph.room_aminities','tph.Languages')
-                            ->whereIn('tph.hotelid',$idArray) ;    
+                            ->whereIn('tph.hotelid',$idArray) ;
                           if (!empty($amenities) || !empty($Rating)) {
                               $searchresults->where(function ($query) use ($amenities, $Rating) {
-                      
+
                                   if (!empty($amenities)) {
                                       foreach ($amenities as $amenity) {
                                           $query->orWhere('tph.amenities', 'LIKE', '%' . $amenity . '%');
@@ -7563,43 +7563,43 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                               }
                           });
                       }
-  
+
                       $searchresults = $searchresults->paginate(5);
 
                       // Manually append existing query parameters to pagination links
                       $searchresults->appends($request->except('_token'));
 
-              
+
                     $searchresults->setPath('hotel_landing.html');
-                   
-     		
+
+
                     $getloc = DB::table('TPLocations')->select('cityName','countryName')->where('id',$locationid)->limit(1)->get();
 						 $cityName ="";
 					     $countryname ="";
-							if(!$getloc->isEmpty()){ 
+							if(!$getloc->isEmpty()){
 								$lname2 =$getloc[0]->cityName;
 								$countryname = $getloc[0]->countryName;
 								$cityName =$getloc[0]->cityName;
 							}
-                       
+
                       // end save id if not found in TPhotel table
-                  
-                        	
+
+
               return view('frontend.hotel.get_hotel_landing_result_withdate', ['hotels' => $hotel, 'locid' => $locationid, 'searchresults' => $searchresults, 'amenities' => $amenities, 'Rating' => $Rating, 'cityName' => $cityName, 'countryname' => $countryname])->render();
 
-                
+
                      }
-              
-                    
+
+
              }else{
                  return 'search id not found';
              }
-                          
+
          } else {
-           
+
              return 2;
          }
-          
+
        }
 	   }
      public function saveNearbyhotel_hotellist(request $request){
@@ -7612,41 +7612,41 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         // Extract latitude and longitude values
         $latitude = $locationData['lat'];
         $longitude = $locationData['lon'];
-            
+
 
         $locationid = $request->get('locationid');
-     
-       
-        $nbs =0; 
+
+
+        $nbs =0;
         $nbh = 0;
         $ns =0;
-    
+
            if($latitude != "" && $longitude !=""){
             $get_nearby_hotel = DB::table('TPhotel_listing_NBhotel')->where('LocationId',$locationid)->get();
-     
-  
+
+
         if (!$get_nearby_hotel->count() >= 5) {
             $nbh = 1;
-             $searchradius = 10; 
-            $nearby_hotel = DB::table("TPHotel")           
+             $searchradius = 10;
+            $nearby_hotel = DB::table("TPHotel")
             ->select('id', 'name','location_id','slug','address','pricefrom','stars',
-                    DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                * cos(radians(TPHotel.Latitude)) 
-                * cos(radians(TPHotel.longnitude) - radians(" . $longitude . ")) 
-                + sin(radians(" . $latitude . ")) 
-                * sin(radians(TPHotel.Latitude))) AS distance"))     
-            ->having('distance', '<=', $searchradius)    
-            ->where('location_id',$locationid) 
-                    
+                    DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                * cos(radians(TPHotel.Latitude))
+                * cos(radians(TPHotel.longnitude) - radians(" . $longitude . "))
+                + sin(radians(" . $latitude . "))
+                * sin(radians(TPHotel.Latitude))) AS distance"))
+            ->having('distance', '<=', $searchradius)
+            ->where('location_id',$locationid)
+
             ->orderBy('distance')
-            ->limit(5)    
-    
+            ->limit(5)
+
             ->get();
        //   return print_r($nearby_hotel);
          if(!$nearby_hotel->isEmpty()){
-           
 
-           
+
+
 
             foreach ($nearby_hotel as $nearby_hotels) {
                 $slug = $nearby_hotels->slug;
@@ -7657,7 +7657,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 $stars = $nearby_hotels->stars;
                 $pricefrom = $nearby_hotels->pricefrom;
                 $id = $nearby_hotels->id;
-                
+
                 $data3= array(
                     'name'=>$Title,
                     'slug'=>$slug,
@@ -7668,73 +7668,73 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     'address'=>$address,
                     'stars'=>$stars,
                     'pricefrom'=>$pricefrom,
-                   
+
                     'dated'=>now(),
                 );
-    
-          
+
+
                 $insertdata3 = DB::table('TPhotel_listing_NBhotel')->insert($data3);
             //   return print_r($data2);
             }
- 
-         
+
+
          }
       }
-    
-        
+
+
         }
         if($nbh = 1){
-                     
+
            $nearby_hotel =  DB::table('TPhotel_listing_NBhotel')->where('LocationId',$locationid)->get();
            $html3 = view('hotel_detail_result.nearby_hotels',['nearby_hotel'=>$nearby_hotel])->render();
-        
-  
+
+
            return response()->json([ 'html' => $html3]);
        }
     }
 	 public function sightlist_saveNearbyhotel(request $request){
 
-   
+
               $locid = $request->get('locationid');
         $getloc = DB::table('Location')->where('LocationId',$locid)->get();
-       
-  
+
+
         $nbh = 0;
-     
+
         $nearby_hotel =collect();
         if(!empty($getloc)){
             $latitude = $getloc[0]->Lat;
             $longitude = $getloc[0]->Longitude ;
             $LocationId = $getloc[0]->LocationId ;
-    
+
 
        if($latitude != "" && $longitude !=""){
             $get_nearby_hotel = DB::table('SightListingNBhotels')->where('loc_id',$locid)->get();
-     
-  
+
+
         if (!$get_nearby_hotel->count() >= 1) {
             $nbh = 1;
-             $searchradius = 10; 
-             $nearby_hotel = DB::table("TPHotel")           
+             $searchradius = 10;
+             $nearby_hotel = DB::table("TPHotel")
                  ->select('id', 'name','location_id','slug','address','stars','pricefrom',
-                     DB::raw("6371 * acos(cos(radians(" . $latitude . ")) 
-                     * cos(radians(TPHotel.Latitude)) 
-                     * cos(radians(TPHotel.longnitude) - radians(" . $longitude . ")) 
-                     + sin(radians(" . $latitude . ")) 
+                     DB::raw("6371 * acos(cos(radians(" . $latitude . "))
+                     * cos(radians(TPHotel.Latitude))
+                     * cos(radians(TPHotel.longnitude) - radians(" . $longitude . "))
+                     + sin(radians(" . $latitude . "))
                      * sin(radians(TPHotel.Latitude))) AS distance"))
                //  ->groupBy("TPHotel.SightId")
                  ->having('distance', '<=', $searchradius)
                 // ->where('TPHotel.hotelid', '!=', $sightid)
                  ->orderBy('distance')
                  ->limit(4)
-                    
+
                  ->get();
 
-     
-         if(!$nearby_hotel->isEmpty()){
-           
 
-           
+         if(!$nearby_hotel->isEmpty()){
+
+
+
 
             foreach ($nearby_hotel as $nearby_hotels) {
                 $slug = $nearby_hotels->slug;
@@ -7745,7 +7745,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 $stars = $nearby_hotels->stars;
                 $pricefrom = $nearby_hotels->pricefrom;
                 $id = $nearby_hotels->id;
-                
+
                 $data3= array(
                     'name'=>$Title,
                     'slug'=>$slug,
@@ -7759,47 +7759,47 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     'dated'=>now(),
                     'loc_id'=>$locid,
                 );
-    
-          
+
+
                 $insertdata3 = DB::table('SightListingNBhotels')->insert($data3);
             //   return print_r($data2);
             }
- 
-         
+
+
          }
       }
-    
-        
+
+
         }
     }
         if($nbh = 1){
-                     
+
            $nearby_hotel =  DB::table('SightListingNBhotels')->where('loc_id',$locid)->get();
-    
+
            $html3 = view('frontend.explore.loc_nearby_hotels_result',['nearby_hotel'=>$nearby_hotel])->render();
-        
-  
+
+
            return response()->json([ 'html' => $html3]);
        }
     }
 
-	
-	 public function hotel_all_filters_without_date(request $request) 
-    { 
-		
+
+	 public function hotel_all_filters_without_date(request $request)
+    {
+
          $locationid = $request->get('locationid');
-     
+
          $chkin = $request->get('Cin');
          $checout = $request->get('Cout');
-        
-        $rooms = $request->get('rooms'); 
-        $guest = $request->get('guest'); 
-        
+
+        $rooms = $request->get('rooms');
+        $guest = $request->get('guest');
+
 
         $minPrice = $request->get('priceFrom');
-        $priceTo = $request->get('priceTo');        
-        $typeHotel = $request->get('hoteltype');    
-        $starRating = $request->get('starRating');       
+        $priceTo = $request->get('priceTo');
+        $typeHotel = $request->get('hoteltype');
+        $starRating = $request->get('starRating');
         $mnt = $request->get('mnt');
         $Smnt = $request->get('Smnt');
 
@@ -7810,16 +7810,16 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
         $amenities = [];
         if(is_string($mnt)){
-            $amenities = explode(',', $mnt);    
+            $amenities = explode(',', $mnt);
         }
 
         $Specamenities = [];
         if(is_string($Smnt)){
-            $Specamenities = explode(',', $Smnt);    
+            $Specamenities = explode(',', $Smnt);
         }
          $Specamenities;
 
-        
+
         $typeHotels = [];
         if (is_string($typeHotel)) {
             $typeHotels = explode(',', $typeHotel);
@@ -7837,7 +7837,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
       if($distance ==0){
         $distance = "";
       }
-              
+
 
                     $searchresults = DB::table('TPHotel as h')
                     ->select([
@@ -7862,7 +7862,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                         'h.image',
                     ])
                     ->join('TPLocations as l', 'l.locationId', '=', 'h.location_id')
-                    ->leftJoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')                     
+                    ->leftJoin('TPHotel_types as ty', 'ty.hid', '=', 'h.propertyType')
                     ->when(!empty($stars), function ($query) use ($stars) {
                         $query->whereIn('h.stars', $stars);
                     })
@@ -7886,24 +7886,24 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 					})
                     ->when(!empty($amenities), function ($query) use ($amenities) {
                         foreach ($amenities as $amenity) {
-                            $query->where('h.amenities', 'LIKE', '%' . $amenity . '%');  
+                            $query->where('h.amenities', 'LIKE', '%' . $amenity . '%');
                         }
                     })
                  //   ->limit(30)
                    ->paginate(10);
-                   
+
                     $url = 'ho-'.$locationid;
                     $searchresults->appends(request()->except(['_token']));
-                 
+
                     $searchresults->setPath($url);
                     $paginationLinks = $searchresults->links('hotellist_pagg.default');
-               
 
 
 
-    
 
-  
+
+
+
 
 //return   print_r($searchresults);
 //    echo '---';
@@ -7916,23 +7916,23 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             $lname = $searchresults[0]->cityName;
             $countryName = $searchresults[0]->countryName;
         }
-        
-   
-        return view('frontend.hotel.get_hotel_listing_result_withoutdate')->with('searchresults',$searchresults)->with('lname',$lname)->with('countryname',$countryName); 
-    } 
-	
-	
-	 
-      
- public function explore_country_list($id,$slug){  
+
+
+        return view('frontend.hotel.get_hotel_listing_result_withoutdate')->with('searchresults',$searchresults)->with('lname',$lname)->with('countryname',$countryName);
+    }
+
+
+
+
+ public function explore_country_list($id,$slug){
     $is_rest ="";
     $ismustsee ="";
-    $is_rest ="";      
+    $is_rest ="";
     $rest_avail ="";
-    $getSightCat =""; 
+    $getSightCat ="";
 
     $start =  date("H:i:s");
-	 
+
 
     $cont = DB::table('Country')
     ->select('Country_Content','Name','CountryId')
@@ -7949,7 +7949,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
 
        //end
-	
+
     $faq= collect();
 
     $getloc = DB::table('Location')
@@ -7964,20 +7964,20 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
     ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
     ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
     ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
-  //  ->where('s.LocationId', $locationIds)	
-  ->whereIn('s.LocationId', $locationIds)	
+  //  ->where('s.LocationId', $locationIds)
+  ->whereIn('s.LocationId', $locationIds)
   //  ->where('co.slug', $slug)
     //->where('l.LocationLevel',1)
-  //  ->where('co.CountryId', $id)	
-    ->where('s.IsMustSee',1)	
+  //  ->where('co.CountryId', $id)
+    ->where('s.IsMustSee',1)
     ->orderBy('s.TATrendingScore', 'desc')
     ->limit(10)
     ->get()
     ->toArray();
 
-  
-   
-  
+
+
+
 
     $getSightCat = DB::table('Sight')
         ->select('Category.CategoryId', 'Category.Title')
@@ -7987,13 +7987,13 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         ->get();
 
 
-	
+
         $breadcumb=[];
 
         $breadcumb  = DB::table('Country as c')
         ->select('co.*','c.Name as cname')
         ->join('CountryCollaboration as co', 'c.CountryCollaborationId', '=', 'co.CountryCollaborationId')
-        ->where('c.CountryId', $id)	
+        ->where('c.CountryId', $id)
         ->get()
         ->toArray();
 
@@ -8011,32 +8011,32 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
       $locationID  = $searchresults[0]->LocationId;
       $lociID = $searchresults[0]->LocationId;
       $locn =  $searchresults[0]->LocationId;
-      
+
       if(empty($searchresults)){
-        
+
 
         $loc = DB::table('Location')
         ->select('LocationId', 'parentid','LocationLevel')
         ->where('LocationId', $locationID)
         ->first();
-        
+
         if(!empty($loc)){
                 $parentId =$loc->parentid;
             $LocationLevel =$loc->LocationLevel;
 
-            
+
             while ($parentId !== null && $LocationLevel !=1) {
                 $parent = DB::table('Location')
                     ->select('LocationId', 'ParentId')
                     ->where('LocationId', $parentId)
                     ->first();
-            
-                
+
+
                 if ($parent) {
                     $isParentInSight = DB::table('Sight')
                         ->where('LocationId', $parent->LocationId)
                         ->exists();
-            
+
                     if ($isParentInSight) {
                         $parentId = $parent->LocationId;
                         break;
@@ -8056,22 +8056,22 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
             ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
            // ->where('l.Slug', $explocname)
-            ->where('l.LocationId', $parentId)	
+            ->where('l.LocationId', $parentId)
             ->orderBy('s.TATrendingScore', 'desc')
             ->limit(10)
             ->get()
             ->toArray();
         }
 
-	    
- 
-      $start3 =  date("H:i:s"); 
-       
-     
+
+
+      $start3 =  date("H:i:s");
+
+
        if(!empty($searchresults[0]->tp_location_mapping_id)){
          $tplocname =  DB::table('TPLocations')->select('cityName','countryName','LocationId')->where('LocationId',$searchresults[0]->tp_location_mapping_id)->get();
        }
-      
+
        $getparent = DB::table('Location')->where('LocationId', $lociID)->get();
 
 
@@ -8096,16 +8096,16 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
            }
        }
     }
-     
+
           if(!empty($searchresults[0]->LocationId)){
            $getrest = DB::table('Restaurant')->select('Title','RestaurantId','LocationId','Slug','Address','PriceRange')->whereIn('LocationId',$locationIds)->get();
           }
-          
-      
+
+
          if(!empty($searchresults[0]->LocationId)){
             $experience =  DB::table('Experience')->whereIn('LocationId',$locationIds)->get();
         }
-	   
+
 	     //new code
         $percentageRecommended = 0;
         if(!empty($searchresults)){
@@ -8113,13 +8113,13 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
             foreach ($searchresults as $results) {
                 $sightId = $results->SightId;
-            
+
                 $Sightcat = DB::table('SightCategory')
                     ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
                     ->select('Category.Title')
                     ->where('SightCategory.SightId', '=', $sightId)
-                    ->get();          
-            
+                    ->get();
+
                 $results->Sightcat = $Sightcat;
 
                 $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
@@ -8127,26 +8127,26 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
             }
             //end code
-		
-            
-  
+
+
+
 		}
        //nearby hotel
 
-      
+
           $nearby_hotel =  DB::table('SightListingNBhotels')->where('loc_id',$locationID)->get();
-          /*end nearby hotels */  
-	   
-        
+          /*end nearby hotels */
+
+
           $getloc = DB::table('Location')->where('LocationId',$locationID)->get();
-	
-	   
+
+
           if(!$getloc->isEmpty()){
             $latitude = $getloc[0]->Lat;
-            $longitude = $getloc[0]->Longitude ;			  
-			  
+            $longitude = $getloc[0]->Longitude ;
+
 		   //hotel list id
-     
+
           $gethotellistiid = DB::table('Temp_Mapping as tm')
           ->select('tpl.*')
           ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
@@ -8154,7 +8154,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
            ->whereIn('tm.Tid',$locationIds)
           ->get();
 
-        
+
           $CountryId ="";
          $formattedDateTime = date("H:i:s");
 		 if($gethotellistiid->isEmpty()){
@@ -8163,7 +8163,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
              $CountryId =$getlocid[0]->CountryId;
 			}
 		 }
-			  
+
 
         if($gethotellistiid->isEmpty()){
                 $getlocid = DB::table('Location')->select('ParentId','CountryId')->where('LocationId',$locationID)->get();
@@ -8171,7 +8171,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     $locationID = $getlocid[0]->ParentId;
                     $CountryId =$getlocid[0]->CountryId;
 
-            
+
                 $gethotellistiid = DB::table('Temp_Mapping as tm')
                 ->select('tpl.*')
                 ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
@@ -8180,12 +8180,12 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 ->get();
                 }
         }
-	
+
     }
 
 
     //end record nit available
-     
+
         if ($gethotellistiid->isEmpty()) {
             $gethotellistiid = DB::table('Temp_Mapping as tm')
                 ->select('tpl.locationId')
@@ -8196,34 +8196,34 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 ->get();
         }
 
-         
+
           // end hotel list id
           }
-   
 
-        
+
+
             //end nearby hotel
-	
-        return view('country_sight_listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('nearby_hotel',$nearby_hotel)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('countryname',$countryname)->with('cont',$cont);
-       
-       
 
-      
+        return view('country_sight_listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('nearby_hotel',$nearby_hotel)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('countryname',$countryname)->with('cont',$cont);
+
+
+
+
     }
-    
+
 
 
     public function loadMoresightbycontry(Request $request)
     {
         $page = $request->input('page');
-        $perPage = 10; 
-        $contid = $request->input('locid');        
-    
+        $perPage = 10;
+        $contid = $request->input('locid');
+
         if ($page == 1) {
             return response()->json(['html' => '']);
         }
-        
-        $offset = ($page - 1) * $perPage; 
+
+        $offset = ($page - 1) * $perPage;
 
         $searchresults = DB::table('Sight as s')
         ->select('s.*', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName','l.About')
@@ -8232,26 +8232,26 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
         //  ->where('co.slug', $slug)
         ->where('l.LocationLevel',1)
-        ->where('co.CountryId', $contid)	
-        ->where('s.IsMustSee',1)	
-        ->orderBy('s.TATrendingScore', 'desc')           
+        ->where('co.CountryId', $contid)
+        ->where('s.IsMustSee',1)
+        ->orderBy('s.TATrendingScore', 'desc')
         ->get();
 
         $attractions = collect($searchresults)
             ->slice($offset, $perPage)
-            ->values();      
+            ->values();
 
             if (!empty($attractions)) {
 
                 foreach ($attractions as $results) {
                     $sightId = $results->SightId;
-                
+
                     $Sightcat = DB::table('SightCategory')
                         ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
                         ->select('Category.Title')
                         ->where('SightCategory.SightId', '=', $sightId)
-                        ->get();          
-                
+                        ->get();
+
                     $results->Sightcat = $Sightcat;
 
                     $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
@@ -8259,14 +8259,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
                     // Retrieve reviews for the sight using a raw SQL query
                     $reviews = DB::select("SELECT * FROM SightReviews WHERE SightId = ?", [$sightId]);
-                
+
                     // Merge the reviews into the result directly
                     $results->reviews = $reviews;
                 }
             }
 
 
-            //end set timing cat val 
+            //end set timing cat val
             $mergedData = [];
 
             // Loop through attractions and associate them with categories
@@ -8317,7 +8317,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                     'SightId' => $att->SightId,
                                     'ismustsee' => $att->IsMustSee,
                                     'name' => $att->Title,
-                                    'recmd' => $recomd,                       
+                                    'recmd' => $recomd,
                                     'cat' => $categoryTitle,
                                     'tm' => $timingInfo, // Include the timing in the locationData array
                                 ];
@@ -8344,7 +8344,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                     'SightId' => $att->SightId,
                                     'ismustsee' => $att->IsMustSee,
                                     'name' => $att->Title,
-                                    'recmd' => $recomd,                      
+                                    'recmd' => $recomd,
                                     'cat' => ' ',
                                     'tm' => $timingInfo,
                                 ];
@@ -8360,25 +8360,25 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             $locationDataJson = json_encode($mergedData);
 
 
-            
+
             if ($attractions->isEmpty()) {
                 return response()->json(['html' => '']);
             }
             $html = view('getloclistbycatid')->with('searchresults', $attractions)->render();
-            
+
             return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
-            
+
     }
-	public function explore_continent_list($id,$slug){   
-      
+	public function explore_continent_list($id,$slug){
+
         $is_rest ="";
         $ismustsee ="";
-        $is_rest ="";      
+        $is_rest ="";
         $rest_avail ="";
-        $getSightCat =""; 
-    
-        $start =  date("H:i:s");         
-    
+        $getSightCat ="";
+
+        $start =  date("H:i:s");
+
         $slug = str_replace('-',' ',$slug);
         $cont = DB::table('CountryCollaboration')
         ->select('CountryCollaborationId','Name')
@@ -8386,27 +8386,27 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         ->where('Name', $slug)
         ->get()
         ->toArray();
-    
+
          if(empty($cont)){
               abort(404, 'NOT FOUND');
          }
-    
-         $countryname = $cont[0]->Name;  
-     
+
+         $countryname = $cont[0]->Name;
+
 
         $faq= collect();
-    
-        $getcount = DB::table('Country as c')      
+
+        $getcount = DB::table('Country as c')
         ->join('CountryCollaboration as clb', 'clb.CountryCollaborationId', '=', 'c.CountryCollaborationId')
         ->select('c.CountryId', 'c.Name')
         ->where('clb.CountryCollaborationId', $id)
        // ->limit(20)
-    
+
         ->get()
         ->toArray();
         //return print_r($getcount);
         $countryId = array_column($getcount, 'CountryId');
-        $getloc = DB::table('Location as l') 
+        $getloc = DB::table('Location as l')
         ->select('l.LocationId', 'l.Name')
         ->whereIn('l.CountryId', $countryId)
         ->limit(50)
@@ -8416,76 +8416,76 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
      //   return  $getloc;
         $locationIds = array_column($getloc, 'LocationId');
-    
+
         $searchresults = DB::table('Sight as s')
         ->select('s.*', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName','l.About')
         ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
         ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
         ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
-      //  ->where('s.LocationId', $locationIds)	
-      ->whereIn('s.LocationId', $locationIds)	
+      //  ->where('s.LocationId', $locationIds)
+      ->whereIn('s.LocationId', $locationIds)
       //  ->where('co.slug', $slug)
         //->where('l.LocationLevel',1)
-      //  ->where('co.CountryId', $id)	
-        ->where('s.IsMustSee',1)	
+      //  ->where('co.CountryId', $id)
+        ->where('s.IsMustSee',1)
         // ->orderBy('s.TATrendingScore', 'desc')
         ->limit(10)
         ->get()
         ->toArray();
-    
-      
-       
-      
-    
+
+
+
+
+
         $getSightCat = DB::table('Sight')
             ->select('Category.CategoryId', 'Category.Title')
             ->distinct()
             ->join('Category', 'Sight.categoryId', '=', 'Category.categoryId')
             ->whereIn('Sight.LocationId', $locationIds) // Use location IDs obtained from the first query
             ->get();
-    
-    
-        
-    
+
+
+
+
          $locn ="";
          $tplocname=array();
          $locationPatent = [];
-    
+
          $getrest=collect();
          $experience =collect();
          $nearby_hotel =collect();
          $gethotellistiid =collect();
-    
+
          if(!empty($searchresults)){
           $locationID  = $searchresults[0]->LocationId;
           $lociID = $searchresults[0]->LocationId;
           $locn =  $searchresults[0]->LocationId;
-          
+
           if(empty($searchresults)){
-            
-    
+
+
             $loc = DB::table('Location')
             ->select('LocationId', 'parentid','LocationLevel')
             ->where('LocationId', $locationID)
             ->first();
-            
+
             if(!empty($loc)){
                     $parentId =$loc->parentid;
                     $LocationLevel =$loc->LocationLevel;
-    
-                
+
+
                 while ($parentId !== null && $LocationLevel !=1) {
                     $parent = DB::table('Location')
                         ->select('LocationId', 'ParentId')
                         ->where('LocationId', $parentId)
                         ->first();
-                
-                    
+
+
                     if ($parent) {
                         $isParentInSight = DB::table('Sight')
                             ->where('LocationId', $parent->LocationId)
                             ->exists();
-                
+
                         if ($isParentInSight) {
                             $parentId = $parent->LocationId;
                             break;
@@ -8497,15 +8497,15 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     }
                 }
             }
-    
-    
+
+
                 $searchresults = DB::table('Sight as s')
                 ->select('s.*', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName')
                 ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
                 ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
                 ->leftJoin('Country as co', 'l.CountryId', '=', 'co.CountryId')
                // ->where('l.Slug', $explocname)
-                ->where('l.LocationId', $parentId)	
+                ->where('l.LocationId', $parentId)
                 ->orderBy('s.TATrendingScore', 'desc')
                 ->limit(10)
                 ->get()
@@ -8515,8 +8515,8 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
 
             }
-    
-          
+
+
             $locids = []; // Initialize an empty array to store LocationIds
 
             foreach ($searchresults as $result) {
@@ -8526,17 +8526,17 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                 }
             }
        //     return print_r($locids);
-     
-          $start3 =  date("H:i:s"); 
-           
-         
+
+          $start3 =  date("H:i:s");
+
+
            if(!empty($searchresults[0]->tp_location_mapping_id)){
              $tplocname =  DB::table('TPLocations')->select('cityName','countryName','LocationId')->where('LocationId',$searchresults[0]->tp_location_mapping_id)->get();
            }
-          
+
            $getparent = DB::table('Location')->where('LocationId', $lociID)->get();
-    
-    
+
+
            if (!$getparent->isEmpty()){
            if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                $loopcount = $getparent[0]->LocationLevel;
@@ -8558,65 +8558,65 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                }
            }
         }
-         
-       
-           
+
+
+
              //new code
             $percentageRecommended = 0;
             if(!empty($searchresults)){
          //   if (!$searchresults->isEmpty()) {
-    
+
                 foreach ($searchresults as $results) {
                     $sightId = $results->SightId;
-                
+
                     $Sightcat = DB::table('SightCategory')
                         ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
                         ->select('Category.Title')
                         ->where('SightCategory.SightId', '=', $sightId)
-                        ->get();          
-                
+                        ->get();
+
                     $results->Sightcat = $Sightcat;
-    
+
                     $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
                     $results->timing = $timing;
-    
+
                 }
                 //end code
-            
-                
-      
+
+
+
             }
-			 
-			     
-          
+
+
+
        if(!empty($locids)){
 	   $getrest = DB::table('Restaurant')->select('Title','RestaurantId','LocationId','Slug','Address','PriceRange')->whereIn('LocationId',$locids)->get();
         $nearby_hotel =  DB::table('SightListingNBhotels')->whereIn('loc_id',$locids)->get();
         $experience =  DB::table('Experience')->whereIn('LocationId',$locids)->get();
        }
            //nearby hotel
-    
-     
-              /*end nearby hotels */  
+
+
+              /*end nearby hotels */
      //     return print_r( $nearby_hotel);
-            
+
               $getloc = DB::table('Location')->where('LocationId',$locationID)->get();
-        
-           
+
+
               if(!$getloc->isEmpty()){
                 $latitude = $getloc[0]->Lat;
-                $longitude = $getloc[0]->Longitude ;			  
-                  
+                $longitude = $getloc[0]->Longitude ;
+
                //hotel list id
-         
+
               $gethotellistiid = DB::table('Temp_Mapping as tm')
               ->select('tpl.*')
               ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
               //  ->where('tm.Tid',$locationID)
                ->whereIn('tm.Tid',$locationIds)
               ->get();
-    
-            
+
+
               $CountryId ="";
              $formattedDateTime = date("H:i:s");
              if($gethotellistiid->isEmpty()){
@@ -8625,15 +8625,15 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                  $CountryId =$getlocid[0]->CountryId;
                 }
              }
-                  
-    
+
+
             if($gethotellistiid->isEmpty()){
                     $getlocid = DB::table('Location')->select('ParentId','CountryId')->where('LocationId',$locationID)->get();
                     if(!$getlocid->isEmpty()){
                         $locationID = $getlocid[0]->ParentId;
                         $CountryId =$getlocid[0]->CountryId;
-    
-                
+
+
                     $gethotellistiid = DB::table('Temp_Mapping as tm')
                     ->select('tpl.*')
                     ->join('TPLocations as tpl','tpl.locationId','=','tm.LocationId')
@@ -8642,12 +8642,12 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     ->get();
                     }
             }
-        
+
         }
-    
-    
+
+
         //end record nit available
-         
+
             if ($gethotellistiid->isEmpty()) {
                 $gethotellistiid = DB::table('Temp_Mapping as tm')
                     ->select('tpl.locationId')
@@ -8657,44 +8657,44 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                     ->limit(1) // limit the result to 1 row
                     ->get();
             }
-    
-             
+
+
               // end hotel list id
               }
-       
-    
-            
+
+
+
                 //end nearby hotel
-        
+
             return view('continent_sight_listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('nearby_hotel',$nearby_hotel)->with('gethotellistiid',$gethotellistiid)->with('countryname',$countryname)->with('cont',$cont);
-           
-           
-    
-          
+
+
+
+
         }
 
 
         public function loadMoresightbycontinent(Request $request)
         {
             $page = $request->input('page');
-            $perPage = 50; 
-            $contlim = 50; 
-            $contid = $request->input('locid');        
-        
+            $perPage = 50;
+            $contlim = 50;
+            $contid = $request->input('locid');
+
             if ($page == 1) {
                 return response()->json(['html' => '']);
             }
-            
-            $offset = ($page - 1) * $perPage; 
-            $offset2 = $page  * $contlim; 
+
+            $offset = ($page - 1) * $perPage;
+            $offset2 = $page  * $contlim;
 
 
-            $getcount = DB::table('Country as c')      
+            $getcount = DB::table('Country as c')
             ->join('CountryCollaboration as clb', 'clb.CountryCollaborationId', '=', 'c.CountryCollaborationId')
             ->select('c.CountryId', 'c.Name')
             ->where('clb.CountryCollaborationId', $contid)
            // ->limit(20)
-        
+
             ->get()
             ->toArray();
             //return print_r($getcount);
@@ -8704,73 +8704,73 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
        // ->join('CountryCollaboration as clb', 'clb.CountryCollaborationId', '=', 'c.CountryCollaborationId')
         ->select('l.LocationId')
         ->whereIn('l.CountryId', $countryId)
-       ->limit($offset2)    
+       ->limit($offset2)
         ->get()
         ->toArray();
-    
-    
+
+
          //   return  $getloc;
             $locationIds = array_column($getloc, 'LocationId');
 
 
             $attraId = collect($getloc)
             ->slice($offset, $perPage)
-            ->values()     
+            ->values()
             ->toArray();
-      
+
             $attraIdValues = array_column($attraId, 'LocationId');
          //   print_r($attraIdValues);
 
                    $attractions = DB::table('Sight as s')
-                   
+
             ->select('s.*', 'c.Title as CategoryTitle', 'l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'l.MetaTagTitle as mTitle', 'l.MetaTagDescription as mDesc', 'l.tp_location_mapping_id', 'co.Name as CountryName','l.About')
             ->leftJoin('Category as c', 's.CategoryId', '=', 'c.CategoryId')
             ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
             ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
-          //  ->where('s.LocationId', $locationIds)	
-          ->whereIn('s.LocationId', $attraIdValues)	
+          //  ->where('s.LocationId', $locationIds)
+          ->whereIn('s.LocationId', $attraIdValues)
           //  ->where('co.slug', $slug)
             //->where('l.LocationLevel',1)
-          //  ->where('co.CountryId', $id)	
-            ->orWhere('s.IsMustSee',1)	
+          //  ->where('co.CountryId', $id)
+            ->orWhere('s.IsMustSee',1)
             // ->orderBy('s.TATrendingScore', 'desc')
             ->limit(10)
             ->get();
-       
-        
-          
 
-  
-    
-         
+
+
+
+
+
+
                 if (!empty($attractions)) {
-    
+
                     foreach ($attractions as $results) {
                         $sightId = $results->SightId;
-                    
+
                         $Sightcat = DB::table('SightCategory')
                             ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
                             ->select('Category.Title')
                             ->where('SightCategory.SightId', '=', $sightId)
-                            ->get();          
-                    
+                            ->get();
+
                         $results->Sightcat = $Sightcat;
-    
+
                         $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
                         $results->timing = $timing;
-    
+
                         // Retrieve reviews for the sight using a raw SQL query
                         $reviews = DB::select("SELECT * FROM SightReviews WHERE SightId = ?", [$sightId]);
-                    
+
                         // Merge the reviews into the result directly
                         $results->reviews = $reviews;
                     }
                 }
-    
-    
-                //end set timing cat val 
+
+
+                //end set timing cat val
                 $mergedData = [];
-    
+
                 // Loop through attractions and associate them with categories
                 if (!empty($attractions)) {
                     foreach ($attractions as $att) {
@@ -8782,7 +8782,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                 } else {
                                     $categoryTitle = '';
                                 };
-    
+
                                 if (!empty($att->Latitude) && !empty($att->Longitude)) {
                                     // Check if $att->timing is set and contains the required properties
                                     if (isset($att->timing->timings)) {
@@ -8794,16 +8794,16 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                         $closingTime = $schedule['time'][$currentDay]['end'];
                                         $isOpen = false;
                                         $formatetime = '';
-    
+
                                         if ($openingtime === '00:00' && $closingTime === '23:59') {
                                             $formatetime = '12:00';
                                             $closingTime = '11:59';
                                         }
-    
+
                                         if ($currentTime >= $openingtime && $currentTime <= $closingTime) {
                                             $isOpen = true;
                                         }
-    
+
                                         $timingInfo = $isOpen ? $formatetime . ' Open Now' : 'Closed Today';
                                     } else {
                                         $timingInfo = '';
@@ -8821,11 +8821,11 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                         'SightId' => $att->SightId,
                                         'ismustsee' => $att->IsMustSee,
                                         'name' => $att->Title,
-                                        'recmd' => $recomd,                       
+                                        'recmd' => $recomd,
                                         'cat' => $categoryTitle,
                                         'tm' => $timingInfo, // Include the timing in the locationData array
                                     ];
-    
+
                                     $mergedData[] = $locationData; // Add the locationData directly to mergedData
                                 }
                             }
@@ -8848,37 +8848,37 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
                                         'SightId' => $att->SightId,
                                         'ismustsee' => $att->IsMustSee,
                                         'name' => $att->Title,
-                                        'recmd' => $recomd,                      
+                                        'recmd' => $recomd,
                                         'cat' => ' ',
                                         'tm' => $timingInfo,
                                     ];
-    
+
                                     $mergedData[] = $locationData;
                                 }
                             }
                         }
                     }
                 }
-    
+
                 // Encode data as JSON
                 $locationDataJson = json_encode($mergedData);
-    
-    
-                
+
+
+
                 if ($attractions->isEmpty()) {
                     return response()->json(['html' => '']);
                 }
                 $html = view('getloclistbycatid')->with('searchresults', $attractions)->render();
-                
+
                 return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
-                
+
         }
       public function updatemetadesc(request $request){
        $id = $request->get('id');
        $locationid = $request->get('locationid');
-       $gethotel = DB::table('TPHotel')->where('id',$id)->get();       
+       $gethotel = DB::table('TPHotel')->where('id',$id)->get();
         $name = $gethotel[0]->name;
-        $amenities = $gethotel[0]->amenities;        
+        $amenities = $gethotel[0]->amenities;
         $room_aminities = $gethotel[0]->room_aminities;
         $location_score = $gethotel[0]->location_score;
         $stars = $gethotel[0]->stars;
@@ -8886,15 +8886,15 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         $pricefrom = $gethotel[0]->pricefrom;
         $hotelid = $gethotel[0]->hotelid;
         if($MetaTagDescription ==""){
-      
+
             if($amenities !="" || $room_aminities !=""){
 
                 $amenitiesArray = explode(',', $amenities);
-                $roomAmenitiesArray = explode(',', $room_aminities);  
-                $selectedAmenities = array_slice($amenitiesArray, 0, 4);        
+                $roomAmenitiesArray = explode(',', $room_aminities);
+                $selectedAmenities = array_slice($amenitiesArray, 0, 4);
                 if (count($selectedAmenities) < 4) {
                     $remainingAmenitiesCount = 4 - count($selectedAmenities);
-                    $selectedRoomAmenities = array_slice($roomAmenitiesArray, 0, $remainingAmenitiesCount);              
+                    $selectedRoomAmenities = array_slice($roomAmenitiesArray, 0, $remainingAmenitiesCount);
                     $selectedAmenities = array_merge($selectedAmenities, $selectedRoomAmenities);
                 }
                 if($name !="" && $selectedAmenities !="" && $stars !="" && $location_score !="" ){
@@ -8910,14 +8910,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         $getLocation = DB::table('TPLocations')->where('id',$locationid)->get();
         $cityName = $getLocation[0]->cityName;
        }
-       
+
        $getLocation = DB::table('TPHotelNeighbourhood as nb')
        ->join('Neighborhood as n','nb.NeighborhoodID','=','n.NeighborhoodID')
        ->where('nb.hotelid',$hotelid)->get();
        $neb ="";
        if(!$getLocation->isEmpty() && $pricefrom !="" && $cityName !=""){
          $neb = $getLocation[0]->Name;
-         
+
          $title = $name.', '.$neb.' '.$cityName.'@'.$pricefrom;
        }
        if($pricefrom !=""){
@@ -8926,27 +8926,27 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         $title = $name.', '.$cityName;
        }
 
-      
+
      return  DB::table('TPHotel')->where('id', $id)->update(['metaTagTitle' => $title]);
-    
+
 
     }
-	
-	
-	
+
+
+
     //search sight
 
-     
-     
+
+
     public function search_sights(request $request){
-      
+
         $locId = $request->input('locationId');
         $val = $request->input('val');
-        $res_type = $request->input('res_type');   
+        $res_type = $request->input('res_type');
      //   session()->flush();
         $result_rest =[];
-        
-        $rest =0;  
+
+        $rest =0;
         $exp =0;
        $recentSearches = session()->get('recent_sightlist_searches', []);
 
@@ -8978,9 +8978,9 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
 
 
         if(empty($val)){
-            $result = DB::table('Sight')      
+            $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
@@ -8997,7 +8997,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         if($val == "Must See" || $val == "must see" || $val == "mustsee"){
             $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
@@ -9009,13 +9009,13 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->get()
             ->toArray();
         }
-        if(empty($result) && $val == "Restaurant" || $val == "restaurant"){     
-            $rest =1;              
-            $result_rest = DB::table('Restaurant as r')      
-            ->join('Location','Location.slugid','=','r.slugid')	    
+        if(empty($result) && $val == "Restaurant" || $val == "restaurant"){
+            $rest =1;
+            $result_rest = DB::table('Restaurant as r')
+            ->join('Location','Location.slugid','=','r.slugid')
             ->where('r.LocationId', $locId)
             ->where(function ($query) use ($val) {
-                $query->where('r.Title', 'LIKE','%'. $val . '%') ;               
+                $query->where('r.Title', 'LIKE','%'. $val . '%') ;
             })
             ->select('r.LocationId','r.RestaurantId','r.Title','r.Timings','r.TAAggregateRating','r.category','r.features','r.slugid','r.PriceRange','Location.Name as Lname')
             ->limit(5)
@@ -9023,12 +9023,12 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->toArray();
          //   return print_r(result_rest);
         }
-        if(empty($result) && $val == "experience" || $val == "Experience"){  
-            $exp =1;    
-            $result_rest = DB::table('Experience as e')    
-            ->join('Location','Location.slugid','=','e.slugid')	          
-            ->where('e.LocationId', $locId)            
-            ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')      
+        if(empty($result) && $val == "experience" || $val == "Experience"){
+            $exp =1;
+            $result_rest = DB::table('Experience as e')
+            ->join('Location','Location.slugid','=','e.slugid')
+            ->where('e.LocationId', $locId)
+            ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')
             ->limit(5)
             ->get()
          ->toArray();
@@ -9036,9 +9036,9 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         }
 
         if(empty($result) &&  empty($result_rest)){
-            $result = DB::table('Sight')      
+            $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
@@ -9054,11 +9054,11 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->toArray();
        }
 
-       
+
         if(empty($result) && empty($result_rest)){
             $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
@@ -9075,14 +9075,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         if(empty($result) && empty($result_rest)){
             $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
             })
              ->where('Sight.LocationId', $locId)
             ->where(function ($query) use ($val) {
-                $query->where('Sight.About', 'LIKE',  '%'. $val . '%');                
+                $query->where('Sight.About', 'LIKE',  '%'. $val . '%');
             })
             ->select('Sight.SightId', 'Sight.IsMustSee', 'Sight.Title', 'Sight.TAAggregateRating', 'Sight.LocationId', 'Sight.Slug', 'IsRestaurant', 'Address', 'Sight.Latitude', 'Sight.Longitude', 'Sight.CategoryId', 'Category.Title as CategoryTitle', 'Location.Name as LName', 'Location.slugid',  'img.Image', 'Sight.TATotalReviews','Sight.ticket')
             ->limit(5)
@@ -9094,7 +9094,7 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
         if(empty($result) && empty($result_rest)){
             $result = DB::table('Sight')
             ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-            ->join('Location','Location.LocationId','=','Sight.LocationId')	
+            ->join('Location','Location.LocationId','=','Sight.LocationId')
             ->leftJoin('Sight_image as img', function ($join) {
                 $join->on('Sight.SightId', '=', 'img.Sightid');
                 $join->whereRaw('img.Image = (SELECT Image FROM Sight_image WHERE Sightid =Sight.SightId LIMIT 1)');
@@ -9102,14 +9102,14 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             ->leftJoin('SightReviews', 'Sight.SightId', '=', 'SightReviews.SightId')
             ->where('Sight.LocationId', $locId)
             ->where(function ($query) use ($val) {
-                $query->where('SightReviews.ReviewDescription', 'LIKE','%'. $val . '%');               
+                $query->where('SightReviews.ReviewDescription', 'LIKE','%'. $val . '%');
             })
             ->select('Sight.SightId', 'Sight.IsMustSee', 'Sight.Title', 'Sight.TAAggregateRating', 'Sight.LocationId', 'Sight.Slug', 'IsRestaurant', 'Address', 'Sight.Latitude', 'Sight.Longitude', 'Sight.CategoryId', 'Category.Title as CategoryTitle', 'Location.Name as LName', 'Location.slugid',  'img.Image', 'Sight.TATotalReviews','Sight.ticket')
             ->limit(5)
             ->get()
             ->toArray();
 
-          
+
         }
 //image code
 	$sightImages = collect();
@@ -9128,8 +9128,8 @@ if (!empty($result)) {
     }
 
 
-  
-   
+
+
     // After collecting SightId, check if $sightIds is not empty
     if (!empty($sightIds)) {
         // Fetch sight images if $sightIds is not empty
@@ -9137,13 +9137,13 @@ if (!empty($result)) {
             ->whereIn('Sightid', $sightIds)
             ->get();
     }
-} 	
-		
-//image code		
-		
-		
+}
+
+//image code
+
+
 		//return print_r($result);
-		
+
         //restaurant
       //  $rest =0;
      //   $exp =0;
@@ -9151,11 +9151,11 @@ if (!empty($result)) {
 
             $rest =1;
             if(empty($result_rest)){
-                $result_rest = DB::table('Restaurant as r')      
-                ->join('Location','Location.slugid','=','r.slugid')	    
+                $result_rest = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
                 ->where('r.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('r.Title', 'LIKE','%'. $val . '%') ;               
+                    $query->where('r.Title', 'LIKE','%'. $val . '%') ;
                 })
                 ->select('r.LocationId','r.RestaurantId','r.Title','r.Timings','r.TAAggregateRating','r.category','r.features','r.slugid','r.PriceRange','Location.Name as Lname')
                 ->limit(5)
@@ -9164,11 +9164,11 @@ if (!empty($result)) {
             }
 
             if(empty($result_rest)){
-                $result_rest = DB::table('Restaurant as r')     
-                ->join('Location','Location.slugid','=','r.slugid')	        
+                $result_rest = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
                 ->where('r.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('r.About', 'LIKE','%'. $val . '%');                                  
+                    $query->where('r.About', 'LIKE','%'. $val . '%');
                 })
                 ->select('r.LocationId','r.RestaurantId','r.Title','r.Address','r.Timings','r.TAAggregateRating','r.category','r.features','r.slugid','r.PriceRange','Location.Name as Lname')
                 ->limit(5)
@@ -9176,40 +9176,40 @@ if (!empty($result)) {
                 ->toArray();
             }
             if(empty($result_rest)){
-                $result_rest = DB::table('Restaurant as r')  
-                ->join('Location','Location.slugid','=','r.slugid')	    
+                $result_rest = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
                 ->join('RestaurantCuisineAssociation as ra','ra.RestaurantId','=','r.RestaurantId')
                 ->join('RestaurantCuisine as rc','ra.RestaurantCuisineId','=','rc.RestaurantCuisineId')
                 ->where('r.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('rc.Name', 'LIKE','%'. $val . '%');                                  
-                })                    
+                    $query->where('rc.Name', 'LIKE','%'. $val . '%');
+                })
                 ->select('r.LocationId','r.RestaurantId','r.Title','r.Address','r.Timings','r.TAAggregateRating','r.category','r.features','r.slugid','r.PriceRange','Location.Name as Lname')
                 ->limit(5)
                 ->get()
                 ->toArray();
             }
              if(empty($result_rest)){
-                $result_rest = DB::table('Restaurant as r')  
-                ->join('Location','Location.slugid','=','r.slugid')	    
-                ->join('RestaurantReview as rv','rv.RestaurantId','=','r.RestaurantId')            
+                $result_rest = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
+                ->join('RestaurantReview as rv','rv.RestaurantId','=','r.RestaurantId')
                 ->where('r.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('rv.Description', 'LIKE','%'. $val . '%');                                  
-                })                    
+                    $query->where('rv.Description', 'LIKE','%'. $val . '%');
+                })
                 ->select('r.LocationId','r.RestaurantId','r.Title','r.Address','r.Timings','r.TAAggregateRating','r.category','r.features','r.slugid','r.PriceRange','Location.Name as Lname')
                 ->limit(5)
                 ->get()
                 ->toArray();
             }
-     
+
             if(empty($result_rest)){
                $exp =1;
-                $result_rest = DB::table('Experience as e')     
-                ->join('Location','Location.slugid','=','e.slugid')	         
+                $result_rest = DB::table('Experience as e')
+                ->join('Location','Location.slugid','=','e.slugid')
                 ->where('e.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('e.Name', 'LIKE','%'. $val . '%');                                  
+                    $query->where('e.Name', 'LIKE','%'. $val . '%');
                 })
                 ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')
                 ->limit(5)
@@ -9218,26 +9218,26 @@ if (!empty($result)) {
             }
             if(empty($result_rest)){
                 $exp =1;
-                 $result_rest = DB::table('Experience as e')    
-                 ->join('Location','Location.slugid','=','e.slugid')	          
+                 $result_rest = DB::table('Experience as e')
+                 ->join('Location','Location.slugid','=','e.slugid')
                  ->where('e.LocationId', $locId)
                  ->where(function ($query) use ($val) {
-                     $query->where('e.Inclusive', 'LIKE','%'. $val . '%');                                  
+                     $query->where('e.Inclusive', 'LIKE','%'. $val . '%');
                  })
-                 ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')      
+                 ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')
                  ->limit(5)
                  ->get()
                  ->toArray();
              }
-             
+
              if(empty($result_rest)){
                 $exp =1;
-                 $result_rest = DB::table('Experience as e')   
-                 ->join('Location','Location.slugid','=','e.slugid')	    
-                 ->join('ExperienceItninerary as  et','et.ExperienceId','=','e.ExperienceId')       
+                 $result_rest = DB::table('Experience as e')
+                 ->join('Location','Location.slugid','=','e.slugid')
+                 ->join('ExperienceItninerary as  et','et.ExperienceId','=','e.ExperienceId')
                  ->where('e.LocationId', $locId)
                  ->where(function ($query) use ($val) {
-                     $query->where('et.Name', 'LIKE','%'. $val . '%');                                  
+                     $query->where('et.Name', 'LIKE','%'. $val . '%');
                  })
                  ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')
                  ->limit(5)
@@ -9247,37 +9247,37 @@ if (!empty($result)) {
          //  return print_r($result_rest);
             if(empty($result_rest)){
                 $exp =1;
-                $result_rest = DB::table('Experience as e')   
-				->join('Location','Location.slugid','=','e.slugid')	
-                ->join('ExperienceReview as  rv','rv.ExperienceId','=','e.ExperienceId')       
+                $result_rest = DB::table('Experience as e')
+				->join('Location','Location.slugid','=','e.slugid')
+                ->join('ExperienceReview as  rv','rv.ExperienceId','=','e.ExperienceId')
                 ->where('e.LocationId', $locId)
                 ->where(function ($query) use ($val) {
-                    $query->where('rv.Description', 'LIKE','%'. $val . '%');                                  
+                    $query->where('rv.Description', 'LIKE','%'. $val . '%');
                 })
                 ->select('e.slugid','e.ExperienceId','e.Slug','e.Name','e.adult_price','Location.Name as Lname','e.Img1','e.Img2','e.Img3')
                 ->limit(5)
                 ->get()
                 ->toArray();
             }
-          
+
         }
 
 
-        //end restaurant 
+        //end restaurant
 
-	
+
 		//new code
    if (!empty($result)) {
 
     foreach ($result as $results) {
          $sightId = $results->SightId;
-    
+
         $Sightcat = DB::table('SightCategory')
             ->join('Category', 'SightCategory.CategoryId', '=', 'Category.CategoryId')
             ->select('Category.Title')
             ->where('SightCategory.SightId', '=', $sightId)
-            ->get();          
-    
+            ->get();
+
         $results->Sightcat = $Sightcat;
 
         $timing = DB::select("SELECT * FROM SightTiming WHERE SightId = ?", [$sightId]);
@@ -9285,14 +9285,14 @@ if (!empty($result)) {
 
         // Retrieve reviews for the sight using a raw SQL query
         $reviews = DB::select("SELECT * FROM SightReviews WHERE SightId = ?", [$sightId]);
-    
+
         // Merge the reviews into the result directly
         $results->reviews = $reviews;
     }
 }
 
 
-//end set timing cat val 
+//end set timing cat val
 $mergedData = [];
 
 // Loop through attractions and associate them with categories
@@ -9351,7 +9351,7 @@ if (!empty($result)) {
                         'SightId' => $att->SightId,
                         'ismustsee' => $att->IsMustSee,
                         'name' => $att->Title,
-                        'recmd' => $recomd,                       
+                        'recmd' => $recomd,
                         'cat' => $categoryTitle,
                         'tm' => $timingInfo,
                         'cityName'=>'City of '.$att->LName,
@@ -9387,7 +9387,7 @@ if (!empty($result)) {
                         'SightId' => $att->SightId,
                         'ismustsee' => $att->IsMustSee,
                         'name' => $att->Title,
-                        'recmd' => $recomd,                      
+                        'recmd' => $recomd,
                         'cat' => ' ',
                         'tm' => $timingInfo,
                         'cityName'=>'City of '.$att->LName,
@@ -9400,27 +9400,27 @@ if (!empty($result)) {
         }
     }
 	}
-  // return $mergedData;  
+  // return $mergedData;
 	// Encode data as JSON
 	    $locationDataJson = json_encode($mergedData);
 
         if($exp == 1){
-            $html = view('get_location_filtered_experience')->with('result', $result_rest)->with('type','search')->render(); 
-        }elseif($rest == 1){         
-            $html = view('get_location_filtered_Restaurant')->with('result', $result_rest)->with('type','search')->render(); 
+            $html = view('get_location_filtered_experience')->with('result', $result_rest)->with('type','search')->render();
+        }elseif($rest == 1){
+            $html = view('get_location_filtered_Restaurant')->with('result', $result_rest)->with('type','search')->render();
         }else{
             $html = view('getloclistbycatid')->with('sightImages',$sightImages)->with('searchresults', $result)->with('type','search')->render();
         }
-		
+
 
         return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
     }
-	
-	
+
+
 	//end filter
-	
-	
+
+
        public function update_sight_desc(request $request){
         $desc = $request->get('desc');
         $sightid = $request->get('id');
@@ -9429,37 +9429,37 @@ if (!empty($result)) {
             ->where('SightId', $sightid)
             ->update(['About' => $desc]);
         }
-       
+
 
         $get_about = DB::table('Sight')->select('About')->where('SightId',$sightid)->get();
         return  view('get_about',['searchresult'=>$get_about]);
 
     }
-      
+
     public function restaurant_landing(request $request){
    //echo $locationID =828104;  // 840749;
         $category ="";
-        $category = $request->get('q');   
+        $category = $request->get('q');
         $locationID = $request->get('location');
 
         if( $locationID !=""){
              $getloc = DB::table('Location')->select('LocationId')->where('slugid', $locationID)->get();
- 
+
             if(!$getloc->isEmpty()){
                 $locationID =  $getloc[0]->LocationId;
             }
         }
-       
+
 
         $breadcumb=[];
         $locationPatent = [];
        if( $locationID != ""){
-        
+
         $breadcumb  = DB::table('Location as l')
-        ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')   
+        ->select('l.CountryId', 'l.Name as LName', 'l.Slug as Lslug', 'co.Name as CountryName','l.LocationId','co.slug as cslug','co.CountryId','cont.Name as ccName','cont.CountryCollaborationId as contid')
         ->Join('Country as co', 'l.CountryId', '=', 'co.CountryId')
         ->leftJoin('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
-        ->where('l.LocationId', $locationID)	
+        ->where('l.LocationId', $locationID)
         ->get()
         ->toArray();
 
@@ -9467,9 +9467,9 @@ if (!empty($result)) {
 
         $getparent = DB::table('Location')->select('LocationId','slug','Name','LocationLevel','ParentId')->where('LocationId', $locationID)->get();
 
-        
-        
-      
+
+
+
       if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
           $loopcount = $getparent[0]->LocationLevel;
           $lociID = $getparent[0]->ParentId;
@@ -9491,43 +9491,43 @@ if (!empty($result)) {
       }
 
   }
-     
+
       $searchresults = DB::table('Restaurant as r')
       ->leftjoin('Location as l', 'l.LocationId', '=', 'r.LocationId')
       ->select('r.*', 'l.Longitude as loc_longitude', 'l.Lat as loc_latitude','l.Name as lname','l.slugid')
       ->whereRaw("CONCAT(',', r.category, ',') LIKE '%,{$category},%'");
-      
+
         if ($locationID !="") {
             $searchresults->where('r.LocationId', $locationID);
         }
-  
+
           $searchresults = $searchresults->limit(15)->get();
           $lname ="";
           if(!$searchresults->isEmpty()){
             $lname =  $searchresults[0]->lname;
           }
-        
+
 
         return view('restaurant_landing',['breadcumb'=>$breadcumb,'locationPatent'=>$locationPatent,'searchresults'=>$searchresults,'category'=>$category,'lname'=>$lname]);
     }
-    
+
 public function hotel_room_desc(Request $request) {
     $checkin = $request->get('checkin');
     $checkout = $request->get('checkout');
     $cityId = $request->get('lid');
     $hotelId = $request->get('hid');
-    
+
     // Other variables and initial setup...
-    
+
     // Fetch room data
     $roomsData = [];
-    
+
     if($checkin !=""  && $checkout !="") {
         $pgtype = 'withdate';
-        
+
         //   $start  =  date("H:i:s");
         $pgtype = 'withdate';
-      
+
        // $cityName = $request->get('cityName') ;
 
        $guests = 2; //Session()->get('guest');
@@ -9541,50 +9541,50 @@ public function hotel_room_desc(Request $request) {
 
 
        //new code start
-       $checkinDate = $checkin;         
-       $checkoutDate = $checkout;       
-       $adultsCount = 2; //$guests;              
-       $customerIP = '49.156.89.145'; 
-       $childrenCount = '1'; 
+       $checkinDate = $checkin;
+       $checkoutDate = $checkout;
+       $adultsCount = 2; //$guests;
+       $customerIP = '49.156.89.145';
+       $childrenCount = '1';
        $chid_age = '10';
-       $lang = 'en'; 
-       $currency ='USD'; 
-       $waitForResult ='0'; 
-       $iata=$hotelId; 
-       
-       $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-       $TRAVEL_PAYOUT_MARKER = "299178"; 
+       $lang = 'en';
+       $currency ='USD';
+       $waitForResult ='0';
+       $iata=$hotelId;
+
+       $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+       $TRAVEL_PAYOUT_MARKER = "299178";
 
 
 
-       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-       $checkinDate.":". 
+       $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+       $checkinDate.":".
        $checkoutDate.":".
-       $chid_age.":". 
-       $childrenCount.":". 
-       $currency.":". 
-       $customerIP.":". 
-       $iata.":".       
-       $lang.":". 
-       $waitForResult; 
+       $chid_age.":".
+       $childrenCount.":".
+       $currency.":".
+       $customerIP.":".
+       $iata.":".
+       $lang.":".
+       $waitForResult;
 
 
        $signature = md5($SignatureString);
        //  $signature = '3193e161e98200459185e43dd7802c2c';
 
-       $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+       $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
 
 
        $response = Http::withoutVerifying()->get($url);
 
        if ($response->successful()) {
-           
-       
+
+
        $data = json_decode($response);
            if(!empty($data)){
-           $searchId = $data->searchId;    
-           
+           $searchId = $data->searchId;
+
 
            $limit =10;
            $offset=0;
@@ -9593,23 +9593,23 @@ public function hotel_room_desc(Request $request) {
            $sortBy='price';
 
            $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-               $sig2 =  md5($SignatureString2);    
+               $sig2 =  md5($SignatureString2);
 
            $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=10&sortBy=price&sortAsc=1&roomsCount=10&offset=0&marker=299178&signature='.$sig2;
        // $response2 = Http::withoutVerifying()->get($url2);
-               
+
            $maxAttempts = 4;
            $retryInterval = 1; // seconds
            $response2 = Http::withoutVerifying()
            ->timeout(0) // Maximum time for an individual request
            ->retry($maxAttempts, $retryInterval)
-           ->get($url2);   
+           ->get($url2);
            $jsonResponse = json_decode($response2, true);
-           
+
            //new code 1
            if ($jsonResponse['status'] == 'ok') {
-        
-           
+
+
                $hotels = $jsonResponse['result'];
                $rooms = [];
                $roomsData = [];
@@ -9647,61 +9647,61 @@ public function hotel_room_desc(Request $request) {
     ]);
 }
 //filter hotel room detail page
-	
+
 
    public function filter_hotel_room(Request $request)
     {
         $value = $request->get('value'); // Example: ['breakfast', 'deposit']
         $hotelid = $request->get('hotelid');
-    
+
         // Retrieve the rooms for the specified hotel
         $rooms = DB::table('TPRoomtype')
             ->where('hotelid', $hotelid)
             ->get();
-    
+
         // Retrieve the hotel data
         $hotel = DB::table('TPHotel')
             ->select('photosByRoomType', 'hotelid', 'photoCount')
             ->where('hotelid', $hotelid)
             ->get();
-    
+
         // Decode room descriptions
         $roomDesc = json_decode($rooms[0]->Roomdesc, true);
-    
+
         $updatedRoomDescJson = []; // Initialize the array to store filtered room data
-    
+
         if (!empty($value)) {
             foreach ($roomDesc as $key => $desc) {
-                $includeRoom = true; 
-    
+                $includeRoom = true;
+
                 foreach ($value as $filterValue) {
                     // Check if each filter value is set and true in the description
                     if (isset($desc[$filterValue]) && $desc[$filterValue] == true) {
                         $updatedRoomDescJson[$key] = $desc;
                     }
                 }
-    
+
             }
-     
+
             $updatedRoomDescJson = json_encode($updatedRoomDescJson);
         } else {
             // If no filters provided, return all room descriptions
             $updatedRoomDescJson = json_encode($roomDesc);
         }
-    
+
         // Retrieve room types
         $getroomtype = collect();
         $photosByRoomType = json_decode($hotel[0]->photosByRoomType, true);
-    
+
         if (!empty($photosByRoomType)) {
             $roomtyids = array_keys($photosByRoomType);
-    
+
             $getroomtype = DB::table('TPRoom_types')
                 ->select('rid', 'type')
                 ->whereIn('rid', $roomtyids)
                 ->get();
         }
-   
+
         // Return the view with the filtered room data
         return view('frontend.hotel.filter_room_result', [
             'TPRoomtype' => $rooms,
@@ -9713,7 +9713,7 @@ public function hotel_room_desc(Request $request) {
 
 
 
-    
+
  public function filter_hotel_room_with_date(request $request){
          $value = $request->get('value');
 
@@ -9726,7 +9726,7 @@ public function hotel_room_desc(Request $request) {
          ->select('photosByRoomType','hotelid','photoCount')
          ->where('hotelid',$hotelid)
          ->get();
-      
+
          $roomsprice = [];
 
          $roomsData = [];
@@ -9737,8 +9737,8 @@ public function hotel_room_desc(Request $request) {
             if($checkin !=""  &&   $checkout !=""){
 
             $pgtype = 'withdate';
-        
-          
+
+
 
             $guests = 2; //Session()->get('guest');
             $rooms = 1;//Session()->get('rooms');
@@ -9752,38 +9752,38 @@ public function hotel_room_desc(Request $request) {
             $checkin =  $checkin;
 
             //new code start
-            $checkinDate = $checkin;         
-            $checkoutDate = $checkout;       
-            $adultsCount = 2; //$guests;              
-            $customerIP = '49.156.89.145'; 
-            $childrenCount = '1'; 
+            $checkinDate = $checkin;
+            $checkoutDate = $checkout;
+            $adultsCount = 2; //$guests;
+            $customerIP = '49.156.89.145';
+            $childrenCount = '1';
             $chid_age = '10';
-            $lang = 'en'; 
-            $currency ='USD'; 
-            $waitForResult ='0'; 
-            $iata=$hotelid; 
-            
-            $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869"; 
-            $TRAVEL_PAYOUT_MARKER = "299178"; 
+            $lang = 'en';
+            $currency ='USD';
+            $waitForResult ='0';
+            $iata=$hotelid;
+
+            $TRAVEL_PAYOUT_TOKEN = "27bde6e1d4b86710997b1fd75be0d869";
+            $TRAVEL_PAYOUT_MARKER = "299178";
 
 
 
-            $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":". 
-            $checkinDate.":". 
+            $SignatureString = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$adultsCount.":".
+            $checkinDate.":".
             $checkoutDate.":".
-            $chid_age.":". 
-            $childrenCount.":". 
-            $currency.":". 
-            $customerIP.":". 
-            $iata.":".       
-            $lang.":". 
-            $waitForResult; 
+            $chid_age.":".
+            $childrenCount.":".
+            $currency.":".
+            $customerIP.":".
+            $iata.":".
+            $lang.":".
+            $waitForResult;
 
 
             $signature = md5($SignatureString);
             //  $signature = '3193e161e98200459185e43dd7802c2c';
 
-            $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;   
+            $url ='http://engine.hotellook.com/api/v2/search/start.json?hotelId='.$iata.'&checkIn='. $checkinDate.'&checkOut='.$checkoutDate.'&adultsCount='.$adultsCount.'&customerIP='.$customerIP.'&childrenCount='.$childrenCount.'&childAge1='.$chid_age.'&lang='.$lang.'&currency='.$currency.'&waitForResult='.$waitForResult.'&marker=299178&signature='.$signature;
 
 
 
@@ -9792,8 +9792,8 @@ public function hotel_room_desc(Request $request) {
             if ($response->successful()) {
                $data = json_decode($response);
                 if(!empty($data)){
-                $searchId = $data->searchId;    
-                
+                $searchId = $data->searchId;
+
 
                 $limit =10;
                 $offset=0;
@@ -9802,39 +9802,39 @@ public function hotel_room_desc(Request $request) {
                 $sortBy='price';
 
                 $SignatureString2 = "". $TRAVEL_PAYOUT_TOKEN .":".$TRAVEL_PAYOUT_MARKER.":".$limit.":".$offset.":".$roomsCount.":".$searchId.":".$sortAsc.":".$sortBy;
-                $sig2 =  md5($SignatureString2);    
+                $sig2 =  md5($SignatureString2);
 
                 $url2 = 'http://engine.hotellook.com/api/v2/search/getResult.json?searchId='.$searchId.'&limit=10&sortBy=price&sortAsc=1&roomsCount=10&offset=0&marker=299178&signature='.$sig2;
             // $response2 = Http::withoutVerifying()->get($url2);
-                    
+
                 $maxAttempts = 4;
                 $retryInterval = 1; // seconds
                 $response2 = Http::withoutVerifying()
                 ->timeout(0) // Maximum time for an individual request
                 ->retry($maxAttempts, $retryInterval)
-                ->get($url2);   
+                ->get($url2);
                 $jsonResponse = json_decode($response2, true);
-                
+
                 //new code 1
-              
-                if ($jsonResponse['status'] == 'ok') {                
+
+                if ($jsonResponse['status'] == 'ok') {
                     $hotels = $jsonResponse['result'];
                     $roomsdsc = [];
-            
-                    
+
+
                     //new code
                     foreach ($hotels as $hotel) {
                         if (isset($hotel['rooms']) && is_array($hotel['rooms'])) {
                             foreach ($hotel['rooms'] as $room) {
                                 $includeRoom = false;
-                    
+
                                 foreach ($value as $values) {
                                     if (isset($room['options'][$values]) && $room['options'][$values] === true) {
                                         $includeRoom = true;
                                         break; // Exit the innermost foreach loop once a match is found
                                     }
                                 }
-                    
+
                                 if ($includeRoom) {
                                     $roomsdsc[] = [
                                         'options' => $room['options'],
@@ -9845,7 +9845,7 @@ public function hotel_room_desc(Request $request) {
                                         'agencyId' => $room['agencyId'],
                                         'agencyName' => $room['agencyName'],
                                     ];
-                    
+
                                     $roomName = $room['desc'];
                                     $amenities = $room['options'];
                                     $roomsData[$roomName] = $amenities;
@@ -9858,115 +9858,115 @@ public function hotel_room_desc(Request $request) {
                             }
                         }
                     }
-                    
+
 
                     //end new code
-                  
-              
+
+
         //end dd
-           
-        }   
+
+        }
 
      //end new code
-         
+
      if (isset($jsonResponse['errorCode']) && $jsonResponse['errorCode'] === 4) {
          $jsonResponse['data_status'] = 4;
           return   $jsonResponse;
-     } 
-   
+     }
+
         //return val
-   
+
      }else{
          return 'search id not found';
      }
-                  
+
  }
-    
+
 }
 
 
-        //end 
+        //end
 
 //start code
        $rooms = DB::table('TPRoomtype')
            ->where('hotelid',$hotelid)
-           ->get();   
+           ->get();
 
         $Roomdesc =  $rooms[0]->Roomdesc;
-     
+
         $roomsData = [];
         $roomDesc = json_decode($rooms[0]->Roomdesc, true);
         if(!empty($value)){
           //  foreach ($rooms as $room) {
-              
-        
+
+
                 foreach ($roomDesc as $key => $desc) {
                     $includeRoom = true;
-        
+
                     foreach ($value as $values) {
                         // Check if each value is set and true in the description
                         if (isset($desc[$values]) && $desc[$values] == true) {
-                            $roomsData[$key] = $desc;                    
+                            $roomsData[$key] = $desc;
                         }else{
                             $includeRoom = false;
-                            break; 
+                            break;
                         }
                     }
-        
+
                     if ($includeRoom) {
                         $roomsData[$key] = $desc;
                     }
                 }
                 // return $roomsData;
-           
+
         }else{
             $roomsData =  $roomDesc;
         }
 
-       
-    
 
-  
-        
 
-       //end 
+
+
+
+
+       //end
        $getroomtype = collect();
        $photosByRoomType = json_decode($hoteldata[0]->photosByRoomType, true);
-   
+
           if (!empty($photosByRoomType)) {
               foreach ($photosByRoomType as $key => $value) {
                   $roomtyids[] = $key;
               }
-   
+
               $getroomtype = DB::table('TPRoom_types')->select('rid','type')->whereIn('rid', $roomtyids)->get();
-          
+
 
            }
 
         //   return print_r($roomsprice);
        //end code
-    
+
       return  view('frontend.hotel.filter_room_with_date',['TPRoomtype'=> $rooms,'searchresult'=>$hoteldata,'getroomtype'=>$getroomtype,'roomsdsc'=>$roomsData,'roomsprice'=>$roomsprice]);
-        
+
     }
 
 //end filter hotel room
    public function view_hotel_all_images(request $request){
         $hotid = $request->get('hotelid');
-        $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ; 
+        $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ;
         $response = Http::withoutVerifying()->get($url);
-        $images = $response->json(); 
+        $images = $response->json();
         return  view('hotel_detail_data.hoteldetail_view_all_images')->with('images',$images)->with('hotelid',$hotid);
     }
-    public function gethotel_galary_image(request $request){      
+    public function gethotel_galary_image(request $request){
         $hotid = $request->get('hotelid');
-        $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ; 
+        $url = 'https://yasen.hotellook.com/photos/hotel_photos?id='.$hotid ;
         $response = Http::withoutVerifying()->get($url);
-        $images = $response->json();  
+        $images = $response->json();
         return  view('hotel_detail_data.hotel_galary_image')->with('images',$images)->with('hotelid',$hotid);
     }
-	
-	
+
+
     public function hotel_detail_nearby_city_and_sights(request $request){
 
         $location_id = $request->get('locationid');
@@ -9978,25 +9978,25 @@ public function hotel_room_desc(Request $request) {
         $hid = $request->get('hid');
         $getlocation =  DB::table('Location')->select('Lat','Longitude')->where('slugid',$location_slugid)->get();
         $lat ="";
-        
-     
 
-        $searchradius = 100; 
-        $nearby_city = collect(); 
-		$nearby_Sight  = collect(); 
+
+
+        $searchradius = 100;
+        $nearby_city = collect();
+		$nearby_Sight  = collect();
 	    $city_hotel_count = [];
 		$sight_hotel_count = [];
 		$sight_hotel_count_grouped = [];
 		$sight_hotelcount  = null;
         if(!$getlocation->isEmpty() ){
             $latitude = $getlocation[0]->Lat;
-            $longitude = $getlocation[0]->Longitude;     
+            $longitude = $getlocation[0]->Longitude;
             if ($latitude != "" && $longitude != "") {
                 $nearby_city = DB::table("Location")
                     ->join('Temp_Mapping as t', 'Location.slugid', '=', 't.slugid')
                     ->select(
-                        'Location.LocationId', 
-                        'Location.Name', 
+                        'Location.LocationId',
+                        'Location.Name',
                         't.LocationId as locid','t.slugid','t.slug',
                         DB::raw("6371 * acos(cos(radians(" . $latitude . "))
                             * cos(radians(Location.Lat))
@@ -10005,14 +10005,14 @@ public function hotel_room_desc(Request $request) {
                             * sin(radians(Location.Lat))) AS distance")
                     )
                     ->having('distance', '<=', $searchradius)
-                    ->where('Location.slugid', '!=', $location_slugid) 
+                    ->where('Location.slugid', '!=', $location_slugid)
                     ->orderBy('distance')
                     ->limit(10)
                     ->get();
-          
+
 
             if (!$nearby_city->isEmpty()) {
-              
+
                 foreach ($nearby_city as $value) {
                     $hotel_count = DB::table('TPHotel')->where('location_id', $value->locid)->count();
                     $city_hotel_count[] = [
@@ -10021,17 +10021,17 @@ public function hotel_room_desc(Request $request) {
                         'slug'=>'ho-'.$value->slugid.'-'.$value->slug,
 
                     ];
-                }  
+                }
             }
- 
+
             //get location
-            $searchradius =50; 
+            $searchradius =50;
             $nearby_Sight = DB::table("Sight")
                 ->join('Temp_Mapping as t', 'Sight.LocationId', '=', 't.tid')
                 ->join('Category as c', 'c.CategoryId', '=', 'Sight.CategoryId')
                 ->select(
-                    'Sight.LocationId', 
-                    'Sight.Title','t.slugid','t.slug', 
+                    'Sight.LocationId',
+                    'Sight.Title','t.slugid','t.slug',
                     't.LocationId as locid', 'c.Title as ctitle','Sight.Latitude','Sight.Longitude',
                     DB::raw("6371 * acos(cos(radians(" . $latitude . "))
                         * cos(radians(Sight.Latitude))
@@ -10040,17 +10040,17 @@ public function hotel_room_desc(Request $request) {
                         * sin(radians(Sight.Latitude))) AS distance")
                 )
                 ->having('distance', '<=', $searchradius)
-                ->orWhere('Sight.IsMustSee', '=', 1) 
-            
+                ->orWhere('Sight.IsMustSee', '=', 1)
+
                 ->orderBy('distance')
                 ->limit(10)
                 ->get();
-     
+
 		  }
 
- 		
+
         if (!$nearby_Sight->isEmpty()) {
-           
+
             foreach ($nearby_Sight as $val) {
                 $slat = $val->Latitude;
                 $slongitude = $val->Longitude;
@@ -10064,108 +10064,108 @@ public function hotel_room_desc(Request $request) {
                     * sin(radians(h.Latitude))) AS distance"))
                 ->having('distance', '<=', $searchradius)
                 ->count();
-        
+
             $sight_hotel_count[] = [
-                'category' => $val->ctitle,  
+                'category' => $val->ctitle,
                 'Title' => $val->Title,
                 'hotelcount' => $sight_hotelcount,
                 'slug'=>'ho-'.$val->slugid.'-'.$val->slug,
             ];
-            }  
+            }
 
-           
+
             foreach ($sight_hotel_count as $sightval) {
                 $sight_hotel_count_grouped[$sightval['category']][] = $sightval;
             }
 
 
         }
-       
-          
-        } 
 
-    
+
+        }
+
+
        return view('frontend.hotel.where_to_stay',['sight_hotel_count'=>$sight_hotel_count,'city_hotel_count'=>$city_hotel_count,'sight_hotel_count_grouped'=>$sight_hotel_count_grouped,'hname'=>$hname]);
-     
+
 
     }
-	
-    public function stays() 
-    {         
-		
+
+    public function stays()
+    {
+
           $searchresults = DB::table('UniqueHotel as TPHotel')
           ->leftJoin('TPHotel_types as ty', 'ty.hid', '=', 'TPHotel.propertyType')
           ->select('TPHotel.hotelid', 'TPHotel.id', 'TPHotel.name', 'TPHotel.slug', 'TPHotel.stars', 'TPHotel.pricefrom', 'TPHotel.rating', 'TPHotel.amenities', 'TPHotel.distance', 'TPHotel.image', 'ty.type as propertyType','TPHotel.slugid','TPHotel.CityName as cityName','TPHotel.room_aminities')
-		 ->whereNotNull('TPHotel.slugid')  
-         // ->where('TPHotel.stars',5)    
-        //  ->limit(8)	   
+		 ->whereNotNull('TPHotel.slugid')
+         // ->where('TPHotel.stars',5)
+        //  ->limit(8)
            ->get();
-   
+
          $locationIds = "";
          $hotels ="";
          $citiesWithHotels="";
-     
-    
-         
-          // Inspect the data
-   
-         
-  
-        $type = "hotel";
-        return view('stays')->with('searchresults',$searchresults)->with('citiesWithHotels',$citiesWithHotels)->with('locationIds',$locationIds);    
-    } 
-    public function stayslocdata(request $request) 
-    {         
 
-        
-        $locationIds = [ 786371, 740257, 750174, 682061,  837452, 697010, 820094, 
+
+
+          // Inspect the data
+
+
+
+        $type = "hotel";
+        return view('stays')->with('searchresults',$searchresults)->with('citiesWithHotels',$citiesWithHotels)->with('locationIds',$locationIds);
+    }
+    public function stayslocdata(request $request)
+    {
+
+
+        $locationIds = [ 786371, 740257, 750174, 682061,  837452, 697010, 820094,
           665939, 840749, 797023, 683796, 763119, 845571,837009,668729
        ];
-		
-	
-          $cities = DB::table(DB::raw('(SELECT DISTINCT l.Name, l.slugid, l.Slug, l.LocationId 
+
+
+          $cities = DB::table(DB::raw('(SELECT DISTINCT l.Name, l.slugid, l.Slug, l.LocationId
             FROM Location as l
             JOIN TPHotel as h ON h.slugid = l.slugid) AS subquery'))
             ->select('subquery.Name', 'subquery.slugid', 'subquery.Slug')
-              ->whereIn('subquery.LocationId', $locationIds)  
-            ->get();   
-           
+              ->whereIn('subquery.LocationId', $locationIds)
+            ->get();
+
             $locationIds = $cities->pluck('slugid');
 		     $hotels = DB::table('TPHotel')
            ->select('name', 'slug', 'pricefrom', 'slugid', 'id')
             ->whereIn('slugid', $locationIds)
             ->get();
-          
-   
+
+
         $citiesWithHotels = $cities->map(function($city) use ($hotels) {
             $city->hotels = $hotels->filter(function($hotel) use ($city) {
                 return $hotel->slugid == $city->slugid;
-            })->take(10); 
+            })->take(10);
 
             return $city;
-        });		
-		 
-        return view('stays_location_data')->with('citiesWithHotels',$citiesWithHotels);    
-    } 
-	
-	
+        });
+
+        return view('stays_location_data')->with('citiesWithHotels',$citiesWithHotels);
+    }
+
+
 
     //sight listing search
-    
+
     public function searchsightlisting(Request $request)
-    {          
-        if ($request->has('val')) {     
+    {
+        if ($request->has('val')) {
             $searchText = $request->input('val');
             $locId = $request->input('locId');
-           
-            
+
+
             $type = 'attraction';
-            $result = DB::table('Sight')                 
+            $result = DB::table('Sight')
                 ->where('Sight.LocationId', $locId)
                 ->where(function ($query) use ($searchText) {
                     $query->where('Sight.Title', 'LIKE', $searchText . '%');
                 })
-                ->select('Sight.SightId as id', 'Sight.Title as displayname')           
+                ->select('Sight.SightId as id', 'Sight.Title as displayname')
                 ->limit(5)
                 ->get();
             if(empty($result) && $searchText =="must see"){
@@ -10174,16 +10174,16 @@ public function hotel_room_desc(Request $request) {
                     'displayname' =>"Must See",
                     'type' => "Category"
                 ];
-            }  
+            }
             if ($result->isEmpty()) {
                 $type = 'Category';
                 $result = DB::table('Sight')
                     ->leftJoin('Category', 'Sight.categoryId', '=', 'Category.categoryId')
-                    ->join('Location', 'Location.LocationId', '=', 'Sight.LocationId')						
+                    ->join('Location', 'Location.LocationId', '=', 'Sight.LocationId')
                     ->where('Sight.LocationId', $locId)
                     ->where(function ($query) use ($searchText) {
                         $query->where('Category.Title', 'LIKE', $searchText . '%');
-                    })		
+                    })
 				    ->distinct()
                     ->select('Category.categoryId as id', 'Category.Title as displayname')
                     ->limit(5)
@@ -10192,50 +10192,50 @@ public function hotel_room_desc(Request $request) {
     //  return print_r($result);
             if ($result->isEmpty()) {
                 $type = 'Restaurant';
-                $result = DB::table('Restaurant as r')      
-                ->join('Location','Location.slugid','=','r.slugid')	    
+                $result = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
                 ->where('Location.LocationId', $locId)
                ->where(function ($query) use ($searchText) {
-                     $query->where('r.Title', 'LIKE','%'. $searchText . '%') ;               
+                     $query->where('r.Title', 'LIKE','%'. $searchText . '%') ;
                 })
 			    ->distinct()
                 ->select('r.RestaurantId  as id','r.Title as displayname')
                 ->limit(5)
-                ->get();             
-              
-            }    
+                ->get();
+
+            }
             if ($result->isEmpty()) {
                 $type = 'Restaurant';
-                $result = DB::table('Restaurant as r')      
-                ->join('Location','Location.slugid','=','r.slugid')	    
+                $result = DB::table('Restaurant as r')
+                ->join('Location','Location.slugid','=','r.slugid')
                 ->where('Location.LocationId', $locId)
                ->where(function ($query) use ($searchText) {
-                     $query->where('r.About', 'LIKE','%'. $searchText . '%') ;               
+                     $query->where('r.About', 'LIKE','%'. $searchText . '%') ;
                 })
                 ->select('r.RestaurantId  as id','r.Title as displayname')
                 ->limit(5)
-                ->get();             
-              
-            }    
+                ->get();
+
+            }
             if ($result->isEmpty()) {
                 $type = 'Restaurant';
-                $result = DB::table('Restaurant as r')      
-                    ->join('Location', 'Location.slugid', '=', 'r.slugid')	  
+                $result = DB::table('Restaurant as r')
+                    ->join('Location', 'Location.slugid', '=', 'r.slugid')
                     ->join('RestaurantCuisineAssociation as ra', 'ra.RestaurantId', '=', 'r.RestaurantId')
-                    ->join('RestaurantCuisine as rc', 'ra.RestaurantCuisineId', '=', 'rc.RestaurantCuisineId')  
+                    ->join('RestaurantCuisine as rc', 'ra.RestaurantCuisineId', '=', 'rc.RestaurantCuisineId')
                     ->where('Location.LocationId', $locId)
                     ->where(function ($query) use ($searchText) {
-                        $query->where('rc.Name', 'LIKE', '%' . $searchText . '%');               
+                        $query->where('rc.Name', 'LIKE', '%' . $searchText . '%');
                     })
                     ->select('r.RestaurantId as id', 'r.Title as displayname')
                     ->limit(5)
-                    ->get();             
+                    ->get();
             }
-            
 
-            
+
+
             $response = [];
-    
+
             if (!$result->isEmpty()) {
                 foreach ($result as $loc) {
                     $response[] = [
@@ -10245,7 +10245,7 @@ public function hotel_room_desc(Request $request) {
                     ];
                 }
             } elseif ($searchText == "must see") {
-              
+
                 $response[] = [
                     'id' => '1',
                     'value' => "Must See",
@@ -10254,27 +10254,27 @@ public function hotel_room_desc(Request $request) {
             } else {
                 $response[] = ['value' => "Result not found"];
             }
-    
+
             return response()->json($response);
         }
-    
+
         // Optionally, return an empty response if no 'val' is provided
        // return response()->json([]);
     }
-    
+
     public function sightlistinghistory(Request $request)
-    {           
-        $recentSearches = session()->get('recent_sightlist_searches', []);               
-                  
-       
-          
+    {
+        $recentSearches = session()->get('recent_sightlist_searches', []);
+
+
+
             $recentSearches = array_unique($recentSearches, SORT_REGULAR);
-            $recentSearches = array_slice($recentSearches, 0, 4);          
+            $recentSearches = array_slice($recentSearches, 0, 4);
             session(['recent_sightlist_searches' => $recentSearches]);
-            $response = [];    
-       
+            $response = [];
+
         if (Session::has('recent_sightlist_searches')) {
-            $recentSearches = session('recent_sightlist_searches');            
+            $recentSearches = session('recent_sightlist_searches');
             foreach ($recentSearches as $value) {
                 $response[] = [
                     'id' => $value['locationId'],
@@ -10283,7 +10283,7 @@ public function hotel_room_desc(Request $request) {
                 ];
             }
         }else{
-          
+
                 $response[] = [
                     'id' => '',
                     'value' => 'Restaurant',
@@ -10292,15 +10292,15 @@ public function hotel_room_desc(Request $request) {
                     'value' => 'Experience',
                     'type' => '',
                 ];
-          
+
         }
-      
+
         return response()->json($response);
     }
-    
+
 
     //end sight listing search
-	
+
         public function filterReviews(Request $request)
     {
         $filter = $request->input('filter');
@@ -10316,7 +10316,7 @@ public function hotel_room_desc(Request $request) {
             ->where('IsRecommend',$rcmd)->where('SightId',$sightId)
             ->get();
         //    return  print_r($reviews);
-    
+
         return view('explore_results.filtered_reviews',['sightreviews'=>$reviews]);
     }
 }
