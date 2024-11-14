@@ -1,0 +1,233 @@
+.asalah_post_option_item.option-item {
+    margin: 8px 0 10px;
+    border-bottom: 1px solid #F2F2F2;
+    padding: 8px 0 14px;
+}
+.asalah_post_option_item.option-item .label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    margin-left: 2px;
+    width: 150px;
+    float: left;
+    margin-top: 2px;
+    margin-right: 10px;
+}
+.asalah_post_option_item input[type="text"] {
+    color: #777;
+    border: none;
+    border: solid 1px #e2e2e2;
+    background: white;
+    font: 13px/22px 'Merriweather', Georgia, serif;
+    width: 400px;
+    max-width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-appearance: none;
+    display: block;
+    height: 36px;
+    box-shadow: none;
+}
+.asalah_post_option_item input[type="text"].input-upload {
+    width: 300px;
+    float: left;
+    margin-right: 8px;
+}
+
+.asalah_post_option_item .aq_upload_button {
+    width: 90px;
+    height: 37px;
+    line-height: 35px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 0;
+    border-color: #D8D8D8;
+    box-shadow: none;
+}
+
+.asalah_post_option_item .wp-picker-container input[type=text].wp-color-picker {
+    height: 24px;
+    float: left;
+}
+
+ .button.wp-picker-clear {
+    float: right;
+ }
+.asalah_post_option_item textarea {
+    color: #777;
+    border: none;
+    border: solid 1px #EEE;
+    border-bottom: solid 1px #DDD;
+    background: white;
+    font: 13px/22px 'Merriweather', Georgia, serif;
+    width: 100%;
+    padding: 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-appearance: none;
+    display: block;
+    height: 150px;
+}
+.asalah_post_option_item select {
+    width: 400px;
+    max-width: 100%;
+    color: #777;
+    border: 0;
+    height: 36px;
+    border: 1px #E2E2E2 solid;
+    box-shadow: none;
+}
+
+.ratenotice {
+	text-align:center;
+	padding: 90px 55px!important;
+}
+
+.ratenotice h1 {
+	font-size: 28px!important;
+	font-weight: 800!important;
+	line-height: 43px!important;
+	text-transform: uppercase;
+	text-align: center;
+	color: #00afd1;
+}
+
+.ratenotice h2 {
+font-size: 28px!important;
+font-weight: 800!important;
+line-height: 43px!important;
+text-transform: uppercase;
+text-align: center;
+color: #555555;
+
+}
+
+.starsrating {
+}
+
+.ratinglink {
+	text-align: center;
+	clear: both;
+	display: block;
+	font-size: 23px;
+	margin-top: 16px;
+}
+
+#message2 {
+text-align: center;
+padding-bottom: 12px;
+}
+
+.col-md-2 {
+  width: 49%;
+  text-align: center;
+  display: inline-block;
+}
+
+.sanabel-update h1 {
+  font-size: 35px !important;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight: 600;
+}
+
+.sanabel-update ul {
+  font-size: 15px;
+  line-height: 20px;
+  padding-left: 15px;
+}
+
+.sanabel-update h2 .col-md-2 {
+  line-height: 25px;
+}
+.sanabel-update h2 {
+  padding: 0;
+  margin: 15px 0px;
+}
+
+.sanabel-update a.notice-dismiss, .error  a.notice-dismiss {
+  text-decoration: none;
+}
+
+.sanabel-update a.notice-dismiss:before, .error  a.notice-dismiss:before {
+  font-size: 20px;
+}
+
+.sanabel-update {
+  padding: 10px 15px !important;
+}
+.wp-editor-container textarea.wp-editor-area {
+  font-family: 'Lora', serif;
+  font-size: 16px;
+  line-height: 29px;
+}
+
+.editor-post-title {
+  font-size: 23px;
+  margin: 0.67em 0;
+  margin-top: 0;
+  margin-bottom: 2px;
+  letter-spacing: 0.8px;
+  line-height: 32px;
+  color: #000;
+}
+/*
+.editor-block-list__layout {
+  font-size: 16px;
+    line-height: 29px;
+    margin-top: 14px;
+}
+.post-type-page .editor-post-title__block {
+  border: 1px solid #eee;
+    border-radius: 30px;
+    margin-bottom: 50px;
+}
+.post-type-page .editor-post-title__block > div {
+  max-width: 870px;
+  display: inline-block;
+}
+.post-type-page .editor-styles-wrapper .editor-post-title__input {
+    border: none;
+    padding: 8px 20px;
+    background-color: #f2f2f2;
+    border-radius: 30px;
+    margin: 3px;
+    padding: 8px 20px;
+    font-size: 17px !important;
+    float: left;
+}
+.post-type-page .editor-block-list__layout > .wp-block {
+	color: #222;
+	font-family: 'Lora', serif;
+	margin: auto;
+	max-width: 870px;
+	font-size: 16px;
+	line-height: 29px;
+	font-weight: 400;
+	vertical-align: baseline;
+} */
+
+body.block-editor-page .hidden_gutenberg_editor {
+	display: none;
+}
+
+a.notice-dismiss {
+	text-decoration: none;
+}
+
+.notice.sanabel-update button.notice-dismiss,
+.notice.hidden_gutenberg_editor button.notice-dismiss {
+	display: none;
+}
+
+.sanabel-update .col-md-2 {
+	float: unset !important;
+}

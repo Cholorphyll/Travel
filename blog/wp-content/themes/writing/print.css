@@ -1,0 +1,25 @@
+/*---- style single post print -----*/
+@media print {
+.info_sidebar, .footer_wrapper, .comment-respond, .top_menu_wrapper, .post_related, .post_navigation, .blog_post_control,.header_info_wrapper, .side_content {
+  display: none;
+}
+
+.logo_wrapper {
+  width: 100%;
+}
+
+.container {
+  width: 90%;
+  padding: 0;
+  
+}
+
+.site_content {
+  margin:35px 0;
+  padding:0;
+}
+
+.site_content p, .site_content span {
+  font-size: 15px !important; 
+}
+}

@@ -1,0 +1,77 @@
+# Translation of Plugins - External Links in New Window / New Tab - Stable (latest release) in Chinese (Taiwan)
+# This file is distributed under the same license as the Plugins - External Links in New Window / New Tab - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2022-11-30 21:08:12+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: GlotPress/4.0.0-alpha.3\n"
+"Language: zh_TW\n"
+"Project-Id-Version: Plugins - External Links in New Window / New Tab - Stable (latest release)\n"
+
+#: open-external-links-in-a-new-window.php:176
+msgid "Settings"
+msgstr "設定"
+
+#: open-external-links-in-a-new-window.php:164
+msgid "http:// or https://"
+msgstr "http:// 或 https://"
+
+#: open-external-links-in-a-new-window.php:163
+msgid "Forced, matching URLs"
+msgstr "強制符合條件的連結"
+
+#: open-external-links-in-a-new-window.php:162
+msgid "Ignored, matching URLs"
+msgstr "忽略符合條件的連結"
+
+#: open-external-links-in-a-new-window.php:160
+msgid "The matches are prioritized in the following order:"
+msgstr "符合規則的項目會依照以下順序設定優先權:"
+
+#: open-external-links-in-a-new-window.php:149
+msgid "Ignore links, and do not open them in a new window, if they match this JS regular expression: (even if they start with http:// or https://)"
+msgstr "如果連結符合 JS 規則運算式便忽略連結，且不在新視窗/新分頁中開啟連結 (即使連結開頭為 http:// 或 https://):"
+
+#: open-external-links-in-a-new-window.php:146
+msgid "Force links to open in a new window if they match this JS regular expression:"
+msgstr "如果連結符合 JS 規則運算式，便強制在新視窗/新分頁中開啟連結:"
+
+#: open-external-links-in-a-new-window.php:142
+msgid "You can change this behavior by providing regular expressions that either forces or ignores whether the link should open in a new window."
+msgstr "外部連結預設會在新視窗/新分頁中開啟，網站管理員可以使用能強制或忽略這個行為的規則運算式進行變更。"
+
+#: open-external-links-in-a-new-window.php:140
+msgid "By default, this plugins makes all external links (i.e. links that point outside the current host name) open in a new window/tab."
+msgstr "依照預設，這個外掛會讓全部外部連結 (例如指向目前網站之外的連結) 在新視窗/新分頁中開啟。"
+
+#: open-external-links-in-a-new-window.php:129
+msgid "External Links"
+msgstr "外部連結"
+
+#: open-external-links-in-a-new-window.php:129
+msgid "Open external links in a new window"
+msgstr "在新視窗中開啟外部連結"
+
+#. Author URI of the plugin
+msgid "https://www.webfactoryltd.com/"
+msgstr "https://www.webfactoryltd.com/"
+
+#. Author of the plugin
+msgid "WebFactory Ltd"
+msgstr "WebFactory Ltd"
+
+#. Description of the plugin
+msgid "Opens all external links in a new window. XHTML Strict compliant and search engine optimized (SEO)."
+msgstr "在新視窗中開啟全部外部連結。完全符合 XHTML 規範及搜尋引擎最佳化 (SEO)。"
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/extend/plugins/open-external-links-in-a-new-window/"
+msgstr "https://tw.wordpress.org/plugins/open-external-links-in-a-new-window/"
+
+#. Plugin Name of the plugin
+#: open-external-links-in-a-new-window.php:135
+msgid "Open External Links in a New Window"
+msgstr "Open External Links in a New Window"

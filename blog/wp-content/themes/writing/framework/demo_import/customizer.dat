@@ -1,0 +1,46 @@
+a:4:{s:8:"template";s:7:"writing";s:4:"mods";a:52:{i:0;b:0;s:23:"asalah_sidebar_position";s:4:"none";s:21:"asalah_footer_credits";s:50:"© 2015 Writing Designs, INC. All Rights Reserved.";s:12:"asalah_fb_id";s:16:"1028508873847234";s:14:"asalah_conk_id";s:25:"AJ3RDLsKS4V8qUbk5zMc9tO4E";s:14:"asalah_cons_id";s:50:"6m5i5k2cx3kg6idqmlnCqHJHXiyVNGasFevbcXR8O5VPvK2Lj9";s:12:"asalah_at_id";s:50:"17485558-XN9hpwOR7zZtLYurVgc8Hbx6gKNeZCNLkBGo34iIn";s:13:"asalah_ats_id";s:45:"euz9G70PbEDJOiexTiztYvvQLrqhqkbpR0gKjkSj8jGYM";s:19:"asalah_facebook_url";s:1:"#";s:18:"asalah_twitter_url";s:1:"#";s:22:"asalah_google-plus_url";s:1:"#";s:18:"asalah_behance_url";s:1:"#";s:19:"asalah_dribbble_url";s:1:"#";s:20:"asalah_instagram_url";s:1:"#";s:14:"asalah_rss_url";s:1:"#";s:18:"nav_menu_locations";a:2:{s:7:"primary";i:10;s:19:"asalah-primary-menu";i:10;}s:17:"asalah_blog_style";s:7:"banners";s:23:"asalah_pagination_style";s:3:"num";s:19:"asalah_default_logo";s:67:"https://ahmad.works/writing/wp-content/uploads/2018/02/logo_124.png";s:17:"asalah_main_color";s:7:"#f47e00";s:19:"asalah_hits_counter";s:2:"no";s:23:"asalah_enable_custom_js";s:0:"";s:21:"asalah_custom_js_code";s:390:"
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-43776399-4', 'auto');
+  ga('send', 'pageview');
+";s:21:"asalah_logo_font_size";s:1:"0";s:19:"asalah_h1_font_size";s:1:"0";s:17:"asalah_logo_width";s:3:"124";s:21:"asalah_main_font_size";s:1:"0";s:19:"asalah_h2_font_size";s:1:"0";s:21:"asalah_blog_font_size";s:1:"0";s:17:"asalah_site_width";s:3:"910";s:23:"asalah_after_the_kartha";s:4:"true";s:20:"asalah_theme_version";s:4:"2.61";s:25:"asalah_custom_header_code";s:0:"";s:21:"asalah_license_notice";b:1;s:23:"asalah_main_line_height";s:1:"0";s:33:"asalah_blog_description_font_size";s:1:"0";s:35:"asalah_blog_description_line_height";s:1:"0";s:18:"asalah_sticky_menu";s:3:"yes";s:25:"asalah_load_fonts_locally";s:3:"yes";s:24:"asalah_enable_custom_css";s:1:"1";s:22:"asalah_custom_css_code";s:818:".jr-insta-slider .jr-insta-thumb .thumbnails > li:nth-child(3n) {
+	margin-right: 0 !important;
+}
+
+
+.jr-insta-thumb ul.thumbnails li {
+    display: inline-block;
+    padding: 0;
+    margin: 0 2.5% 2.5% 0 !important;
+}
+
+.logo_wrapper {
+margin-top: 3px;
+}
+
+img.wp-image-159.size-full.alignright {
+max-width:280px;
+}
+
+main_content col-md-9 img.wp-image-159.size-full.alignright {
+max-width:250px;
+}
+@media (min-width: 768 px) {
+#third_footer_widget {
+padding-left: 0 !important;
+padding-right: 0 !important;
+}
+}
+.main_content.col-md-9 .blog_posts_wrapper.list_blog_style .blog_post {
+	padding-bottom: 30px;
+}
+
+.main_content.col-md-9 .blog_posts_wrapper.list_blog_style .blog_post_readmore,
+.main_content.col-md-9 .blog_posts_wrapper.list_blog_style .blog_post_share {
+	margin-bottom: 10px;
+	display: block;
+	width: 100%;
+}";s:24:"asalah_site_icon_version";b:1;s:26:"asalah_default_logo_retina";s:74:"https://ahmad.works/writing/wp-content/uploads/2018/02/logo_retina_248.png";s:18:"asalah_logo_height";s:2:"32";s:27:"asalah_content_width_layout";s:6:"narrow";s:18:"custom_css_post_id";i:-1;s:29:"asalah_lazyload_iframe_banner";s:1:"1";s:25:"asalah_image_optimization";s:3:"yes";s:27:"asalah_banners_devices_size";s:1:"1";s:28:"asalah_lazyload_image_banner";s:0:"";s:26:"asalah_js_conditional_load";s:1:"1";s:29:"asalah_fontawesome_icons_load";s:1:"1";}s:7:"options";a:3:{s:9:"site_icon";s:1:"0";s:14:"posts_per_page";s:2:"12";s:23:"nav_menus_created_posts";a:0:{}}s:6:"wp_css";s:0:"";}

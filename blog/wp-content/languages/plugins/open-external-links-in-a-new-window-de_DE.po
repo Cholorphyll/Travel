@@ -1,0 +1,77 @@
+# Translation of Plugins - External Links in New Window / New Tab - Stable (latest release) in German
+# This file is distributed under the same license as the Plugins - External Links in New Window / New Tab - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2021-01-31 19:01:40+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.0-alpha.3\n"
+"Language: de\n"
+"Project-Id-Version: Plugins - External Links in New Window / New Tab - Stable (latest release)\n"
+
+#: open-external-links-in-a-new-window.php:176
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: open-external-links-in-a-new-window.php:164
+msgid "http:// or https://"
+msgstr "http:// oder https://"
+
+#: open-external-links-in-a-new-window.php:163
+msgid "Forced, matching URLs"
+msgstr "Erzwungene übereinstimmende URLs"
+
+#: open-external-links-in-a-new-window.php:162
+msgid "Ignored, matching URLs"
+msgstr "Ignorierte übereinstimmende URLs"
+
+#: open-external-links-in-a-new-window.php:160
+msgid "The matches are prioritized in the following order:"
+msgstr "Die Übereinstimmungen werden in der folgenden Reihenfolge priorisiert:"
+
+#: open-external-links-in-a-new-window.php:149
+msgid "Ignore links, and do not open them in a new window, if they match this JS regular expression: (even if they start with http:// or https://)"
+msgstr "Ignoriere Verlinkungen und öffne sie nicht in einem neuen Fenster, wenn sie mit diesem regulären JS-Ausdruck übereinstimmen: (selbst wenn mit http:// oder https:// beginnend)"
+
+#: open-external-links-in-a-new-window.php:146
+msgid "Force links to open in a new window if they match this JS regular expression:"
+msgstr "Erzwinge das Öffnen von Verlinkungen in einem neuen Fenster, wenn sie mit diesem regulären JS-Ausdruck übereinstimmen:"
+
+#: open-external-links-in-a-new-window.php:142
+msgid "You can change this behavior by providing regular expressions that either forces or ignores whether the link should open in a new window."
+msgstr "Du kannst dieses Verhalten ändern, indem du reguläre Ausdrücke angibst, die das Öffnen einer Verlinkung im neuen Fenster entweder erzwingen oder verhindern."
+
+#: open-external-links-in-a-new-window.php:140
+msgid "By default, this plugins makes all external links (i.e. links that point outside the current host name) open in a new window/tab."
+msgstr "Standardmäßig bewirkt dieses Plugin das Öffnen aller externen Verlinkungen (das heißt Verlinkungen, die auf außerhalb der aktuellen Webseite zeigen) in einem neuen Fenster/Tab."
+
+#: open-external-links-in-a-new-window.php:129
+msgid "External Links"
+msgstr "Externe Verlinkungen"
+
+#: open-external-links-in-a-new-window.php:129
+msgid "Open external links in a new window"
+msgstr "Öffne externe Verlinkungen in einem neuen Fenster"
+
+#. Author URI of the plugin
+msgid "https://www.webfactoryltd.com/"
+msgstr "https://www.webfactoryltd.com/"
+
+#. Author of the plugin
+msgid "WebFactory Ltd"
+msgstr "WebFactory Ltd"
+
+#. Description of the plugin
+msgid "Opens all external links in a new window. XHTML Strict compliant and search engine optimized (SEO)."
+msgstr "Öffnet alle externen Verlinkungen in einem neuen Fenster. Streng XHTML-konform und suchmaschinenoptimiert (SEO)."
+
+#. Plugin URI of the plugin
+msgid "https://wordpress.org/extend/plugins/open-external-links-in-a-new-window/"
+msgstr "https://wordpress.org/extend/plugins/open-external-links-in-a-new-window/"
+
+#. Plugin Name of the plugin
+#: open-external-links-in-a-new-window.php:135
+msgid "Open External Links in a New Window"
+msgstr "Öffne externer Verlinkungen in einem neuen Fenster"

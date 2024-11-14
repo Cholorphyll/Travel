@@ -1,0 +1,74 @@
+
+---Downloaded files---
+The import files for: Writing were successfully downloaded!
+Initial max execution time = 30
+Files info:
+Site URL = https://www.yaan.co/blog
+Data file = /var/www/vhosts/yaan.co/httpdocs/blog/wp-content/themes/writing/framework/demo_import/writing.xml
+Widget file = /var/www/vhosts/yaan.co/httpdocs/blog/wp-content/themes/writing/framework/demo_import/widgets.wie
+Customizer file = /var/www/vhosts/yaan.co/httpdocs/blog/wp-content/themes/writing/framework/demo_import/customizer.dat
+Redux files:
+not defined!
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+------
+New AJAX call!
+
+
+---Importing widgets---
+Default sidebar : 
+
+Search - No Title - Widget already exists
+Recent Posts - No Title - Widget already exists
+Recent Comments - No Title - Widget already exists
+Archives - No Title - Widget already exists
+Categories - No Title - Widget already exists
+Meta - No Title - Widget already exists
+Categories - No Title - Imported
+Writing - Posts List - Recent Posts - Imported
+Tag Cloud - No Title - Imported
+Search - No Title - Imported
+
+Sliding Sidebar : 
+
+Search - No Title - Imported
+Writing - About Me - About Me - Imported
+Writing - Social Profiles - Social Profiles - Imported
+Writing - Posts List - Recent Posts - Imported
+Writing - Facebook Page - Facebook - Imported
+
+404 page sidebar : 
+
+Writing - Tweets - Latest Tweets - Imported
+Writing - Social Profiles - Follow Me - Imported
+
+Footer Widgets 1 : 
+
+Writing - About Me - About Me - Imported
+
+Footer Widgets 2 : 
+
+Writing - Tweets - Tweets - Imported
+
+Footer Widgets 3 : 
+
+Instagram Slider - Instagram Slider - Imported
+
+
+
+---Importing customizer settings---
+Customizer settings import finished!
+
+---ocdi/after_import---
+

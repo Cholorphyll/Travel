@@ -1,0 +1,1343 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Writing\n"
+"POT-Creation-Date: 2019-05-13 01:39+0000\n"
+"PO-Revision-Date: 2019-12-09 09:13+0000\n"
+"Last-Translator: heba <heba.f.fawzy@gmail.com>\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx;_nx:1,2\n"
+"X-Poedit-SearchPath-0: ..\n"
+"Report-Msgid-Bugs-To: \n"
+"X-Loco-Version: 2.2.1; wp-5.3"
+
+#: inc/customizer.php:1010
+msgid " Share"
+msgstr ""
+
+#: functions.php:698 inc/template-tags.php:78
+msgid "% Comments"
+msgstr "‎عدد التعليقات‫:‬ %"
+
+#: inc/postoptions.php:14
+#, php-format
+msgid "%s - Blog Template Options."
+msgstr ""
+
+#: inc/postoptions.php:17
+#, php-format
+msgid "%s - General Page Options."
+msgstr ""
+
+#: inc/postoptions.php:12
+#, php-format
+msgid "%s - Page Options."
+msgstr ""
+
+#: inc/postoptions.php:10
+#, php-format
+msgid "%s - Post Options."
+msgstr ""
+
+#: functions.php:698 inc/template-tags.php:78
+msgid "1 Comment"
+msgstr "‎تعليق ١"
+
+#: 404.php:14
+msgid "404"
+msgstr "٤٠٤"
+
+#: 404.php:28
+msgid "404 Page Sidebar"
+msgstr ""
+
+#: functions.php:275
+msgid "404 page sidebar"
+msgstr "‎القائمة الجانبية لصفحة خطأ ٤٠٤"
+
+#: inc/customizer.php:3339
+msgid "Above Title"
+msgstr ""
+
+#: inc/customizer.php:2150
+msgid "Add Custom CSS Code"
+msgstr ""
+
+#: inc/customizer.php:2184
+msgid "Add Custom JS Code"
+msgstr ""
+
+#: inc/customizer.php:2224
+msgid "Add Footer Content Code"
+msgstr ""
+
+#: inc/customizer.php:2207
+msgid "Add Header Content Code"
+msgstr ""
+
+#: inc/customizer.php:774
+msgid "Add Header/Footer Content"
+msgstr ""
+
+#: inc/customizer.php:3890
+msgid "After & Before Post Content"
+msgstr ""
+
+#: comments.php:30
+msgctxt "After comments number"
+msgid "On "
+msgstr ""
+
+#: inc/customizer.php:3888
+msgid "After Post Content"
+msgstr ""
+
+#. Author of the theme
+msgid "Ahmad Abou Hashem"
+msgstr ""
+
+#: inc/customizer.php:3069 inc/postoptions.php:309
+msgid "Ajax"
+msgstr ""
+
+#: inc/fonts.php:126
+msgid "All"
+msgstr ""
+
+#: inc/postoptions.php:337
+msgid "All Categories"
+msgstr ""
+
+#: inc/customizer.php:3760
+msgid "Always"
+msgstr ""
+
+#: inc/formats/boxes/format-audio.php:2
+msgid "Audio URL (oEmbed) or Embed Code"
+msgstr ""
+
+#: inc/customizer.php:3847
+msgid "Author"
+msgstr ""
+
+#: inc/customizer.php:4072
+msgid "Background Attachment"
+msgstr ""
+
+#: inc/customizer.php:779
+msgid "Background Image"
+msgstr ""
+
+#: inc/customizer.php:4054
+msgid "Background Position"
+msgstr ""
+
+#: inc/customizer.php:4035
+msgid "Background Repeat"
+msgstr ""
+
+#: inc/customizer.php:569
+msgid "Banner/Featured Image Settings"
+msgstr ""
+
+#: inc/customizer.php:3043 inc/postoptions.php:320
+msgid "Banners First"
+msgstr ""
+
+#: inc/customizer.php:3889
+msgid "Before Post Content"
+msgstr ""
+
+#: inc/customizer.php:1470
+msgid "Below Title"
+msgstr ""
+
+#: inc/customizer.php:1469
+msgid "Beside Title"
+msgstr ""
+
+#: inc/customizer.php:2726
+msgid "Blog Content Font Type"
+msgstr ""
+
+#: inc/customizer.php:2454
+msgid "Blog List Post Title Font Type"
+msgstr ""
+
+#. Name of the template
+msgid "Blog Page"
+msgstr ""
+
+#: index.php:5 page-templates/blog.php:14
+msgid "Blog Posts"
+msgstr ""
+
+#: inc/customizer.php:730
+msgid "Blog Posts Description Typography"
+msgstr ""
+
+#: inc/postoptions.php:313
+msgid "Blog Style"
+msgstr ""
+
+#: inc/customizer.php:706
+msgid "Blog Title Typography"
+msgstr ""
+
+#: comments.php:58 comments.php:79 comments.php:99
+msgid "Cancel Reply"
+msgstr "‎إلغاء الرد"
+
+#: inc/customizer.php:3845
+msgid "Categories"
+msgstr ""
+
+#: inc/customizer.php:665
+msgid "Categories Settings"
+msgstr ""
+
+#: inc/customizer.php:660
+msgid "Categories/Tags Settings"
+msgstr ""
+
+#: inc/postoptions.php:343
+msgid "Category"
+msgstr ""
+
+#: inc/customizer.php:4059
+msgid "Center"
+msgstr ""
+
+#: functions.php:1048
+msgid "Comment navigation"
+msgstr "‎تصفح التعليقات"
+
+#: comments.php:48
+msgid "Comments are closed."
+msgstr "‎التعليقات مغلقة"
+
+#: comments.php:16
+msgctxt "comments title"
+msgid "One Comment"
+msgstr "‎تعليق واحد"
+
+#: inc/customizer.php:2039
+msgid "Content Background Color"
+msgstr ""
+
+#: inc/customizer.php:581
+msgid "Content Settings"
+msgstr ""
+
+#: content.php:444 content-post-format.php:317
+msgid "Continue Reading"
+msgstr "‎أكمل القراءة"
+
+#: content.php:342
+#, php-format
+msgid "Continue reading %s"
+msgstr "‎أكمل قراءة %s"
+
+#: inc/customizer.php:3717
+msgid "Continue Reading Button Text"
+msgstr ""
+
+#: functions.php:2040
+msgid "Could not read image size"
+msgstr ""
+
+#: inc/customizer.php:1779
+msgid "Cover"
+msgstr ""
+
+#: inc/customizer.php:3217
+msgid "Crop Blog Banners in Blog List"
+msgstr ""
+
+#: inc/customizer.php:3238
+msgid "Crop Gallery Images in Blog List"
+msgstr ""
+
+#: inc/customizer.php:3259
+msgid "Crop Single Page Image"
+msgstr ""
+
+#: inc/postoptions.php:253
+msgid "Custom Description"
+msgstr ""
+
+#: inc/fonts.php:127
+msgid "Cyrillic"
+msgstr ""
+
+#: inc/fonts.php:128
+msgid "Cyrillic Extended"
+msgstr ""
+
+#: inc/customizer.php:1209 inc/fonts.php:18
+msgid "Default"
+msgstr ""
+
+#: inc/customizer.php:3042 inc/postoptions.php:319
+msgid "Default (Classic)"
+msgstr ""
+
+#: inc/customizer.php:3038
+msgid "Default Blog Style"
+msgstr ""
+
+#: functions.php:255
+msgid "Default sidebar"
+msgstr "‎القائمة الجانبية"
+
+#: inc/fonts.php:129
+msgid "Devanagari"
+msgstr ""
+
+#: inc/customizer.php:897
+msgid "Disable Theme's Facebook Scripts"
+msgstr ""
+
+#: inc/customizer.php:3598
+msgid "Disabled"
+msgstr ""
+
+#: functions.php:992 content.php:273 content-post-format.php:230
+#: inc/customizer.php:195
+msgid "Edit"
+msgstr "‎تعديل"
+
+#: comments.php:68 comments.php:89 comments.php:109
+msgid "Email"
+msgstr "‎البريد الإلكتروني"
+
+#: inc/customizer.php:3673
+msgid "Embed Pinterest links"
+msgstr ""
+
+#: inc/customizer.php:2133
+msgid "Enable Custom CSS Code"
+msgstr ""
+
+#: inc/customizer.php:2167
+msgid "Enable Custom JS Code"
+msgstr ""
+
+#: inc/customizer.php:3280
+msgid "Enable Custom Single Image Size"
+msgstr ""
+
+#: inc/postoptions.php:159
+msgid "Enable Facebook Comments"
+msgstr ""
+
+#: inc/postoptions.php:426
+msgid "Enable Sticky Menu"
+msgstr ""
+
+#: inc/customizer.php:3597
+msgid "Enabled"
+msgstr ""
+
+#: inc/customizer.php:917
+msgid "Facebook App ID"
+msgstr ""
+
+#: inc/customizer.php:767
+msgid "Facebook Comments"
+msgstr ""
+
+#: inc/customizer.php:802
+msgid "Fav Icon"
+msgstr ""
+
+#: functions.php:587 inc/template-tags.php:5
+msgid "Featured"
+msgstr "‎مميز"
+
+#: inc/customizer.php:3335
+msgid "Featured Image Position at Single Posts/Pages"
+msgstr ""
+
+#: inc/customizer.php:859
+msgid ""
+"Few words about your blog to introducte it to search engines and social "
+"networks"
+msgstr ""
+
+#: inc/customizer.php:4076
+msgid "Fixed"
+msgstr ""
+
+#: inc/fonts.php:203
+msgctxt "font style"
+msgid "Monospaced"
+msgstr ""
+
+#: inc/fonts.php:199
+msgctxt "font style"
+msgid "Sans Serif"
+msgstr ""
+
+#: inc/fonts.php:195
+msgctxt "font style"
+msgid "Serif"
+msgstr ""
+
+#: inc/customizer.php:819
+msgid "Footer Credits Text"
+msgstr ""
+
+#: functions.php:285
+msgid "Footer Widgets 1"
+msgstr "‎قائمة خاتمة الموقع الأولى"
+
+#: functions.php:295
+msgid "Footer Widgets 2"
+msgstr "‎قائمة خاتمة الموقع الثانية"
+
+#: functions.php:305
+msgid "Footer Widgets 3"
+msgstr "‎قائمة خاتمة الموقع الثانية"
+
+#: inc/formats/boxes/format-gallery.php:5
+msgid "Gallery Images"
+msgstr ""
+
+#: inc/customizer.php:632
+msgid "General Logo Settings"
+msgstr ""
+
+#: inc/customizer.php:593
+msgid "General Page/Post Settings"
+msgstr ""
+
+#: inc/customizer.php:563
+msgid "General Settings"
+msgstr ""
+
+#: inc/customizer.php:749
+msgid "General Settings and Social API Keys"
+msgstr ""
+
+#: inc/customizer.php:677
+msgid "General Style"
+msgstr ""
+
+#: inc/customizer.php:688
+msgid "General Typography Settings"
+msgstr ""
+
+#: inc/customizer.php:876
+msgid "Generate Open Graph Data"
+msgstr ""
+
+#: inc/fonts.php:21
+msgid "Google Fonts"
+msgstr ""
+
+#: inc/fonts.php:130
+msgid "Greek"
+msgstr ""
+
+#: inc/fonts.php:131
+msgid "Greek Extended"
+msgstr ""
+
+#: inc/customizer.php:1187
+msgid "Header (default)"
+msgstr ""
+
+#: inc/customizer.php:1757
+msgid "Header Background"
+msgstr ""
+
+#: inc/customizer.php:1858
+msgid "Header background Color"
+msgstr ""
+
+#: inc/customizer.php:1773
+msgid "Header Background Style"
+msgstr ""
+
+#: inc/customizer.php:619
+msgid "Header Style"
+msgstr ""
+
+#: inc/customizer.php:1896
+msgid "Header Text Color"
+msgstr ""
+
+#: inc/customizer.php:1934
+msgid "Header Text Hover Color"
+msgstr ""
+
+#: inc/customizer.php:2845
+msgid "Headlines Font Type"
+msgstr ""
+
+#: inc/customizer.php:736
+msgid "Headlines Typography"
+msgstr ""
+
+#: functions.php:277
+msgid "Here you add widgets to 404 Error page"
+msgstr "‎أضف هنا ما تريد إظهاره في صفحة خطأ ٤٠٤"
+
+#: inc/customizer.php:1471 inc/customizer.php:2980 inc/customizer.php:3386
+#: inc/postoptions.php:422
+msgid "Hide"
+msgstr ""
+
+#: header-searchform.php:2
+msgid "Hit enter to search"
+msgstr "‎إضغط إنتر للبحث"
+
+#. URI of the theme
+msgid "http://ahmad.works/writing/"
+msgstr ""
+
+#. Author URI of the theme
+msgid "https://ahmad.works/"
+msgstr ""
+
+#: inc/customizer.php:1211
+msgid "Image"
+msgstr ""
+
+#: inc/customizer.php:645
+msgid "Image Logo"
+msgstr ""
+
+#: inc/customizer.php:1212
+msgid "Image Logo & Site Name"
+msgstr ""
+
+#: inc/formats/boxes/format-gallery.php:16
+msgid "Images uploaded to this post"
+msgstr ""
+
+#: inc/customizer.php:1183
+msgid "In case of top bar, text is only allowed."
+msgstr ""
+
+#: 404.php:18
+msgid "It looks like nothing was found at this location. Maybe try a search?"
+msgstr "‎لا يوجد نتائج في هذه الصفحة، يمكنك استخدام البحث للوصول لمواضيع أخرى"
+
+#: content-none.php:19
+msgid ""
+"It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps "
+"searching can help."
+msgstr "‎لا يمكن الوصول لما تريده، يمكنك استخدام البحث للوصول لمواضيع أخرى"
+
+#: inc/fonts.php:132
+msgid "Khmer"
+msgstr ""
+
+#: inc/fonts.php:133
+msgid "Latin"
+msgstr ""
+
+#: inc/fonts.php:134
+msgid "Latin Extended"
+msgstr ""
+
+#: inc/customizer.php:558
+msgid "Layout"
+msgstr ""
+
+#: inc/customizer.php:600
+msgid "Lazy Load"
+msgstr ""
+
+#: functions.php:698 inc/template-tags.php:78
+msgid "Leave a comment"
+msgstr "‎أضف تعليق"
+
+#: comments.php:56 comments.php:77 comments.php:97
+msgid "Leave a reply"
+msgstr ""
+"‎أضف رد</br><p style=\"background-color:#fefaeb; padding: 10px; border-left: "
+"3px solid #f9b800;\">I don't publish guest or sponsored posts on this site. "
+"But thanks anyway. :)</p>"
+
+#: comments.php:57 comments.php:78 comments.php:98
+#, php-format
+msgid "Leave a Reply to %s"
+msgstr "‎أضف رد إلى %s"
+
+#: inc/customizer.php:4058
+msgid "Left"
+msgstr ""
+
+#: inc/customizer.php:2957 inc/postoptions.php:410
+msgid "Left Sidebar"
+msgstr "‎الجانب الأيمن"
+
+#: inc/customizer.php:3383
+msgid "Link to default posts list layout"
+msgstr ""
+
+#: inc/customizer.php:3384
+msgid "Link to posts list grid layout"
+msgstr ""
+
+#: inc/customizer.php:3045 inc/postoptions.php:322
+msgid "List"
+msgstr ""
+
+#: inc/customizer.php:3047 inc/postoptions.php:324
+msgid "List with Featured Post"
+msgstr ""
+
+#: inc/customizer.php:2297
+msgid "Load Fonts Locally? (don't load from google fonts CDN)"
+msgstr ""
+
+#: functions.php:1240
+msgid "Load More"
+msgstr ""
+
+#: inc/customizer.php:1403
+msgid "Logo Font Type"
+msgstr ""
+
+#: inc/customizer.php:1182
+msgid "Logo Position (Default is in header"
+msgstr ""
+
+#: inc/customizer.php:627
+msgid "Logo Style"
+msgstr ""
+
+#: inc/customizer.php:1204
+msgid "Logo Type (Default is Text or Image if available)"
+msgstr ""
+
+#: inc/customizer.php:1963
+msgid "Main Color"
+msgstr ""
+
+#: inc/customizer.php:2077
+msgid "Main Text Color"
+msgstr ""
+
+#: inc/customizer.php:694
+msgid "Main Typography"
+msgstr ""
+
+#: inc/customizer.php:3044 inc/postoptions.php:321
+msgid "Masonry"
+msgstr ""
+
+#: inc/customizer.php:3046 inc/postoptions.php:323
+msgid "Masonry with Featured Post"
+msgstr ""
+
+#: inc/customizer.php:2386
+msgid "Menu Font Type"
+msgstr ""
+
+#: inc/customizer.php:700
+msgid "Menu Typography"
+msgstr ""
+
+#: inc/customizer.php:2590
+msgid "Meta Info Font Type"
+msgstr ""
+
+#: inc/customizer.php:718
+msgid "Meta Info Typography"
+msgstr ""
+
+#: inc/customizer.php:575
+msgid "Meta Tags Settings"
+msgstr ""
+
+#. Description of the theme
+msgid "Minmal &amp; Clean Blog Wordpress Theme."
+msgstr ""
+
+#: comments.php:67 comments.php:88 comments.php:108
+msgid "Name"
+msgstr "‎الإسم\t"
+
+#: inc/customizer.php:3535
+msgid "Narrow"
+msgstr ""
+
+#: functions.php:1055
+msgid "Newer Comments"
+msgstr "‎التعليقات الأجدد"
+
+#: functions.php:1259
+msgid "Newer Posts"
+msgstr ""
+
+#: functions.php:2270
+msgid "Next Post:"
+msgstr "‎الموضوع التالي"
+
+#: inc/customizer.php:881 inc/customizer.php:902 inc/customizer.php:1015
+#: inc/customizer.php:1119 inc/customizer.php:1249 inc/customizer.php:1586
+#: inc/customizer.php:1607 inc/customizer.php:2302 inc/customizer.php:3090
+#: inc/customizer.php:3112 inc/customizer.php:3222 inc/customizer.php:3243
+#: inc/customizer.php:3264 inc/customizer.php:3363 inc/customizer.php:3407
+#: inc/customizer.php:3428 inc/customizer.php:3449 inc/customizer.php:3470
+#: inc/customizer.php:3491 inc/customizer.php:3512 inc/customizer.php:3556
+#: inc/customizer.php:3576 inc/customizer.php:3657 inc/customizer.php:3678
+#: inc/customizer.php:3701 inc/customizer.php:3739 inc/customizer.php:3783
+#: inc/customizer.php:3804 inc/customizer.php:3825 inc/customizer.php:3868
+#: inc/customizer.php:3911 inc/customizer.php:3960 inc/customizer.php:4002
+#: inc/postoptions.php:135 inc/postoptions.php:145 inc/postoptions.php:155
+#: inc/postoptions.php:163 inc/postoptions.php:219 inc/postoptions.php:229
+#: inc/postoptions.php:239 inc/postoptions.php:249 inc/postoptions.php:432
+msgid "No"
+msgstr ""
+
+#: inc/customizer.php:4039
+msgid "No Repeat"
+msgstr ""
+
+#: inc/customizer.php:2959 inc/postoptions.php:412
+msgid "No Sidebar"
+msgstr "‎بدون قائمة جانبية"
+
+#: inc/customizer.php:3385
+msgid "Not linked"
+msgstr ""
+
+#: content-none.php:3
+msgid "Nothing Found"
+msgstr "‎لا يوجد نتائج"
+
+#: inc/postoptions.php:328
+msgid "Number of Posts (Leave blank for default)"
+msgstr ""
+
+#: inc/customizer.php:3068 inc/postoptions.php:308
+msgid "Numerical"
+msgstr ""
+
+#: functions.php:1051
+msgid "Older Comments"
+msgstr "‎التعليقات الأقدم"
+
+#: functions.php:1252
+msgid "Older Posts"
+msgstr ""
+
+#: inc/customizer.php:3067 inc/postoptions.php:307
+msgid "Older/Newer Links"
+msgstr ""
+
+#: inc/customizer.php:3759
+msgid "On Hovering/Mouse Over"
+msgstr ""
+
+#: inc/customizer.php:3107
+msgid "Optimize Featured Images Quality"
+msgstr ""
+
+#: content.php:352
+msgid "Page"
+msgstr "‎صفحة"
+
+#: inc/customizer.php:3063 inc/postoptions.php:301
+msgid "Pagination Style"
+msgstr ""
+
+#: functions.php:992
+msgid "Pingback: "
+msgstr "‎بينج باك"
+
+#: comments.php:20
+#, php-format
+msgctxt "plural comments title"
+msgid "%1$s comments"
+msgstr "‎التعليقات‫:‬ %1$s"
+
+#: comments.php:59 comments.php:80 comments.php:100
+msgid "Post Comment"
+msgstr "‎أضف التعليق"
+
+#: inc/customizer.php:3593
+msgid "Post Excerpt"
+msgstr ""
+
+#: inc/customizer.php:3379
+msgid "Post Format Icon"
+msgstr ""
+
+#: functions.php:2213
+msgid "Post Navigation"
+msgstr ""
+
+#: inc/customizer.php:3530
+msgid "Posts Content Width"
+msgstr ""
+
+#: functions.php:2238
+msgid "Previous Post:"
+msgstr "‎الموضوع السابق"
+
+#: functions.php:183
+msgid "Primary Menu"
+msgstr "‎القائمة الرئيسية"
+
+#: inc/formats/boxes/format-quote.php:3
+msgid "Quote Author Name"
+msgstr ""
+
+#: inc/formats/boxes/format-quote.php:7
+msgid "Quote Author URL"
+msgstr ""
+
+#: inc/formats/boxes/format-quote.php:11
+msgid "Quote Content"
+msgstr ""
+
+#: content-none.php:10
+#, php-format
+msgid ""
+"Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+msgstr "‎هل لديك أفكار لتكتبها؟ <a href=\"%1$s\">قم بكتابة تدوينتك الأولى</a>."
+
+#: inc/customizer.php:3135
+msgid ""
+"Recommended, Use <a target=\"_blank\" href=\"https://wordpress."
+"org/plugins/regenerate-thumbnails/\">Regenerate Thumbnails</a> plugin after "
+"changing the options."
+msgstr ""
+
+#: functions.php:2151
+msgid "Related Posts"
+msgstr "‎مواضيع متعلقة"
+
+#: inc/customizer.php:3841
+msgid "Related Posts According to"
+msgstr ""
+
+#: functions.php:1024
+msgid "Reply"
+msgstr "‎رد"
+
+#: inc/customizer.php:1283
+msgid "Retina Logo ( Double size as default logo )"
+msgstr ""
+
+#: inc/customizer.php:4060
+msgid "Right"
+msgstr ""
+
+#: inc/customizer.php:2958 inc/postoptions.php:411
+msgid "Right Sidebar"
+msgstr "‎الجانب الأيسر"
+
+#: inc/postoptions.php:133 inc/postoptions.php:143 inc/postoptions.php:153
+#: inc/postoptions.php:217 inc/postoptions.php:227 inc/postoptions.php:237
+#: inc/postoptions.php:247 inc/postoptions.php:306 inc/postoptions.php:318
+#: inc/postoptions.php:409 inc/postoptions.php:420 inc/postoptions.php:430
+msgid "Same as site options"
+msgstr ""
+
+#: inc/customizer.php:4077
+msgid "Scroll"
+msgstr ""
+
+#: searchform.php:4
+msgid "Search ..."
+msgstr "إبحث ‫…"
+
+#: searchform.php:3 searchform.php:4
+msgid "Search for:"
+msgstr "إبحث عن‫:"
+
+#: search.php:8
+#, php-format
+msgid "Search Results for: %s"
+msgstr "نتائج البحث عن‫:‬ %s"
+
+#: functions.php:184
+msgid "Secondary Menu"
+msgstr "‎القائمة الثانوية"
+
+#: inc/customizer.php:587
+msgid "Share and Continue Reading Settings"
+msgstr ""
+
+#: inc/customizer.php:755
+msgid "Share Icons List"
+msgstr ""
+
+#: inc/customizer.php:3884
+msgid "Share Icons Position"
+msgstr ""
+
+#: inc/formats/boxes/format-gallery.php:10
+msgid "Shortcode"
+msgstr ""
+
+#: inc/customizer.php:2979 inc/postoptions.php:421
+msgid "Show"
+msgstr ""
+
+#: inc/customizer.php:3778 inc/postoptions.php:149 inc/postoptions.php:243
+msgid "Show Author Box"
+msgstr ""
+
+#: inc/customizer.php:3507
+msgid "Show Author in Post Meta"
+msgstr ""
+
+#: inc/customizer.php:3085
+msgid "Show Author Info at Author Page"
+msgstr ""
+
+#: inc/customizer.php:3402
+msgid "Show Categories in Post Meta"
+msgstr ""
+
+#: inc/customizer.php:3955
+msgid "Show Category Description"
+msgstr ""
+
+#: inc/customizer.php:3486
+msgid "Show Comments Number in Post Meta"
+msgstr ""
+
+#: inc/customizer.php:3696
+msgid "Show Continue Reading Button"
+msgstr ""
+
+#: inc/customizer.php:3444
+msgid "Show Date in Post Meta"
+msgstr ""
+
+#: inc/customizer.php:3358 inc/postoptions.php:223
+msgid "Show Meta Info"
+msgstr ""
+
+#: inc/customizer.php:3551
+msgid "Show Post Content"
+msgstr ""
+
+#: inc/customizer.php:3572
+msgid "Show Post Content With Formatting at blog list"
+msgstr ""
+
+#: inc/customizer.php:3799
+msgid "Show Posts Navigation"
+msgstr ""
+
+#: inc/customizer.php:3906
+msgid "Show Reading Progress Bar"
+msgstr ""
+
+#: inc/customizer.php:3820
+msgid "Show Related Posts"
+msgstr ""
+
+#: inc/customizer.php:1602
+msgid "Show Search at Top Bar"
+msgstr ""
+
+#: inc/customizer.php:3734 inc/postoptions.php:139 inc/postoptions.php:233
+msgid "Show Share Icons"
+msgstr ""
+
+#: inc/customizer.php:3755
+msgid "Show Share Icons Action"
+msgstr ""
+
+#: inc/customizer.php:3863
+msgid "Show Share Icons At single posts"
+msgstr ""
+
+#: inc/customizer.php:3652
+msgid "Show Single Post Title"
+msgstr ""
+
+#: inc/customizer.php:3997
+msgid "Show Tag Description"
+msgstr ""
+
+#: inc/customizer.php:3423
+msgid "Show Tags in Post Meta"
+msgstr ""
+
+#: inc/postoptions.php:129 inc/postoptions.php:213
+msgid "Show Title"
+msgstr ""
+
+#: inc/customizer.php:3465
+msgid "Show views number"
+msgstr ""
+
+#: inc/customizer.php:2953 inc/postoptions.php:405
+msgid "Sidebar Position"
+msgstr ""
+
+#: inc/customizer.php:1777
+msgid "Single"
+msgstr ""
+
+#: inc/customizer.php:2522
+msgid "Single Post Title Font Type"
+msgstr ""
+
+#: inc/customizer.php:712
+msgid "Single Title Typography"
+msgstr ""
+
+#: inc/customizer.php:2001
+msgid "Site Background Color"
+msgstr ""
+
+#: inc/customizer.php:842
+msgid "Site Default Image for Share"
+msgstr ""
+
+#: inc/customizer.php:858
+msgid "Site Description"
+msgstr ""
+
+#: footer.php:9
+msgid "Site Footer"
+msgstr "‎مؤخرة الموقع"
+
+#: inc/customizer.php:1267
+msgid "Site Logo"
+msgstr ""
+
+#: inc/customizer.php:2318
+msgid "Site Main Font Type"
+msgstr ""
+
+#: sidebar.php:2
+msgid "Site Sidebar"
+msgstr ""
+
+#: functions.php:265 footer.php:74 inc/customizer.php:2975
+#: inc/postoptions.php:416
+msgid "Sliding Sidebar"
+msgstr "‎القائمة الجانبية المتحركة"
+
+#: inc/customizer.php:2999 inc/customizer.php:3020
+msgid "Sliding Sidebar Icon Avatar"
+msgstr ""
+
+#: inc/customizer.php:761
+msgid "Social Links List"
+msgstr ""
+
+#: inc/customizer.php:744
+msgid "Social Settings"
+msgstr ""
+
+#: content-none.php:14
+msgid ""
+"Sorry, but nothing matched your search terms. Please try again with some "
+"different keywords."
+msgstr ""
+"‎عفواً، لا يوجد نتائج تناسب كلمة البحث التي كتبتها، يمكنك استخدام كلمات أخرى "
+"للبحث‫.‬"
+
+#: inc/fonts.php:19
+msgid "Standard Fonts"
+msgstr ""
+
+#: inc/customizer.php:1244
+msgid "Sticky Logo at mobile"
+msgstr ""
+
+#: inc/customizer.php:1581
+msgid "Sticky Menu?"
+msgstr ""
+
+#: inc/customizer.php:1487
+msgid "Tagline Font Type"
+msgstr ""
+
+#: inc/customizer.php:1465
+msgid "Tagline Place"
+msgstr ""
+
+#: inc/customizer.php:651
+msgid "Tagline Settings"
+msgstr ""
+
+#: inc/customizer.php:3846
+msgid "Tags"
+msgstr ""
+
+#: inc/customizer.php:671
+msgid "Tags Settings"
+msgstr ""
+
+#: inc/customizer.php:1210
+msgid "Text"
+msgstr ""
+
+#: inc/customizer.php:638
+msgid "Text Logo"
+msgstr ""
+
+#: inc/customizer.php:594
+msgid ""
+"These options affects all single posts/pages, to edit one single post, you "
+"will need to edit post options."
+msgstr ""
+
+#: functions.php:257
+msgid ""
+"This is the default sidebar in your blog, add widgets here and it will "
+"appear on all pages have this sidebar"
+msgstr ""
+"‎القائمة الجانبية الافتراضية في موقعك، كل ما يتم إضافته هنا سيظهر في جميع "
+"الصفحات التي يظهر بها قائمة جانبية "
+
+#: functions.php:267
+msgid ""
+"This is the sliding side bar, it slides from the right side if you click on "
+"user info button"
+msgstr "‎القائمة الجانبية المتحركة التي تظهر من الجانب الأيسر"
+
+#: inc/customizer.php:4040
+msgid "Tile"
+msgstr ""
+
+#: inc/customizer.php:4041
+msgid "Tile Horizontally"
+msgstr ""
+
+#: inc/customizer.php:4042
+msgid "Tile Vertically"
+msgstr ""
+
+#: inc/customizer.php:1778
+msgid "Tiled"
+msgstr ""
+
+#: inc/customizer.php:2115
+msgid "Titles Hover Color"
+msgstr ""
+
+#: inc/customizer.php:1188
+msgid "Top Bar"
+msgstr ""
+
+#: inc/customizer.php:608
+msgid "Top Bar and Header Style"
+msgstr ""
+
+#: inc/customizer.php:613
+msgid "Top Bar Style"
+msgstr ""
+
+#: inc/customizer.php:1661
+msgid "Top Menu Background Color"
+msgstr ""
+
+#: inc/customizer.php:1699
+msgid "Top Menu Text Color"
+msgstr ""
+
+#: inc/customizer.php:1737
+msgid "Top Menu Text Hover Color"
+msgstr ""
+
+#: inc/customizer.php:963
+msgid "Twitter Access Token"
+msgstr ""
+
+#: inc/customizer.php:978
+msgid "Twitter Access Token Secret"
+msgstr ""
+
+#: inc/customizer.php:933
+msgid "Twitter Consumer Key"
+msgstr ""
+
+#: inc/customizer.php:948
+msgid "Twitter Consumer Secret"
+msgstr ""
+
+#: inc/customizer.php:683
+msgid "Typography"
+msgstr ""
+
+#: inc/customizer.php:3340
+msgid "Under Title"
+msgstr ""
+
+#: inc/formats/boxes/format-gallery.php:70
+msgid "Upload Images"
+msgstr ""
+
+#: inc/formats/boxes/format-link.php:2
+msgid "URL"
+msgstr ""
+
+#: inc/customizer.php:2931 inc/customizer.php:3108
+msgid ""
+"Use <a target=\"_blank\" href=\"https://wordpress.org/plugins/regenerate-"
+"thumbnails/\">Regenerate Thumbnails</a> plugin after changing the options."
+msgstr ""
+
+#: inc/customizer.php:1114
+msgid "Use HTML5"
+msgstr ""
+
+#: inc/template-tags.php:50
+msgctxt "Used before category names."
+msgid "Categories"
+msgstr ""
+
+#: functions.php:649
+msgctxt "Used before category names."
+msgid "In"
+msgstr "‎في"
+
+#: functions.php:708 inc/template-tags.php:69
+msgctxt "Used before full size attachment link."
+msgid "Full size"
+msgstr "‎الحجم الكامل"
+
+#: inc/template-tags.php:41
+msgctxt "Used before post author name."
+msgid "Author"
+msgstr ""
+
+#: inc/template-tags.php:11
+msgctxt "Used before post format."
+msgid "Format"
+msgstr ""
+
+#: inc/template-tags.php:32
+msgctxt "Used before publish date."
+msgid "Posted on"
+msgstr ""
+
+#: functions.php:660 inc/template-tags.php:58
+msgctxt "Used before tag names."
+msgid "Tags"
+msgstr "‎التاجات"
+
+#: functions.php:646 functions.php:657 inc/template-tags.php:47
+#: inc/template-tags.php:55
+msgctxt "Used between list items, there is a space after the comma."
+msgid ", "
+msgstr "- "
+
+#: functions.php:2316
+msgctxt "Used for mobile menu."
+msgid "Menu"
+msgstr "‎القائمة"
+
+#: inc/formats/boxes/format-video.php:2
+msgid "Video URL (oEmbed) or Embed Code"
+msgstr ""
+
+#: inc/fonts.php:135
+msgid "Vietnamese"
+msgstr ""
+
+#: functions.php:690
+msgid "Views"
+msgstr "‎مشاهدة"
+
+#: comments.php:69 comments.php:90 comments.php:110
+msgid "Website"
+msgstr "‎الموقع"
+
+#: inc/customizer.php:3534
+msgid "Wide"
+msgstr ""
+
+#: inc/customizer.php:2658
+msgid "Widget Title Font Type"
+msgstr ""
+
+#: inc/customizer.php:724
+msgid "Widgets Titles Typography"
+msgstr ""
+
+#: inc/formats/boxes/format-status.php:2
+msgid "Write a status or paste a status url from Facebook or Twitter"
+msgstr ""
+
+#. Name of the theme
+msgid "Writing"
+msgstr ""
+
+#: inc/formats/formats.php:108
+msgid "Writing Featured Thumbnail"
+msgstr ""
+
+#: inc/customizer.php:880 inc/customizer.php:901 inc/customizer.php:1014
+#: inc/customizer.php:1118 inc/customizer.php:1248 inc/customizer.php:1585
+#: inc/customizer.php:1606 inc/customizer.php:2301 inc/customizer.php:3089
+#: inc/customizer.php:3113 inc/customizer.php:3221 inc/customizer.php:3242
+#: inc/customizer.php:3263 inc/customizer.php:3362 inc/customizer.php:3406
+#: inc/customizer.php:3427 inc/customizer.php:3448 inc/customizer.php:3469
+#: inc/customizer.php:3490 inc/customizer.php:3511 inc/customizer.php:3555
+#: inc/customizer.php:3577 inc/customizer.php:3656 inc/customizer.php:3677
+#: inc/customizer.php:3700 inc/customizer.php:3738 inc/customizer.php:3782
+#: inc/customizer.php:3803 inc/customizer.php:3824 inc/customizer.php:3867
+#: inc/customizer.php:3910 inc/customizer.php:3959 inc/customizer.php:4001
+#: inc/postoptions.php:134 inc/postoptions.php:144 inc/postoptions.php:154
+#: inc/postoptions.php:164 inc/postoptions.php:218 inc/postoptions.php:228
+#: inc/postoptions.php:238 inc/postoptions.php:248 inc/postoptions.php:431
+msgid "Yes"
+msgstr ""
+
+#: inc/customizer.php:1205
+msgid ""
+"You can customize <a data-control=\"asalah_logo_text\" data-"
+"focus=\"section\" href=\"#\" class=\"asalah-custom-refresh-partial\">Text "
+"Logo Settings</a>, or <a data-control=\"asalah_logo_image\" data-"
+"focus=\"section\" href=\"#\" class=\"asalah-custom-refresh-partial\">Image "
+"Logo Settings</a>."
+msgstr ""
+
+#: inc/customizer.php:4106
+msgid ""
+"You can customize tagline from <a data-control=\"asalah_show_tagline\" "
+"href=\"#\" class=\"asalah-custom-refresh-partial\">Tagline Settings</a>."
+msgstr ""
+
+#: inc/customizer.php:652
+msgid ""
+"You can customize tagline text from <a data-control=\"blogdescription\" "
+"href=\"#\" class=\"asalah-custom-refresh-partial\">Site Identity</a>."
+msgstr ""
+
+#: inc/customizer.php:4104
+msgid ""
+"You can customize Text Logo Style from <a data-control=\"asalah_logo_text\" "
+"data-focus=\"section\" href=\"#\" class=\"asalah-custom-refresh-partial\">"
+"Text Logo Settings</a>."
+msgstr ""
+
+#: inc/customizer.php:639
+msgid ""
+"You can edit the <a data-control=\"blogname\" href=\"#\" class=\"asalah-"
+"custom-refresh-partial\">Logo Text</a>."
+msgstr ""
+
+#: comments.php:62 comments.php:83 comments.php:103
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr ""
+
+#: comments.php:64 comments.php:85 comments.php:105
+msgid "Your email address will not be published."
+msgstr "‎بريدك الإلكتروني لن يظهر لأحد"
