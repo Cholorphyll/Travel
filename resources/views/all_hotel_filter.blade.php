@@ -99,77 +99,90 @@
 		  	<div class="tr-vgood" style="color:{{$color}};background: {{$bgcolor}};">{{$ratingtext}}</div>
 		  	@endif
 			</div>
-			 <div class="tr-hotel-facilities">
-                    <?php
-                        // Step 2: Define your selected amenities by name
-                        $selectedAmenities = ['A/C', 'Parking', 'Wi-Fi', 'Laundry', 'Smoke-free', 'Pool', 'Gym', 'Food', 'Pets', 'Bar', 'Spa']; // Replace with names of your selected 15-20 amenities
+			<div class="tr-hotel-facilities">
+                <?php
+                    // Define an array to map each selected amenity to its specific icon path
+                    $amenityIconPaths = [
+                        'A/C' => 'public/frontend/hotel-detail/images/amenities/A/C.svg',
+                        'Parking' => 'public/frontend/hotel-detail/images/amenities/Parking.svg',
+                        'Wi-Fi' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
+                        'Laundry' => 'public/frontend/hotel-detail/images/amenities/Laundry.svg',
+                        'Smoke-free' => 'public/frontend/hotel-detail/images/amenities/Smoke-free.svg',
+                        'Pool' => 'public/frontend/hotel-detail/images/amenities/Pool.svg',
+                        'Gym' => 'public/frontend/hotel-detail/images/amenities/Gym.svg',
+                        'Food' => 'public/frontend/hotel-detail/images/amenities/Food.svg',
+                        'Pets' => 'public/frontend/hotel-detail/images/amenities/Pets.svg',
+                        'Bar' => 'public/frontend/hotel-detail/images/amenities/Bar.svg',
+                        'Spa' => 'public/frontend/hotel-detail/images/amenities/Spa.svg',
+                        // Add additional amenities as needed
+                    ];
 
-                        $amenities = [];
-                        if ($searchresult->amenity_info != "") {
-                            $amenityData = explode(',', $searchresult->amenity_info);
-                            foreach ($amenityData as $item) {
-                                if (strpos($item, '|') !== false) {
-                                    list($name, $available) = explode('|', $item);
-                                    $name = trim($name);
-                                    $available = (int) trim($available);
+                    // Define your selected amenities by name
+                    $selectedAmenities = array_keys($amenityIconPaths); // Fetch keys directly from icon paths
 
-                                    // Only include amenities from the selected list
-                                    if (in_array($name, $selectedAmenities)) {
-                                        $amenities[] = [
-                                            'name' => $name,
-                                            'available' => $available,
-                                        ];
-                                    }
+                    $amenities = [];
+                    if ($searchresult->amenity_info != "") {
+                        $amenityData = explode(',', $searchresult->amenity_info);
+                        foreach ($amenityData as $item) {
+                            if (strpos($item, '|') !== false) {
+                                list($name, $available) = explode('|', $item);
+                                $name = trim($name);
+                                $available = (int) trim($available);
+
+                                // Only include amenities from the selected list
+                                if (in_array($name, $selectedAmenities)) {
+                                    $amenities[] = [
+                                        'name' => $name,
+                                        'available' => $available,
+                                    ];
                                 }
                             }
-
-                            // Remove duplicates and limit to 5
-                            $uniqueAmenities = [];
-                            foreach ($amenities as $amenity) {
-                                if (!in_array($amenity['name'], array_column($uniqueAmenities, 'name'))) {
-                                    $uniqueAmenities[] = $amenity;
-                                }
-                            }
-                            $uniqueAmenities = array_slice($uniqueAmenities, 0, 5); // Limit to the first 5 amenities
                         }
-                    ?>
 
-                    <!-- Display Amenities on the Page -->
-                    @if (!empty($uniqueAmenities))
-                        <ul>
-                            @foreach ($uniqueAmenities as $mnt)
-                                <li>
-                                    @if($mnt['available'] == 1 && is_string($mnt['name']))
-                                        <img src="{{ asset('public/frontend/hotel-detail/images/amenities/'.trim($mnt['name']).'.svg') }}" >
-                                    @else
-                                        <img src="{{ asset('public/frontend/hotel-detail/images/amenities/wifi.svg') }}" >
-                                    @endif
-                                    <span> {{ $mnt['name'] }}</span> <!-- Display the amenity name -->
-                                </li>
-                            @endforeach
-                        </ul>
+                        // Remove duplicates and limit to 5
+                        $uniqueAmenities = [];
+                        foreach ($amenities as $amenity) {
+                            if (!in_array($amenity['name'], array_column($uniqueAmenities, 'name'))) {
+                                $uniqueAmenities[] = $amenity;
+                            }
+                        }
+                        $uniqueAmenities = array_slice($uniqueAmenities, 0, 5); // Limit to the first 5 amenities
+                    }
+                ?>
+
+                <!-- Display Amenities on the Page -->
+                @if (!empty($uniqueAmenities))
+                    <ul>
+                        @foreach ($uniqueAmenities as $mnt)
+                            <li>
+                                @php
+                                    // Assign icon path from predefined list; if unavailable, use a default
+                                    $iconPath = $amenityIconPaths[$mnt['name']] ?? 'public/frontend/hotel-detail/images/amenities/wifi.svg';
+                                @endphp
+                                <img src="{{ asset($iconPath) }}" alt="{{ $mnt['name'] }}">
+                                <span>{{ $mnt['name'] }}</span> <!-- Display the amenity name -->
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+
+
+
+
+            <div class="tr-more-facilities">
+                @if(!empty($searchresult->short_description))
+                    <ul class="short-description-content">
+                        <li>{{ $searchresult->short_description }}</li>
+                    </ul>
+
+                    @if(strlen($searchresult->short_description) > 100) <!-- Show "Read More" if the description is long -->
+                        <button type="button" class="tr-anchor-btn toggle-list" onclick="toggleContent(this)">Read More</button>
                     @endif
-                </div>
+                @endif
+            </div>
 
-			<div class="tr-more-facilities">
-				@if($searchresult->short_description !="")
-				<ul>
-					<?php
-					$short_description =[];
-
-					$short_description =  explode('^',$searchresult->short_description);
-					$b =0;
-					?>
-					@foreach($short_description as $data)
-					@if($b != 0)
-					<li>{{$data}} </li>
-					@endif
-					<?php $b++; ?>
-					@endforeach
-				</ul>
-				@endif
-			</div>
-	  </div>
+             </div>
 
 	  <div class="tr-hotel-price-section">
 		 	<!--
