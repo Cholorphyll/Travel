@@ -1600,7 +1600,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
       ->Leftjoin('Location', 'Sight.LocationId', '=', 'Location.LocationId')
       ->Leftjoin('Country', 'Location.CountryId', '=', 'Country.CountryId')
  ->Leftjoin('Category', 'Sight.CategoryId', '=', 'Category.CategoryId')
- ->select('Sight.Title','Sight.Address','Sight.SightId','Sight.LocationId','Sight.Longitude','Sight.Latitude','Sight.TAAggregateRating','Sight.About','Sight.Phone' , 'Sight.Website', 'Sight.CategoryId','Sight.TATotalReviews', 'Location.Name', 'Location.Slug as Lslug', 'Country.Name as countryName','Location.slugid','Sight.IsMustSee','Sight.duration','Sight.ReviewSummaryLabel','Sight.ReviewSummary','Sight.Award','Sight.Award_description','Sight.Email')
+ ->select('Sight.Title','Sight.Address','Sight.SightId','Sight.LocationId','Sight.Longitude','Sight.Latitude','Sight.TAAggregateRating','Sight.About','Sight.Phone' , 'Sight.Website', 'Sight.CategoryId','Sight.TATotalReviews', 'Location.Name', 'Location.Slug as Lslug', 'Country.Name as countryName','Location.slugid','Sight.IsMustSee','Sight.duration','Sight.ReviewSummaryLabel','Sight.ReviewSummary','Sight.Award','Sight.Award_description','Sight.Email','Sight.MetaTagTitle','Sight.MetaTagDescription')
       ->where('Sight.SightId', $sighid)
       ->where('Location.LocationId', $locationID)
       ->where('Sight.Slug', $slug)

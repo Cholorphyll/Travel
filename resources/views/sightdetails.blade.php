@@ -7,7 +7,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-PTHP3JH4');</script>
    @php $title = '';$lname=''; @endphp
-@if(!empty($searchresult)) @php $title = $searchresult[0]->Title; $lname=$searchresult[0]->Name; @endphp @endif
+@if(!empty($searchresult)) @php $title = $searchresult[0]->MetaTagTitle; $lname=$searchresult[0]->Name; @endphp @endif
   <title>{{$title}}, {{$lname}}@if(!empty($locationPatent)), @foreach($locationPatent as $location){{$location['Name']}}@if(!$loop->last),@endif @endforeach @endif– Reviews, Hours, and Photos - Travell</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,14 +18,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
- 
+
+
 
     <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/jquery.min.js')}}"></script>
   <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/bootstrap.bundle.min.js')}}"></script>
   <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/jquery-ui-datepicker.min.js')}}">
   </script>
- 
+
 
 
   <link rel="stylesheet" href="{{ asset('/public/frontend/hotel-detail/css/bootstrap.min.css')}}">
@@ -38,7 +38,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="stylesheet" href="{{ asset('/public/css/map_leaflet.css')}}">
 
   </head>
-  
+
 <?php
       $locationPatents = array_reverse($locationPatent);
        $n = 2;
@@ -65,7 +65,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       @foreach($locationPatents as $location) {
         "@type": "ListItem",
         "position": {{$n}},
-       
+
         "name": "{{ $location['Name'] }}",
         "item": "{{ route('search.results',[$location['LocationId'].'-'.strtolower($location['slug']).'-'.str_replace(' ','_',strtolower($searchresult[0]->countryName))]) }}"
       },
@@ -84,7 +84,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     "position": {{$n + 1}},
     "name": "{{$searchresult[0]->Title}}",
     "item": ""
-  } 
+  }
    @endif
    ]
 }
@@ -104,15 +104,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="tr-explore-galleries">
               <div class="tr-desktop d-none d-sm-block d-md-block">
                 <div class="tr-thumb-images">
-                  <ul>    
-                  @if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='')             
-                    <li>                  
+                  <ul>
+                  @if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='')
+                    <li>
                       <img src="https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image}}" alt="Tower Bridge" height="445" height="360">
                     </li>
                     @else
                     <!-- Below element When We don't have data - Start -->
                     <div >
-                      <img src="{{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}}" alt="">      
+                      <img src="{{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}}" alt="">
                     </div>
                     <!-- Below element When We don't have data - End -->
 
@@ -120,23 +120,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
                     @if(!$Sight_image->isEmpty() && $Sight_image->count() > 1)
-                    @php                         
+                    @php
                           $remainingImages = $Sight_image->slice(1);
                       @endphp
 
                       @if(!$remainingImages->isEmpty())
                           @foreach($remainingImages as $image)
                               <li>
-                                  <img src="@if(isset($image->Image) && $image->Image != '')                                 
-                                               https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$image->Image }}                                        
-                                          @endif" 
+                                  <img src="@if(isset($image->Image) && $image->Image != '')
+                                               https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$image->Image }}
+                                          @endif"
                                       alt="Tower Bridge" height="115" width="110">
                               </li>
                           @endforeach
-                          @if(count($Sight_image) < 5) 
+                          @if(count($Sight_image) < 5)
                             @for($i=0; $i < 6 - count($Sight_image); $i++)
                               <li>
-                                    <img src="{{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}}" 
+                                    <img src="{{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}}"
                                         alt="Tower Bridge" height="115" width="110">
                                 </li>
                               @endfor
@@ -167,9 +167,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                    @endif
                   <div class="carousel-inner">
                     <div class="carousel-item active">
-                       <img src="@if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='')  https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image }}  @else {{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}} @endif " alt="Tower Bridge" class="d-block w-100" height="452" width="432">                    
+                       <img src="@if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='')  https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image }}  @else {{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}} @endif " alt="Tower Bridge" class="d-block w-100" height="452" width="432">
                     </div>
-                    
+
                     @if(!$Sight_image->isEmpty() && $Sight_image->count() > 1)
                     @php
                           // Remove the first item from the collection
@@ -179,16 +179,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       @if(!$remainingImages->isEmpty())
                           @foreach($remainingImages as $image)
                           <div class="carousel-item">
-                          <img src="@if(isset($image->Image) && $image->Image != '') 
+                          <img src="@if(isset($image->Image) && $image->Image != '')
                               https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$image->Image }}
-                                             
+
                                           @endif" alt="" class="d-block w-100" height="452" width="432">
-                        </div>                             
+                        </div>
                           @endforeach
                       @endif
                     @endif
                   </div>
-                
+
                   <!-- The thumbs/carousel -->
                   @if(!$Sight_image->isEmpty() && $Sight_image->count() > 1)
                   <div class="carousel-thumbs">
@@ -200,14 +200,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                     <div class="carousel-thumb">
                       <img loading="lazy" src="images/tower-bridge-4.png" alt="">
-                    </div>					  
+                    </div>
                     <div class="tr-thumbs-count tr-show-all-photos">Show all {{$tsightimg}}+</div>
-					       
+
                   </div>
                   @endif
                 </div>
               </div>
-             
+
             </div>
             <!--GALLERY - END-->
 
@@ -271,9 +271,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 						<?php   $ratingtext = '';
                    				$color = ''; ?>
 						@if($searchresult[0]->TAAggregateRating != "" && $searchresult[0]->TAAggregateRating != 0)
-                    <?php 
-                  $rating = (float)$searchresult[0]->TAAggregateRating;       
-                  $result = round($rating * 20); 
+                    <?php
+                  $rating = (float)$searchresult[0]->TAAggregateRating;
+                  $result = round($rating * 20);
                   if ($result > 95) {
                       $ratingtext = 'Superb';
                       $color = 'green';
@@ -303,7 +303,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       $color = 'red';
                   }
 
-                
+
                 ?>
                       {{$result}}% @else -- @endif</div>
                       @if($searchresult[0]->TAAggregateRating != "" && $searchresult[0]->TAAggregateRating != 0)     <div class="tr-review-name tr-excellent" style="color:{{$color}}">{{$ratingtext}}</div> @endif
@@ -313,7 +313,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
               </div>
             </div>
-           
+
             <!--CERTIFICATED SECTION - START-->
             @if($searchresult[0]->Award == 1)
             <div class="tr-hotel-certificated">
@@ -365,37 +365,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               </div>
             </div> -->
             <!--ADMISSION TICKETS FOR MOBILE - END-->
-           
+
             <!--ABOUT/OVERVIEW SECTION - START-->
             <div class="tr-about-section">
               <div class="tr-overview-section">
                 <div class="tr-overview-details">
                   <ul>
                   @if($searchresult[0]->TAAggregateRating != "" && $searchresult[0]->TAAggregateRating != 0)
-                  <?php 
-                  $rating = (float)$searchresult[0]->TAAggregateRating;       
-                  $result = round($rating * 20); 
+                  <?php
+                  $rating = (float)$searchresult[0]->TAAggregateRating;
+                  $result = round($rating * 20);
                   if ($result > 95) {
-                      $ratingtext = 'Superb';                      
+                      $ratingtext = 'Superb';
                   } elseif ($result >= 91 && $result <= 95) {
-                      $ratingtext = 'Excellent';                     
+                      $ratingtext = 'Excellent';
                   } elseif ($result >= 81 && $result <= 90) {
-                      $ratingtext = 'Great';                    
+                      $ratingtext = 'Great';
                   } elseif ($result >= 71 && $result <= 80) {
-                      $ratingtext = 'Good';                     
+                      $ratingtext = 'Good';
                   } elseif ($result >= 61 && $result <= 70) {
-                      $ratingtext = 'Okay';                      
+                      $ratingtext = 'Okay';
                   } elseif ($result >= 51 && $result <= 60) {
-                      $ratingtext = 'Average';                     
+                      $ratingtext = 'Average';
                   } elseif ($result >= 41 && $result <= 50) {
-                      $ratingtext = 'Poor';                     
+                      $ratingtext = 'Poor';
                   } elseif ($result >= 21 && $result <= 40) {
-                      $ratingtext = 'Disappointing';                     
+                      $ratingtext = 'Disappointing';
                   } else {
-                      $ratingtext = 'Bad';                    
+                      $ratingtext = 'Bad';
                   }
 
-                
+
                 ?>
                     <li>
                       <div class="tr-rating">{{ $result }}%</div>
@@ -434,7 +434,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       $todayEndTime = $data['time'][$currentDay]['end'] ?? null;
                       ?>
                     <li>
-                      
+
                       <div class="tr-rating">
                       @if(isset($data['time'][$currentDay]))
                         <div>{{ date('h:i A', strtotime($todayStartTime)) }} - {{ date('h:i A', strtotime($todayEndTime)) }}</div>
@@ -463,8 +463,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       </button>
                     </li>
                     @endif
-              
-              
+
+
                   </ul>
                 </div>
               </div>
@@ -488,11 +488,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <img src="{{asset('public/frontend/hotel-detail/images/no-data-about.png')}}" alt="">
                     <div class="tr-improve-lisitng mt-41">
                       <button type="button" class="tr-anchor-btn" data-bs-toggle="modal" data-bs-target="#improveListingModal">Write something about the place</button>
-                    </div>     
+                    </div>
                   </div>
                   <!-- Below element When We don't have data - End -->
                 @endif
-     
+
             </div>
             <!--ABOUT/OVERVIEW SECTION - END-->
 
@@ -522,7 +522,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   <div class="tr-show-all-review">
                     <button type="button" class="tr-show-all-review-btn">See all Reviews</button>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
@@ -554,8 +554,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   </div>
                   <!-- Below element When We don't have data - End -->
                   @endif
-            
-          
+
+
             <!--HIGHLIGHTED REVIEWS SECTION - END-->
 
             <!--RECOMMENDED WRITE A REVIEWS SECTION - START-->
@@ -625,13 +625,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       $experienceCount = count($get_experience);
                       $requiredPlaceholders = 4 - $experienceCount;
                     @endphp
-                    
+
                     @foreach($get_experience as $get_experiences)
                       <div class="tr-top-ways-list">
                         <div class="tr-img">
                           <a href="@if($get_experiences->viator_url != '') {{ $get_experiences->viator_url }} @endif">
                             <img loading="lazy" src="@if($get_experiences->Img1 !=''){{ $get_experiences->Img1 }}@else{{ asset('public/images/Hotel lobby-image.png') }}@endif" alt="top-places" height="117" width="100" style="width: 100px; height: 117px !important;">
-                          </a>                  
+                          </a>
                         </div>
                         <div class="tr-details">
                           <div class="tr-place-type">Classes</div>
@@ -774,7 +774,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div id="map1" class="" style="width: 100%; height: 400px;"></div>
 
                 <div id="screenshotContainer"></div>
-                @else 
+                @else
                   <div >
                     <img src="{{asset('public/frontend/hotel-detail/images/no-data-no-map.png')}}" alt="">
                     <div class="tr-improve-lisitng mt-24">
@@ -783,13 +783,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   </div>
                 @endif
               </div>
-            
+
              <!-- <div class="tr-neighborhood">
                 <h3>Neighborhood</h3>
                 <p>The neighborhood is a blend of ancient history and modern dynamism. Walk among towering skyscrapers and historic pubs, enjoying the juxtaposition of old and new. Explore the bustling Leadenhall Market, brimming with charm and vibrant stalls. Financial district by day, the City transforms into a tranquil area by night, offering unique experiences like night tours of iconic landmarks. Its rich history and contemporary vibrancy make the City of London a captivating destination.</p>
               </div> -->
               <!-- Below element When We don't have data - Start -->
-          
+
               <!-- Below element When We don't have data - End -->
             </div>
             <!--LOCATION SECTION - END-->
@@ -798,7 +798,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="tr-explore-section">
               <h3 class="d-none d-md-block">Explore other options in and around</h3>
               <div class="tr-tourist-places-row" >
-              
+
                 <div class="tr-tourist-places" id="nearbyattraction">
                   <div class="tr-title open">
                     <h4><svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3335 5.05859C17.3335 6.20565 16.2305 7.30859 15.0835 7.30859C16.2305 7.30859 17.3335 8.41154 17.3335 9.55859C17.3335 8.41154 18.4364 7.30859 19.5835 7.30859C18.4364 7.30859 17.3335 6.20565 17.3335 5.05859Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.3335 15.0586C17.3335 16.2056 16.2305 17.3086 15.0835 17.3086C16.2305 17.3086 17.3335 18.4115 17.3335 19.5586C17.3335 18.4115 18.4364 17.3086 19.5835 17.3086C18.4364 17.3086 17.3335 16.2056 17.3335 15.0586Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3335 8.05859C9.3335 10.2252 7.25015 12.3086 5.0835 12.3086C7.25015 12.3086 9.3335 14.3919 9.3335 16.5586C9.3335 14.3919 11.4168 12.3086 13.5835 12.3086C11.4168 12.3086 9.3335 10.2252 9.3335 8.05859Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/></svg>Top attractions</h4>
@@ -811,7 +811,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             $nearbyCount = count($nearbyatt);
                             $requiredPlaceholders = 4 - $nearbyCount;
                           @endphp
-                          
+
                           @foreach($nearbyatt as $nearbyatt)
                             <div class="tr-tourist-place">
                               <div class="tr-img">
@@ -920,9 +920,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <!-- Below element When We don't have data - End -->
                   </div>
                 </div>
-               
+
                 <div class="tr-tourist-places" id="restaurant-data" >
-                  
+
                   <div class="tr-title">
                     <h4><svg width="24" height="20" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.63492 1.90625L15.6158 15.8871C15.8811 16.1524 16.0301 16.5122 16.0301 16.8874C16.0301 17.2626 15.8811 17.6224 15.6158 17.8877C15.3504 18.1529 14.9906 18.3018 14.6155 18.3018C14.2404 18.3018 13.8806 18.1529 13.6152 17.8877L10.2 14.4136C9.97647 14.1867 9.85109 13.881 9.85086 13.5625V13.3526C9.85089 13.1918 9.81897 13.0326 9.75695 12.8842C9.69494 12.7358 9.60406 12.6012 9.4896 12.4882L9.04865 12.081C8.89896 11.9429 8.71694 11.8447 8.51933 11.7953C8.32172 11.746 8.11487 11.7471 7.91783 11.7987C7.6071 11.8798 7.28058 11.8782 6.97065 11.7942C6.66071 11.7101 6.37816 11.5464 6.15101 11.3194L2.90918 8.07722C0.986021 6.15405 0.278307 3.24996 1.63492 1.90625Z" stroke="#131313" stroke-linejoin="round"></path><path d="M14.6312 1.30859L11.6998 4.24001C11.4742 4.46554 11.2953 4.73329 11.1732 5.02798C11.0511 5.32267 10.9883 5.63852 10.9883 5.9575V6.52139C10.9883 6.60118 10.9726 6.68018 10.9421 6.75389C10.9115 6.82759 10.8668 6.89456 10.8103 6.95096L10.3811 7.38014M11.5954 8.59445L12.0246 8.16526C12.081 8.10883 12.148 8.06407 12.2217 8.03353C12.2954 8.00299 12.3744 7.98728 12.4542 7.98729H13.0181C13.3371 7.98729 13.6529 7.92446 13.9476 7.80238C14.2423 7.6803 14.51 7.50136 14.7356 7.27578L17.667 4.34437M16.1491 2.82648L13.1133 5.86225M7.04179 14.0588L3.2577 17.8642C2.97305 18.1487 2.58704 18.3086 2.18455 18.3086C1.78207 18.3086 1.39605 18.1487 1.11141 17.8642C0.826849 17.5795 0.666992 17.1935 0.666992 16.791C0.666992 16.3885 0.826849 16.0025 1.11141 15.7179L4.30959 12.541" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"></path></svg>Restaurants</h4>
                     <span class="d-none d-md-block">Within 1 KM</span>
@@ -995,7 +995,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 @endif
 
                 </div>
-               
+
                 <!-- <div class="tr-tourist-places">
                   <div class="tr-title">
                     <h4><svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.3335 5.05859C17.3335 6.20565 16.2305 7.30859 15.0835 7.30859C16.2305 7.30859 17.3335 8.41154 17.3335 9.55859C17.3335 8.41154 18.4364 7.30859 19.5835 7.30859C18.4364 7.30859 17.3335 6.20565 17.3335 5.05859Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.3335 15.0586C17.3335 16.2056 16.2305 17.3086 15.0835 17.3086C16.2305 17.3086 17.3335 18.4115 17.3335 19.5586C17.3335 18.4115 18.4364 17.3086 19.5835 17.3086C18.4364 17.3086 17.3335 16.2056 17.3335 15.0586Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.3335 8.05859C9.3335 10.2252 7.25015 12.3086 5.0835 12.3086C7.25015 12.3086 9.3335 14.3919 9.3335 16.5586C9.3335 14.3919 11.4168 12.3086 13.5835 12.3086C11.4168 12.3086 9.3335 10.2252 9.3335 8.05859Z" stroke="#131313" stroke-linecap="round" stroke-linejoin="round"/></svg>Getting there</h4>
@@ -1040,7 +1040,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                           <a href="javascript:void(0);" class="tr-travel-type">See rental cars</a>
                         </div>
                       </div>
-                     
+
                       <div data-type="no-data">
                         <div class="tr-tourist-place">
                           <div class="tr-img">
@@ -1087,7 +1087,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                           </div>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
                 </div> -->
@@ -1099,7 +1099,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div class="tr-nearby-hotel">
               <h3 class="d-none d-md-block">What's nearby hotels</h3>
               <h3 class="d-block d-sm-block d-md-none">You might also like</h3>
-              <div class="row tr-nearby-hotel-lists" id="nearby_hotel">               
+              <div class="row tr-nearby-hotel-lists" id="nearby_hotel">
                  @if(!$nearby_hotel->isEmpty())
                       @foreach($nearby_hotel as $nearby_hotels)
                           <div class="tr-nearby-hotel-list">
@@ -1257,10 +1257,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <!--NEARBY HOTEL - END-->
 
             <!--REVIEWS SECTION - START-->
-           
-           
+
+
             <div class="tr-review-section" id="">
-              <div class="row">              
+              <div class="row">
                 <h3>Reviews</h3>
                 <div class="col-lg-7 getreviewdata" id="reviews">
                   <div class="tr-review-content">
@@ -1286,7 +1286,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <ul class="tr-revies-recomm">
                       @foreach($expreviewSummaryLabel as $sumval)
                       @if( $t ==1)
-                 
+
                       <li>
                         <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 13.8086C11.2583 13.8086 10.5333 13.5887 9.91661 13.1766C9.29993 12.7646 8.81928 12.1789 8.53545 11.4937C8.25162 10.8084 8.17736 10.0544 8.32206 9.32701C8.46675 8.59958 8.8239 7.93139 9.34835 7.40695C9.8728 6.8825 10.541 6.52535 11.2684 6.38065C11.9958 6.23596 12.7498 6.31022 13.4351 6.59405C14.1203 6.87788 14.706 7.35852 15.118 7.97521C15.5301 8.59189 15.75 9.31692 15.75 10.0586C15.7488 11.0528 15.3533 12.0059 14.6503 12.7089C13.9473 13.4119 12.9942 13.8074 12 13.8086ZM12 7.8086C11.555 7.8086 11.12 7.94056 10.75 8.18779C10.38 8.43502 10.0916 8.78642 9.92127 9.19756C9.75098 9.60869 9.70642 10.0611 9.79324 10.4975C9.88005 10.934 10.0943 11.3349 10.409 11.6496C10.7237 11.9643 11.1246 12.1785 11.561 12.2654C11.9975 12.3522 12.4499 12.3076 12.861 12.1373C13.2722 11.967 13.6236 11.6786 13.8708 11.3086C14.118 10.9386 14.25 10.5036 14.25 10.0586C14.2494 9.46204 14.0122 8.89009 13.5903 8.46826C13.1685 8.04644 12.5966 7.80919 12 7.8086Z" fill="#222222"/><path d="M12 22.8086L5.67301 15.3468C5.58509 15.2348 5.49809 15.1221 5.41201 15.0086C4.33179 13.5846 3.74799 11.8459 3.75001 10.0586C3.75001 7.87056 4.6192 5.77214 6.16637 4.22496C7.71355 2.67779 9.81197 1.80859 12 1.80859C14.188 1.80859 16.2865 2.67779 17.8336 4.22496C19.3808 5.77214 20.25 7.87056 20.25 10.0586C20.2517 11.8451 19.6682 13.5829 18.5888 15.0063L18.588 15.0086C18.588 15.0086 18.363 15.3041 18.3293 15.3438L12 22.8086ZM6.60976 14.1048C6.60976 14.1048 6.78451 14.3358 6.82426 14.3853L12 20.4896L17.1825 14.3771C17.2155 14.3358 17.391 14.1033 17.3918 14.1026C18.2747 12.9395 18.7518 11.5189 18.75 10.0586C18.75 8.26838 18.0388 6.55149 16.773 5.28562C15.5071 4.01975 13.7902 3.30859 12 3.30859C10.2098 3.30859 8.49291 4.01975 7.22703 5.28562C5.96116 6.55149 5.25001 8.26838 5.25001 10.0586C5.24815 11.5198 5.72584 12.9413 6.60976 14.1048Z" fill="#222222"/></svg>
                         <div>Location</div>
@@ -1303,16 +1303,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </ul>
                     @endif
                    @if($searchresult[0]->ReviewSummary !="") <p>{{$searchresult[0]->ReviewSummary}}</p>@endif
-                  
+
                    @if(!$sightreviews->isEmpty()) <a href="javascript:void(0);" class="tr-jump-to-all-review">Jump to all reviews</a>
                     <div class="tr-helpful">
-                      Do you find this helpful? 
+                      Do you find this helpful?
                       <button class="tr-like-button">Like</button>
                       <button class="tr-dislike-button">Dislike</button>
                     </div>
                     @endif
                    </div>
-                  @if(!$sightreviews->isEmpty()) 
+                  @if(!$sightreviews->isEmpty())
 					 <?php
 						  $totalReviews = $sightreviews->count();
 						  $recommendedCount = $sightreviews->where('IsRecommend', 1)->count();
@@ -1333,7 +1333,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                           <div class="tr-reviews-count">({{count($sightreviews)}} Reviews)</div>
                         </div>
                         <div class="tr-rating-types">
-                          <div class="tr-rating-type">  
+                          <div class="tr-rating-type">
                             <div class="tr-title">Recommended</div>
                             <div class="progress">
                               <div class="progress-bar" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" style="width:88%"></div>
@@ -1349,7 +1349,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                           </div>
                         </div>
                       </div>
-                    
+
                       <div class="tr-reviews-mentioned">
                         <h4>Reviews that mentioned</h4>
                         <ul>
@@ -1367,8 +1367,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>
                       </div>
                       <!-- review-data -->
-                      <div class="review-data">    
-                          @if(!$sightreviews->isEmpty())           
+                      <div class="review-data">
+                          @if(!$sightreviews->isEmpty())
                           <div class="tr-customer-reviews ">
                             @foreach($sightreviews as $review)
                               <div class="tr-customer-review">
@@ -1393,13 +1393,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 </div>
                                 <p>{{$review->ReviewDescription}}</p>
                                 <div class="tr-helpful">
-                                  Was this helpful? 
+                                  Was this helpful?
                                   <button class="tr-like-button">Like</button>
                                   <button class="tr-dislike-button">Dislike</button>
                                 </div>
                               </div>
                             @endforeach
-                          </div>                  
+                          </div>
                           @else
                           <div class="tr-no-review-listing mt-5">
                             <div class="tr-no-review-list">
@@ -1426,7 +1426,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     @endif
              <!-- review-data -->
                 </div>
-               
+
 
                 <div class="col-lg-5">
                       <div class="tr-enjoyed-the-stay">
@@ -1437,14 +1437,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
                   </div>
                 </div>
-                         </div>      
+                         </div>
             <!--REVIEWS SECTION - END-->
 
             <!--BREADCRUMB - START-->
             <div class="tr-breadcrumb-section">
             @if(!empty($searchresult))
                 <ul class="tr-breadcrumb">
-                   
+
 
                     @if(!empty($breadcumb))
                         @if($breadcumb[0]->ccName != "")
@@ -1489,9 +1489,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
       </div>
     </div>
-    
+
     <!--FOOTER-->
-    @include('frontend.footer') 
+    @include('frontend.footer')
 
     <div class="overlay" id="overLay"></div>
 
@@ -1554,7 +1554,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </div>
         </div>
       </div>
-      
+
       <div class="tr-gallery-categories">
         <div class="tr-galleries-section">
           <div class="tr-gallery-category">
@@ -1562,8 +1562,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
              @if(!$Sight_image->isEmpty())
             @foreach($Sight_image as $image)
               <li data-bs-toggle="modal" data-bs-target="#gallerySliderModal">
-                <img loading="lazy" src="@if(isset($image->Image) && $image->Image != '') 
-                https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$image->Image}}                                                                              
+                <img loading="lazy" src="@if(isset($image->Image) && $image->Image != '')
+                https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$image->Image}}
                                           @endif" alt="Outdoor Pictures 1" height="300" height="270">
               </li>
             @endforeach
@@ -1611,7 +1611,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
             <div class="tr-hotel-info">
               <h4 class="tr-hotel-name">{{$searchresult[0]->Title}}</h4>
-              <div class="tr-hotel-address">{{$searchresult[0]->Address}}</div> 
+              <div class="tr-hotel-address">{{$searchresult[0]->Address}}</div>
             </div>
           </div>
           <form id="s-review" class="add_review">
@@ -1668,7 +1668,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <span>or drag and drop</span>
                   </div>
                 </div>
-                <div class="tr-file-upload-content"> 
+                <div class="tr-file-upload-content">
                   <img class="tr-file-upload-image" src="#" alt="your image"  />
                   <div class="image-title-wrap">
                     <button type="button" onclick="removeUpload()" class="tr-remove-image">
@@ -1716,7 +1716,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   <div class="tr-day-time">
                       <div class="tr-days">Today</div>
 
-                    
+
                       @if($todayStartTime == "00:00" && $todayEndTime == "23:59")
                           <div class="tr-timing"><span class="tr-open-circle"></span>Open 24 hours</div>
                       @elseif($todayStartTime == "00:00" && $todayEndTime == "00:00")
@@ -1963,9 +1963,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.99604 2.28959C5.02968 1.20745 3.41823 0.916356 2.20745 1.90727C0.996677 2.89818 0.826217 4.55494 1.77704 5.7269L5.99604 9.63412L10.215 5.7269C11.1659 4.55494 11.0162 2.88776 9.78463 1.90727C8.55304 0.92678 6.96239 1.20745 5.99604 2.28959Z" fill="white" stroke="white" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                 </div>
                 @if($searchresult[0]->TAAggregateRating != "" && $searchresult[0]->TAAggregateRating != 0)
-                <?php 
-                  $rating = (float)$searchresult[0]->TAAggregateRating;       
-                  $result = round($rating * 20); 
+                <?php
+                  $rating = (float)$searchresult[0]->TAAggregateRating;
+                  $result = round($rating * 20);
                   if ($result > 95) {
                       $ratingtext = 'Superb';
                       $color = 'green';
@@ -1995,9 +1995,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                       $color = 'red';
                   }
 
-                
+
                 ?>
-                
+
                 <div class="tr-ranting-percent">{{$result}}% @else -- @endif</div>
                 <div class="tr-excellent" style="color:{{$color}}">{{$ratingtext}}</div>
               </div>
@@ -2080,16 +2080,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </div>
         </div>
       </div>
-    </div> 
+    </div>
   </body>
 </html>
 
-<?php 
-  
+<?php
+
   if(!empty($searchresult)){
     $longitude = $searchresult[0]->Longitude;
     $latitude = $searchresult[0]->Latitude;
-  
+
   }else{
     $longitude = 0;
     $latitude = 0;
@@ -2099,7 +2099,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
   </script>
- 
+
  <script type="application/ld+json">
   {
     @if(!empty($faq))
@@ -2146,7 +2146,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "@type": "PostalAddress",
       "streetAddress": "{{$searchresult[0]->Address}}"
     },
-    @if(!empty($sightreviews)) 
+    @if(!empty($sightreviews))
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "@if($searchresult[0]->TAAggregateRating !="" && $searchresult[0]->TAAggregateRating !=0.00){{$searchresult[0]->TAAggregateRating}} @else not available @endif",
@@ -2179,7 +2179,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <script src="{{ asset('/public/css/hotel-css/t-datepicker.min.js')}}"></script>
   <script src="{{ asset('/public/js/datepicker-homepage.js')}}"></script>
 
-  <script src="{{ asset('/public/js/explore.js')}}"></script> 
+  <script src="{{ asset('/public/js/explore.js')}}"></script>
 
 
 <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/common.js')}} "></script>

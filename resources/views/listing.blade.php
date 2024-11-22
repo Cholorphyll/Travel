@@ -59,7 +59,14 @@
   <style>
   .leaflet-popup-tip-container {
     display: none;
-  }	
+  }
+
+ .tr-more-facilities ul {
+    max-height: 36px;
+    overflow: hidden;
+    position: relative;
+}
+
   </style>
 
   <script type="text/javascript">
@@ -213,15 +220,15 @@
               <button type="button" class="tr-btn">Search</button>
             </div>
             <div class="tr-explore-search-modal">
-              <div class="tr-explore-search-feild">   
+              <div class="tr-explore-search-feild">
                 <input type="text" name="" class="tr-search-field serch_sights" id="serch_sights"
                   placeholder="Search for “Restaurants”" autocomplete="off">
                   <span class="res_type d-none" id="res_type"></span>
                 <button type="submit" class="tr-btn" id="serch_sightsdata">Search</button>
               </div>
                <div class="tr-recent-searchs-modal search-result">
-                  
-                 
+
+
                 </div>
 
             </div>
@@ -437,6 +444,19 @@
                 @else
                 <span class="timing_<?php echo $j;?>"></span>
                 @endif
+
+                <div class="tr-more-facilities">
+                    @if(!empty($searchresult->MicroSummary))
+                        <ul class="short-description-content">
+                            <li>{{ $searchresult->MicroSummary }}</li>
+                        </ul>
+
+                        @if(strlen($searchresult->MicroSummary) > 100) <!-- Show "Read More" if the description is long -->
+                            <button type="button" class="tr-anchor-btn toggle-list" onclick="toggleContent(this)">Read More</button>
+                        @endif
+                    @endif
+                </div>
+
                 <div class="tr-like-review">
                   <div class="tr-heart">
                     <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -823,6 +843,19 @@
                                         </div>
                                     @endif
 
+
+                                    <div class="tr-more-facilities">
+                                        @if(!empty($searchresult->MicroSummary))
+                                            <ul class="short-description-content">
+                                                <li>{{ $searchresult->MicroSummary }}</li>
+                                            </ul>
+
+                                            @if(strlen($searchresult->MicroSummary) > 100) <!-- Show "Read More" if the description is long -->
+                                                <button type="button" class="tr-anchor-btn toggle-list" onclick="toggleContent(this)">Read More</button>
+                                            @endif
+                                        @endif
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -840,6 +873,22 @@
           <div id="loading" style="display: none;"> </div>
 
           <button type="button" class="tr-btn tr-load-more">Load More</button>
+
+
+          <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="tr-single-page">
+                        <div class="tr-terms-and-conditions-section">
+                            <h3 style="font-weight: bold; margin-bottom: 20px; font-size: 24px;">Why Book Hotels With Travell ?</h3>
+                            <p style="margin-top: 20px;">Discover the real essence of every place with Travell, which is beyond the ordinary constituent of travel guides via its unique platform to discover special places that bonds you with the city’s soul and culture. We feel that travel isn't so much about visiting monuments and sites; it is more about relating to a locality's character and tradition; in other words, its hidden treasure. Travell offers experiences hand picked off the beaten path and imbued with local counsel. In addition to famous landmarks, you can explore alleyways, cheap eats, and frolicking local favorites. We make it easier for you to experience the main and the slim dance of each city. Imagine scooping up street food, going hunting for art scenes, or joining a local festival; Travell is your toolkit for experiencing each destination in the deepest and thickest sense.  You select what matches your preferences for the day, and we do the rest to ensure your trip culminates in note-perfect moments at every one of your stops. At Travell, we are all about making travel attainable, exhilarating, and tremendous. With Travell, you do not just see one city—you see it alive! Live among returning with kaleidoscopic memories that mirrors the actual soul of places you visit. Let Travell show you what makes every place special.  Whether an avid foodie, budding artist, or festival enthusiast, we have just the experiences for you. We create your personas to give you the insider perspective on some unique places to explore without the stress of maps or guides. Let us know what speaks to you, and we will take it all from there. Come with us along this unforgettable journey; let Travell be your eyes for exploring what gives a city its heart.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
    <!--BREADCRUMB - START-->
             @if(!empty($breadcumb))
             <div class="tr-breadcrumb-section">
@@ -1024,12 +1073,12 @@
 
 </html>
 
-	
+
     <script src="{{ asset('/public/js/header.js')}}"></script>
     <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/common.js')}} "></script>
     <script src="{{ asset('/public/js/restaurant.js')}}"></script>
 	<script src="{{ asset('/public/js/custom.js')}}"></script>
-	
+
 <script src="{{ asset('/public/js/map_leaflet.js')}}"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -1202,7 +1251,7 @@ marker<?php echo $i; ?>.on('mouseout', function(e) {
         var marker = e.target;
 
         // Use default placeholders for missing data
-        var popupContent = ` 
+        var popupContent = `
         <div class="tr-map-tooltip tr-explore-listing" style="top: -214px !important; right: 0; left: 0; margin: auto; font-size: 14px;">
             <div class="tr-historical-monument">
                 <div class="tr-heading-with-distance">
@@ -1243,8 +1292,8 @@ marker<?php echo $i; ?>.on('mouseout', function(e) {
     // FOR RESTAURANT
 
     restaurantLocations.forEach(function(location) {
-		
-		
+
+
         // Create marker for each restaurant location with custom icon
         var marker = L.marker([location.lat, location.long], { icon: defaultIconRes }).addTo(map);
 
@@ -1438,4 +1487,23 @@ marker<?php echo $i; ?>.on('mouseout', function(e) {
     window.onload = function() {
         updateMarkerIcons(); // Initial update to ensure custom icons on load
     };
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const readMoreBtn = document.querySelector('.custom-read-more');
+    const trMoreFacilities = document.querySelector('.tr-more-facilities');
+
+    if (readMoreBtn && trMoreFacilities) {
+        readMoreBtn.addEventListener('click', function() {
+            trMoreFacilities.classList.toggle('expanded');
+
+            // Optional: Change button text to "Read Less" when expanded
+            if (trMoreFacilities.classList.contains('expanded')) {
+                readMoreBtn.textContent = 'Read Less';
+            } else {
+                readMoreBtn.textContent = 'Read More';
+            }
+        });
+    }
+});
 </script>

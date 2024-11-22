@@ -22,7 +22,7 @@ a:hover {
   width: 1264px;
   max-width: 100%;
   margin: 0 auto;
-} 
+}
 body.modal-open {
   overflow: hidden;
 /*  padding-right: 17px;*/
@@ -149,15 +149,15 @@ h3 {
   width: 10px;
 }
 .tr-custom-scrollbar::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px grey; 
+  box-shadow: inset 0 0 5px grey;
   border-radius: 10px;
 }
 .tr-custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #D6D6D6; 
+  background: #D6D6D6;
   border-radius: 10px;
 }
 .tr-custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #D6D6D6; 
+  background: #D6D6D6;
 }
 .tr-show-all a {
   font-weight: 600;
@@ -204,7 +204,7 @@ button.tr-anchor-btn:hover {
   top: 0;
   left: 0;
   height: 18px;
-  width: 18px; 
+  width: 18px;
 }
 .tr-check-box:hover input ~ .checkmark {
   background-color: #F0F3F5;
@@ -600,7 +600,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
 .tr-find-hotels form .tr-form-fields {
   display: flex;
   justify-content: center;
-} 
+}
 .tr-find-hotels .col {
   padding: 0;
   position: relative;
@@ -620,7 +620,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   min-width: 292px;
   margin: 0 20px;
   padding: 0 20px;
-  position: relative; 
+  position: relative;
 }
 .tr-find-hotels .tr-form-booking-date .tr-form-checkin,
 .tr-find-hotels .tr-form-booking-date .tr-form-checkout {
@@ -717,7 +717,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   background-size: 16px;
   border-radius: 50%;
   width: 40px;
-  height: 40px; 
+  height: 40px;
   margin-top: 5.5px;
   text-indent: -9999px;
 }
@@ -823,13 +823,13 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   width: 400px;
   position: absolute;
   top: 59px;
-  right: -49px;  
+  right: -49px;
   padding: 9px 35px;
 }
 .tr-guests-modal .tr-add-edit-guest {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center; 
+  align-items: center;
   justify-content: space-between;
   font-size: 16px;
   font-weight: 500;
@@ -848,7 +848,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   border-bottom: 0.8px solid rgba(94, 94, 94, 0.5);
 }
 .tr-guests-modal .tr-total-num-of-rooms .tr-guest {
-  font-weight: 600;  
+  font-weight: 600;
 }
 .tr-guests-modal .tr-age {
   font-size: 14px;
@@ -882,13 +882,13 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   text-indent: -9999px;
 }
 .tr-guests-modal .tr-qty-box .minus.disabled {
-  background-image: url(../images/icons/minus-circle-icon.svg); 
+  background-image: url(../images/icons/minus-circle-icon.svg);
 }
 .tr-guests-modal .tr-qty-box .plus {
   background-image: url(../images/icons/plus-circle-icon.svg);
 }
 .tr-guests-modal .tr-qty-box .minus {
-  background-image: url(../images/icons/minus-circle-enable-icon.svg); 
+  background-image: url(../images/icons/minus-circle-enable-icon.svg);
 }
 
 /*Explore Form*/
@@ -1464,7 +1464,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   border-radius: 8px;
   overflow: hidden;
 }
-.tr-room-section .carousel .carousel-control-next-icon, 
+.tr-room-section .carousel .carousel-control-next-icon,
 .tr-room-section .carousel .carousel-control-prev-icon {
   background: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12);
@@ -1713,7 +1713,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   line-height: 28px;
   color: #222222;
   margin-top: 8px;
-  padding-left: 24px; 
+  padding-left: 24px;
 }
 .tr-facilities-lists .tr-facilities-list ul li.tr-available {
   background-image: url(../images/icons/check-icon.svg);
@@ -2182,7 +2182,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   line-height: 19px;
   color: #000000;
   padding: 7.7px 45px 7.7px 16px;
-  transition: all .3s ease;  
+  transition: all .3s ease;
 }
 .tr-review-section .tr-jump-to-all-review:hover {
   background-image: url(../images/icons/long-arrow-down-white-icon.svg);
@@ -2396,7 +2396,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
 }
 .tr-customer-review .tr-customer-details .tr-report .tr-report-icon.active + .tr-report-popup {
   display: block;
-} 
+}
 .tr-customer-review .tr-customer-details .tr-report-popup {
   position: absolute;
   top: 2px;
@@ -2411,7 +2411,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
 }
 .tr-customer-review .tr-customer-details .tr-report-popup h5 {
   font-weight: 600;
-  font-size: 16px;  
+  font-size: 16px;
   line-height: 19px;
   border-bottom: 1px solid #D6D6D6;
   margin-bottom: 16px;
@@ -2631,7 +2631,7 @@ header .tr-header.explore-page .tr-utility-nav .nav-item.tr-guest {
   width: 272px;
 }
 .tr-rules-ques-ans .tr-rules-ans {
-  font-size: 15px;  
+  font-size: 15px;
   line-height: 22px;
   color: #222222;
   width: calc(100% - 272px);
@@ -3598,7 +3598,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   padding: 16px 0 10px;
   text-align: center;
 }
-#gallerySlider .carousel-control-next, 
+#gallerySlider .carousel-control-next,
 #gallerySlider .carousel-control-prev {
   width: 40px;
   height: 40px;
@@ -3606,7 +3606,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   opacity: 1;
   transform: translateY(-50%);
 }
-#gallerySlider .carousel-control-next-icon, 
+#gallerySlider .carousel-control-next-icon,
 #gallerySlider .carousel-control-prev-icon {
   background: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12);
@@ -3621,9 +3621,9 @@ footer .tr-social-links ul li:nth-of-type(3) {
 #gallerySlider .carousel-control-next-icon {
   background-image: url(../images/chevron-down-right-icon.svg);
 }
-#gallerySlider .carousel-control-next:focus, 
-#gallerySlider .carousel-control-next:hover, 
-#gallerySlider .carousel-control-prev:focus, 
+#gallerySlider .carousel-control-next:focus,
+#gallerySlider .carousel-control-next:hover,
+#gallerySlider .carousel-control-prev:focus,
 #gallerySlider .carousel-control-prev:hover {
   opacity: 0.5;
 }
@@ -3985,7 +3985,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   min-width: 292px;
   margin-left: 20px;
   padding-left: 20px;
-  position: relative; 
+  position: relative;
 }
 .tr-search-hotel .tr-form-booking-date .tr-form-checkin,
 .tr-search-hotel .tr-form-booking-date .tr-form-checkout {
@@ -4175,13 +4175,13 @@ footer .tr-social-links ul li:nth-of-type(3) {
   width: 400px;
   position: absolute;
   top: 59px;
-  right: -49px;  
+  right: -49px;
   padding: 9px 35px;*/
 }
 .tr-guests-modal .tr-add-edit-guest {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center; 
+  align-items: center;
   justify-content: space-between;
   font-size: 16px;
   font-weight: 500;
@@ -4200,7 +4200,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   border-bottom: 0.8px solid rgba(94, 94, 94, 0.5);
 }
 .tr-guests-modal .tr-total-num-of-rooms .tr-guest {
-  font-weight: 600;  
+  font-weight: 600;
 }
 .tr-guests-modal .tr-age {
   font-size: 14px;
@@ -4234,13 +4234,13 @@ footer .tr-social-links ul li:nth-of-type(3) {
   text-indent: -9999px;
 }
 .tr-guests-modal .tr-qty-box .minus.disabled {
-  background-image: url(../images/icons/minus-circle-icon.svg); 
+  background-image: url(../images/icons/minus-circle-icon.svg);
 }
 .tr-guests-modal .tr-qty-box .plus {
   background-image: url(../images/icons/plus-circle-icon.svg);
 }
 .tr-guests-modal .tr-qty-box .minus {
-  background-image: url(../images/icons/minus-circle-enable-icon.svg); 
+  background-image: url(../images/icons/minus-circle-enable-icon.svg);
 }
 
 
@@ -4353,7 +4353,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
 .tr-more-places-list .tr-hotel-deatils {
   min-height: 118px;
   margin-top: 10px;
-  position: relative;  
+  position: relative;
 }
 .tr-more-places-list .tr-hotel-img {
   border-radius: 12px;
@@ -4475,7 +4475,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
 .tr-city-wise-hotel-lists .tr-hotel-lists .tr-hotel-list {
   display: flex;
   justify-content: space-between;
-  color: #6A6A6A;   
+  color: #6A6A6A;
   font-weight: 400;
   font-size: 16px;
   line-height: 19px;
@@ -4513,7 +4513,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   width: 272px;
 }
 .tr-good-to-know-section .tr-season-list .tr-season-desc {
-  font-size: 15px;  
+  font-size: 15px;
   line-height: 22px;
   color: #222222;
   width: calc(100% - 272px);
@@ -4684,102 +4684,117 @@ footer .tr-social-links ul li:nth-of-type(3) {
 /******* Filter Section - Start *******/
 
 /******* Price Range - Start *******/
+
 .tr-price-graph {
-  display: flex;
-  align-items: end;
-  justify-content: center;
-  gap: 10px;
-  padding: 24px 10px 0;
-}
-.tr-price-graph-col {
-  background-color: #F0F3F5;
-  width: 20px;
-  border-radius: 4px 4px 0 0;
-}
-.tr-price-range-section {
-  margin-top: -5px;
-  position: relative;
-}
-.tr-price-range-section .tr-price-slider {
-  background-image: url(../images/date-range-bg.png);
-  background-repeat: repeat-x;
-  background-size: 8px;
-  height: 5px;
-  margin: 9px 0 40px;
-  position: relative;
-}
-.tr-price-range-section .tr-title {
-  display: none;
-  color: #000000;
-  font-size: 12px;
-  position: absolute;
-  top: 18px;
-  width: 40px;
-  text-align: center;
-  transform: translateX(-50%);
-}
-.tr-price-range-section .min-price-title {
-  margin-left: 11px;
-}
-.tr-price-range-section .max-price-title {
-  margin-left: -10px;
-}
-.tr-price-range-section .tr-price-slider input[type=range] {
-  -webkit-appearance: none;
-          appearance: none;
-  background: transparent;
-  width: 100%;
-  height: 5px;
-  pointer-events: none;
-  position: absolute;
-}
-.tr-price-range-section .tr-price-slider input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-          appearance: none;
-  background-color: #FFFFFF;
-  background-image: url(../images/icons/arrow-left-right-black.svg);
-  background-repeat: no-repeat;
-  background-size: 12px;
-  background-position: center;
-  border-radius: 50%;
-  border: 1px solid #000000;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  pointer-events: auto;
-}
-.tr-price-range-section .tr-price-slider input[type=range]:hover::-webkit-slider-thumb {
-  background-color: #000000;
-  background-image: url(../images/icons/arrow-left-right-white.svg);
-}
-.tr-price-range-section .tr-price-slider input[type=range]::-moz-range-thumb {
-  background: #4CAF50;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 15px;
-  height: 15px;
-  pointer-events: auto;
-}
-.tr-price-range-section .tr-range-values {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #F0F3F5;
-  border: 1px solid #FFFFFF;
-  border-radius: 40px;
-  padding: 4px;
-}
-.tr-price-range-section .tr-range-values div {
-  background-color: #FFFFFF;
-  border-radius: 40px;
-  font-weight: 600;
-  line-height: 40px;
-  color: #222222;
-  width: calc(50% - 10px);
-  height: 40px;  
-  text-align: center;
-}
-/******* Price Range - End *******/
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    gap: 10px;
+    padding: 24px 10px 0;
+  }
+
+  .tr-price-graph-col {
+    background-color: #F0F3F5;
+    width: 20px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .tr-price-range-section {
+    margin-top: -5px;
+    position: relative;
+  }
+
+  .tr-price-range-section .tr-price-slider {
+    background-image: url(../images/date-range-bg.png);
+    background-repeat: repeat-x;
+    background-size: 8px;
+    height: 5px;
+    margin: 9px 0 40px;
+    position: relative;
+  }
+
+  .tr-price-range-section .tr-title {
+    display: block; /* Change from 'none' to 'block' */
+    color: #000000;
+    font-size: 12px;
+    position: absolute;
+    top: -20px; /* Adjust vertical position to avoid overlap */
+    width: 60px; /* Adjust width as needed */
+    text-align: center;
+    transform: translateX(-50%);
+  }
+
+  .tr-price-range-section .min-price-title {
+    left: 0;
+  }
+
+  .tr-price-range-section .max-price-title {
+    right: 0;
+  }
+
+  .tr-price-range-section .tr-price-slider input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    width: 100%;
+    height: 5px;
+    pointer-events: none;
+    position: absolute;
+  }
+
+  .tr-price-range-section .tr-price-slider input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #FFFFFF;
+    background-image: url(../images/icons/arrow-left-right-black.svg);
+    background-repeat: no-repeat;
+    background-size: 12px;
+    background-position: center;
+    border-radius: 50%;
+    border: 1px solid #000000;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .tr-price-range-section .tr-price-slider input[type=range]:hover::-webkit-slider-thumb {
+    background-color: #000000;
+    background-image: url(../images/icons/arrow-left-right-white.svg);
+  }
+
+  .tr-price-range-section .tr-price-slider input[type=range]::-moz-range-thumb {
+    background: #4CAF50;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    pointer-events: auto;
+  }
+
+  .tr-price-range-section .tr-range-values {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #F0F3F5;
+    border: 1px solid #FFFFFF;
+    border-radius: 40px;
+    padding: 4px;
+  }
+
+  .tr-price-range-section .tr-range-values div {
+    background-color: #FFFFFF;
+    border-radius: 40px;
+    font-weight: 600;
+    line-height: 40px;
+    color: #222222;
+    width: calc(50% - 10px);
+    height: 40px;
+    text-align: center;
+  }
+
+  /******* Price Range - End *******/
+
 
 /******* ROOM Start *******/
 .tr-hotel-info-section {
@@ -4796,7 +4811,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   font-size: 16px;
   border: 1px solid #D6D6D6;
   border-radius: 8px;
-  margin:  24px 0 32px 0; 
+  margin:  24px 0 32px 0;
   padding: 23px 30px;
 }
 .tr-room-section-2 .tr-room-filters .tr-filter-label {
@@ -4852,14 +4867,14 @@ footer .tr-social-links ul li:nth-of-type(3) {
 .tr-room-section-2  .carousel-indicators {
   align-items: center;
 }
-.tr-room-section-2 .carousel .carousel-control-next, 
+.tr-room-section-2 .carousel .carousel-control-next,
 .tr-room-section-2 .carousel .carousel-control-prev {
   display: none;
   top: 50%;
   bottom: auto;
   transform: translateY(-50%);
 }
-.tr-room-section-2 .carousel .carousel-control-next-icon, 
+.tr-room-section-2 .carousel .carousel-control-next-icon,
 .tr-room-section-2 .carousel .carousel-control-prev-icon {
   background: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12);
@@ -4870,7 +4885,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   width: 24px;
   height: 24px;
 }
-.tr-room-section-2 .carousel:hover .carousel-control-next, 
+.tr-room-section-2 .carousel:hover .carousel-control-next,
 .tr-room-section-2 .carousel:hover .carousel-control-prev {
   display: block;
 }
@@ -5751,7 +5766,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   position: relative;
   text-align: center;
 }
-.tr-auth-section .tr-or:before, 
+.tr-auth-section .tr-or:before,
 .tr-auth-section .tr-or:after {
   content: "";
   position: absolute;
@@ -6197,14 +6212,14 @@ footer .tr-social-links ul li:nth-of-type(3) {
 .tr-explore-listing  .carousel-indicators {
   align-items: center;
 }
-.tr-explore-listing .carousel .carousel-control-next, 
+.tr-explore-listing .carousel .carousel-control-next,
 .tr-explore-listing .carousel .carousel-control-prev {
   display: none;
   top: 50%;
   bottom: auto;
   transform: translateY(-50%);
 }
-.tr-explore-listing .carousel .carousel-control-next-icon, 
+.tr-explore-listing .carousel .carousel-control-next-icon,
 .tr-explore-listing .carousel .carousel-control-prev-icon {
   background: #FFFFFF;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.12);
@@ -6215,7 +6230,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   width: 24px;
   height: 24px;
 }
-.tr-explore-listing .carousel:hover .carousel-control-next, 
+.tr-explore-listing .carousel:hover .carousel-control-next,
 .tr-explore-listing .carousel:hover .carousel-control-prev {
   display: block;
 }
@@ -7080,7 +7095,7 @@ footer .tr-social-links ul li:nth-of-type(3) {
   background-color: #09707A;
 }
 .tr-no-highlighted-review-listing .tr-no-review-list {
-  display: flex; 
+  display: flex;
   align-items: center;
 }
 .tr-no-highlighted-review-listing .tr-no-review-list .tr-heart {
@@ -7675,3 +7690,10 @@ footer .tr-social-links ul li:nth-of-type(3) {
   padding: 74px 30px 28px;
 }
 /******* Home Page - End *******/
+/* font-family: 'Figtree', sans-serif !important;
+color: #222;
+font-size: 16px;
+line-height: 28px;
+overflow-x: hidden;
+word-break: break-word;
+} */

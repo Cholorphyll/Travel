@@ -125,6 +125,75 @@
 .tr-more-facilities.expanded .custom-read-more {
     display: none;
 }
+.tr-price-range-section {
+  position: relative;
+}
+
+#maxPrice {
+  position: absolute;
+  top: -25px; /* Adjust vertical position to place it above the slider */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: left 0.1s ease; /* Smooth transition */
+  right: 0; /* Initially align the max price to the right */
+}
+.tr-price-range-section {
+  position: relative;
+}
+
+#maxPrice {
+  position: absolute;
+  top: -25px; /* Adjust this value to move the label above the slider */
+  left: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: left 0.1s ease;  /* Smooth transition when moving */
+}
+
+#minPrice {
+  position: absolute;
+  top: -25px; /* Same for the min price */
+  left: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tr-price-slider {
+  position: relative;
+  width: 100%; /* Ensure slider takes the full width */
+}
+
+.tr-price-slider input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 5px;
+  pointer-events: none;
+  position: absolute;
+}
+
+.tr-price-slider input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #FFFFFF;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.tr-price-slider input[type=range]::-moz-range-thumb {
+  background: #4CAF50;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  pointer-events: auto;
+}
+
   </style>
    <?php
       $locationPatents = $locationPatent;
@@ -614,19 +683,18 @@
                   <div class="tr-price-graph-col" style="height: 81px;"></div>
                 </div>
                 <div class="tr-price-range-section">
-                  <div class="tr-price-slider">
-                    <input type="range" min="0" max="1000" value="0" class="min-range" step="1"  id="minRange">
-                    <input type="range" min="0" max="5000" value="5000" class="max-range" step="1" id="maxRange">
+                    <div class="tr-price-slider">
+                      <input type="range" min="0" max="5000" value="0" class="min-range" step="1" id="minRange">
+                      <input type="range" min="0" max="5000" value="5000" class="max-range" step="1" id="maxRange">
+                    </div>
+                    <div class="tr-title min-price-title" id="minPrice">$0</div>
+                    <div class="tr-title max-price-title" id="maxPrice">$5000</div>
+                    <div class="tr-range-values">
+                      <div class="min-price hl-filter">Min Price</div>
+                      <span>-</span>
+                      <div class="max-price hl-filter">Max Price</div>
+                    </div>
                   </div>
-                  <div class="tr-title min-price-title " id="minPrice">$0</div>
-                  <div class="tr-title max-price-title " id="maxPrice">$5000</div>
-                  <div class="tr-range-values">
-                    <div class="min-price hl-filter">Min Price</div>
-                    <span>-</span>
-                    <div class="max-price hl-filter">Max Price</div>
-                  </div>
-                </div>
-              </div>
               <div class="tr-filter-lists mnt">
                 <h5>Facilities</h5>
                 <ul>
@@ -1737,50 +1805,36 @@
 </script>
 @endif
 <script>
-    // Get references to the elements
-    // Get references to the elements
-const minRange = document.getElementById("minRange");
-const maxRange = document.getElementById("maxRange");
-const minPrice = document.getElementById("minPrice");
-const maxPrice = document.getElementById("maxPrice");
+    const minRange = document.getElementById('minRange');
+const maxRange = document.getElementById('maxRange');
+const minPrice = document.getElementById('minPrice');
+const maxPrice = document.getElementById('maxPrice');
+const slider = document.querySelector('.tr-price-slider');  // The slider container
+const sliderWidth = slider.offsetWidth;  // Get the width of the slider
 
-// Function to update the price labels' positions and values
-function updatePriceLabels() {
-  const minValue = parseInt(minRange.value);
-  const maxValue = parseInt(maxRange.value);
+// Update the min and max price dynamically
+minRange.addEventListener('input', function () {
+  minPrice.textContent = `$${minRange.value}`;
+  updateMaxPricePosition();  // Update the position of the max price
+});
 
-  // Update label text to reflect current slider values
-  minPrice.textContent = `$${minValue}`;
-  maxPrice.textContent = `$${maxValue}`;
+maxRange.addEventListener('input', function () {
+  maxPrice.textContent = `$${maxRange.value}`;
+  updateMaxPricePosition();  // Update the position of the max price
+});
 
-  // Calculate percentage positions within the slider
-  const minPosition = (minValue / minRange.max) * minRange.offsetWidth;
-  const maxPosition = (maxValue / maxRange.max) * maxRange.offsetWidth;
+// Function to update the position of the maxPrice
+function updateMaxPricePosition() {
+  const maxPosition = (maxRange.value / maxRange.max) * sliderWidth;
 
-  // Position labels according to calculated slider thumb positions
-  minPrice.style.left = `${minPosition}px`;
+  // Update the left position of maxPrice to move it with the slider
   maxPrice.style.left = `${maxPosition}px`;
+
+  // Prevent the maxPrice label from going beyond the right edge of the slider
+  if (maxPosition + maxPrice.offsetWidth > sliderWidth) {
+    maxPrice.style.left = `${sliderWidth - maxPrice.offsetWidth}px`;  // Prevent overflow
+  }
 }
-
-// Function to update listings based on slider values (replace with your actual filter function)
-function updateListings() {
-  // Your existing logic to update listings based on `minRange.value` and `maxRange.value`
-  console.log(`Updating listings with min price: $${minRange.value} and max price: $${maxRange.value}`);
-  // Add your actual filtering logic here
-}
-
-// Combined function to update both labels and listings
-function handleSliderChange() {
-  updatePriceLabels();
-  updateListings();
-}
-
-// Initialize label positions
-updatePriceLabels();
-
-// Update label positions and listings when the sliders move
-minRange.addEventListener("input", handleSliderChange);
-maxRange.addEventListener("input", handleSliderChange);
 
 
 </script>
