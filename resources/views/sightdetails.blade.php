@@ -7,11 +7,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-PTHP3JH4');</script>
    @php $title = '';$lname=''; @endphp
-@if(!empty($searchresult)) @php $title = $searchresult[0]->MetaTagTitle; $lname=$searchresult[0]->Name; @endphp @endif
+@if(!empty($searchresult)) @php $title = $searchresult[0]->MetaTagTitle; $MetaTagDescription = $searchresult[0]->MetaTagDescription; $lname=$searchresult[0]->Name; @endphp @endif
   <title>{{$title}}, {{$lname}}@if(!empty($locationPatent)), @foreach($locationPatent as $location){{$location['Name']}}@if(!$loop->last),@endif @endforeach @endif– Reviews, Hours, and Photos - Travell</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Planning to visit {{$title}}? Read Reviews, check hours, and see traveler photos of {{$title}}, {{$lname}}.">
+    <meta name="description" content="{{$MetaTagDescription}}, {{$lname}}.">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
