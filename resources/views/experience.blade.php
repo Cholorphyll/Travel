@@ -46,7 +46,7 @@
                 @if(!empty($breadcumb))
                      <li class="breadcrumb-item active" aria-current="page">
                          <a href="{{ route('explore_continent_list',[$breadcumb[0]->contid,$breadcumb[0]->ccName])}}"> {{$breadcumb[0]->ccName}}</a>
-                    </li>              
+                    </li>
                     <li class="breadcrumb-item">
                         <a href="{{ route('explore_country_list',[$breadcumb[0]->CountryId,$breadcumb[0]->cslug])}}">
                             @if(!empty($breadcumb)) {{$breadcumb[0]->CountryName}} @endif</a>
@@ -67,10 +67,10 @@
                 @endif
                 <li class="breadcrumb-item active" aria-current="page">
                     <a
-                    href="{{ route('search.results',[$getexp[0]->slugid.'-'.strtolower($getexp[0]->LSlug)]) }}"><span>{{$getexp[0]->Lname}}</span>  
+                    href="{{ route('search.results',[$getexp[0]->slugid.'-'.strtolower($getexp[0]->LSlug)]) }}"><span>{{$getexp[0]->Lname}}</span>
                     </a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">{{$getexp[0]->Name}}</li>               
+                <li class="breadcrumb-item active" aria-current="page">{{$getexp[0]->Name}}</li>
               </ol>
               @endif
             </nav>
@@ -118,46 +118,46 @@
                     <div class="col-lg-6 ">
                       @if($getexp[0]->Img1 !="")
                       <img src="{{$getexp[0]->Img1}}" class="h-100 p1"
-              alt="hotel image">  
+              alt="hotel image">
                       @else
                       <img src="{{asset('public/images/Hotel lobby.svg')}}" class="h-100 p1"
-              alt="hotel image">  
-                      @endif   
+              alt="hotel image">
+                      @endif
                     </div>
 
-                    <div class="col-lg-6 d-none d-md-inline-block"> 
+                    <div class="col-lg-6 d-none d-md-inline-block">
                         <div class="row">
                             <div class="col-md-6 p1">
-                            @if($getexp[0]->Img2 !="")                               
-                            <img src="{{$getexp[0]->Img2}}" 
-              alt="hotel image">   
+                            @if($getexp[0]->Img2 !="")
+                            <img src="{{$getexp[0]->Img2}}"
+              alt="hotel image">
                             @else
-                            <img src="{{asset('public/images/Hotel lobby.svg')}}" 
-              alt="hotel image">   
+                            <img src="{{asset('public/images/Hotel lobby.svg')}}"
+              alt="hotel image">
                             @endif
                             </div>
 
                             <div class="col-md-6 p1">
-                            @if($getexp[0]->Img3 !="")   
+                            @if($getexp[0]->Img3 !="")
                                 <!-- <img src="{{ asset('public/images/image 3.png') }}" alt=""> -->
-                                <img src="{{$getexp[0]->Img3}}" 
-              alt="hotel image">  
-                             @else   
-                             <img src="{{asset('public/images/Hotel lobby.svg')}}" 
+                                <img src="{{$getexp[0]->Img3}}"
+              alt="hotel image">
+                             @else
+                             <img src="{{asset('public/images/Hotel lobby.svg')}}"
               alt="hotel image">
                              @endif
                             </div>
 
                             <div class="col-md-6 p1">
                                 <!-- <img src="{{ asset('public/images/image 4.png') }}" alt=""> -->
-                                <img src="{{asset('public/images/Hotel lobby.svg')}}" 
-              alt="hotel image">     
+                                <img src="{{asset('public/images/Hotel lobby.svg')}}"
+              alt="hotel image">
                             </div>
 
                             <div class="col-md-6 p1">
                                 <!-- <img src="{{ asset('public/images/image 5.png') }}" alt=""> -->
                                 <img src="{{asset('public/images/Hotel lobby.svg')}}" class="card-img br-10 mb-12"
-              alt="hotel image">     
+              alt="hotel image">
                             </div>
                         </div>
                     </div>
@@ -204,7 +204,7 @@
                       <img src="{{ asset('public/images/phone.svg') }}" alt="" class="mr-10">
                       <div class="fs14">{{$getexp[0]->TicketType}}</div>
                   </div>
-               
+
                 @endif
                 <?php// return print_r($languageData) ?>
                 @if(!$languageData->isEmpty())
@@ -214,7 +214,7 @@
                     <div class="fs14">Offered in:
                     @foreach ($languageData as $langItem)
                        {{$langItem->Language}} @if(!$loop->last) , @endif @endforeach
-                     
+
                     </div>
                 </div>
 
@@ -228,7 +228,7 @@
                   <?php   $exclusiveArray = explode(',', $getexp[0]->Exclusive); ?>
                   @if(!$getexprv->isEmpty())
                   @foreach($getexprv as $getreview)
-                    <div class="key-facts "><b>{{ substr($getreview->Description, 0, 70)}}</b></div>                  
+                    <div class="key-facts "><b>{{ substr($getreview->Description, 0, 70)}}</b></div>
                   @endforeach
                   @else
                         <p>Reviews not available.</p>
@@ -242,13 +242,13 @@
                         <h6 class="mb-20 fs24"><b>What’s Included</b></h6>
                     </div>
 
-              
+
                     <?php $explode_inc = explode(',',$getexp[0]->Inclusive); ?>
                     @foreach($explode_inc as $explode_inc)
                     <div class="d-flex ammenity fw-500 mb-20"> <img src="{{ asset('public/images/Check-Success.svg')}}" alt=""
                             class="mr-10">{{$explode_inc}}</div>
                     @endforeach
-              
+
                 </section>
                 @endif
                 <hr class="d-block">
@@ -263,10 +263,10 @@
                             </div>
                             @if(!empty($iteneryday))
                                 @php
-                                   
+
                                     $sortedIteneryday = $iteneryday[$getexp[0]->ExperienceId]->sortBy('ItnineraryDay')->values()->all();
                                 @endphp
-                                
+
                                 @foreach ($sortedIteneryday as $langItem)
                                     <div class="fw-500 mb-20"><a href="{{ asset('at-'.$langItem->slugid.'-'.$langItem->SightId.'-'.strtolower($langItem->Slug)) }}" target="_blank">Day: {{$langItem->ItnineraryDay}} - <span class="ml-5">{{$langItem->Name}}</span></a></div>
                                 @endforeach
@@ -381,55 +381,55 @@
                              @if($getexp[0]->FreeCancellation == "Free Cancellation")
                                 Available
                              @else
-                                 {{$getexp[0]->FreeCancellation}}       
-                             @endif   
+                                 {{$getexp[0]->FreeCancellation}}
+                             @endif
                               @endif </li>
                         <li><b>Pickup</b> - @if($getexp[0]->Pickup != "" && $getexp[0]->Pickup == "Yes") Available @else Unavailable @endif</li>
                         <li><b>Confirmation</b> - @if($getexp[0]->Confirmation != "" ) {{$getexp[0]->Confirmation}} @else Unavailable @endif</li>
                         <li><b>Duration</b> - @if($getexp[0]->Duration != "" ) {{$getexp[0]->Duration}} @else Unavailable @endif</li>
                         <li><b>Mobile Tickets</b> - @if($getexp[0]->mobile_tickets != "" ) {{$getexp[0]->mobile_tickets}} @else Unavailable  @endif
-                    
+
                         </li>
-                        @if($getexp[0]->WhatToExpect != "" ) 
+                        @if($getexp[0]->WhatToExpect != "" )
                         <li><b>What To Expect</b> - @if($getexp[0]->WhatToExpect != "" ) {{$getexp[0]->WhatToExpect}}  </li>
                         @endif
                         @endif
-                        
+
                     </ul>
 
                     </section>
-                    
-                    @if($getexp[0]->CancellationPolicy != "") 
+
+                    @if($getexp[0]->CancellationPolicy != "")
                     <hr class="d-block">
                    <section class="mb-32">
-                    <h5 class="mb-20 fs24"><b>Cancellation Policy</b></h5>                  
+                    <h5 class="mb-20 fs24"><b>Cancellation Policy</b></h5>
                       <p> {{$getexp[0]->CancellationPolicy}}</p>
                     </section>
                    @endif
 
-                   <!-- @if($getexp[0]->AdditionalInformation != "") 
+                   <!-- @if($getexp[0]->AdditionalInformation != "")
                     <hr class="d-block">
                    <section class="mb-32">
-                    <h5 class="mb-20 fs24"><b>Additional Information</b></h5>                  
+                    <h5 class="mb-20 fs24"><b>Additional Information</b></h5>
                       <p> {{$getexp[0]->AdditionalInformation}}</p>
                     </section>
                    @endif -->
-                   
-                   @if($getexp[0]->AllInformation != "") 
+
+                   @if($getexp[0]->AllInformation != "")
                     <hr class="d-block">
                    <section class="mb-32">
-                    <h5 class="mb-20 fs24"><b>More Information</b></h5>                  
+                    <h5 class="mb-20 fs24"><b>More Information</b></h5>
                       <p> {{$getexp[0]->AllInformation}}</p>
                     </section>
                    @endif
                 <hr class="d-block">
-                @if($getexp[0]->AdditionalInformation != "") 
+                @if($getexp[0]->AdditionalInformation != "")
                 <section class="mb-32">
                     <h5 class="mb-20 fs24"><b>Accessibility</b></h5>
 
                     <p> {{$getexp[0]->AdditionalInformation}}</p>
                 </section>
-               
+
                 <hr class="d-block">
                 @endif
                 <!-- <h5 class="mb-20 fs24"><b>Accessibility</b></h5>
@@ -511,13 +511,13 @@
                     <p class=""><b>Select topics to read reviews:</b></p>
                     <div class="d-flex flex-wrap mb-65">
 
-                   
+
 						@foreach($getexprv as $getrv)
 						<div class="key-facts">  {{ substr($getrv->Description, 0, 70)}}</div>
 						@endforeach
-                       
-					
-                      
+
+
+
                     </div>
                     @endif
                 </section>
@@ -539,8 +539,8 @@
                     </div>
 
                     <div class="row d-flex align-items-start">
-                 
-               
+
+
                         @foreach($getexprv as $review)
                         <div class="col-6 col-md-1 mt-3">
                             <img src="{{asset('public/images/image 22.png')}}" class="w-51px " alt="">
@@ -562,19 +562,19 @@
 
 
                             </div>
-                            <img src="{{asset('public/images/dots.svg')}}" alt="" class="d-none d-md-inline-block" style="margin-left: 243px;"> 
+                            <img src="{{asset('public/images/dots.svg')}}" alt="" class="d-none d-md-inline-block" style="margin-left: 243px;">
                         </div>
                         @endforeach
-                      
+
                     </div>
                     @else
                         Reviews not available.
-                       
+
                         @endif
                 </section>
                 <!-- <hr class="d-block"> -->
 
-             
+
             </div>
 
 

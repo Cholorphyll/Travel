@@ -92,7 +92,7 @@
         #grey-overlay {
             filter: grayscale(100%);
         }
-		 
+
 		 .tr-overview-section .tr-overview-content button.tr-anchor-btn {
     margin-top: 15px;
 }
@@ -115,6 +115,7 @@ button.tr-anchor-btn {
   "@context": "https://schema.org/",
   "@type": "BreadcrumbList",
   "itemListElement": [
+  @if(!$getcontlink->isEmpty())
     {
       "@type": "ListItem",
       "position": 1,
@@ -126,7 +127,7 @@ button.tr-anchor-btn {
       "position": 2,
       "name": "@if(!$getcontlink->isEmpty()){{$getcontlink[0]->Name}}@endif",
       "item": "@if(!$getcontlink->isEmpty()){{ route('explore_country_list',[$getcontlink[0]->CountryId,$getcontlink[0]->slug])}}@endif"
-    }
+    } @else  <?php $locationPatents = array_reverse($locationPatent);  $n = 1; ?>  @endif
     @if(!empty($locationPatent))
     <?php $locationPatents = array_reverse($locationPatent);  $n = 3; ?>
     @foreach ($locationPatents as $location)
@@ -139,10 +140,10 @@ button.tr-anchor-btn {
       <?php $n++; ?>
       @endforeach
 	  	@else
-	<?php $n = 3;?>
+	@if(!$getcontlink->isEmpty() ) <?php $n = 3;?> @endif
     @endif
     @if(!$getlocationexp->isEmpty())
-    ,{
+    @if(!$getcontlink->isEmpty() || !empty($locationPatent)),@endif{
       "@type": "ListItem",
       "position": {{$n}},
       "name": "{{$getlocationexp[0]->Name}}",
@@ -162,10 +163,10 @@ button.tr-anchor-btn {
       "position": {{$n}},
       "name": "{{$searchresult[0]->cityName}}",
       "item": "@if(isset($getlocationexp[0]->Slug)){{ route('hotel.list',[$firstId.'-'.$getlocationexp[0]->Slug]) }}@endif"
-    } 
+    }
     <?php $n++; ?>
     @endif
-    ,{
+    @if(!$getcontlink->isEmpty() || !empty($locationPatent) || !$getlocationexp->isEmpty()),@endif{
       "@type": "ListItem",
       "position": {{$n}},
       "name": "{{$searchresult[0]->name}}",
@@ -654,7 +655,7 @@ button.tr-anchor-btn {
             <!--OVERVIEW SECTION - END-->
           </div>
         </div>
-   
+
 
       <div class="col-lg-5 col-md-12 tr-right-col">
         <div class="tr-hotel-certificated">
@@ -682,9 +683,30 @@ button.tr-anchor-btn {
             <img  src="images/icons/marketeq-icon.svg" alt="">
           </div>
         </div>
+        <?php
+            $sessionData = session()->all();
+            $checkinDate = "";
+            $checkoutDate = "";
+            $guest = "";
+            if (isset($sessionData['checkin'])) {
+              $checkin = str_replace('_', ' - ', $sessionData['checkin']);
+              $dates = explode('_', $sessionData['checkin']);
+              // $checkinDate = $dates[0];
+              // $checkoutDate = $dates[1];
+              $checkinDatet = new DateTime($dates[0]);
+              $checkoutDatet = new DateTime($dates[1]);
+              $checkinDate = $checkinDatet->format('j M Y'); // 6 Sep 2024
+              $checkoutDate = $checkoutDatet->format('j M Y'); // 9 Sep 2024
+            } else {
+              $checkin = 'Add date';
+            }
+            $guest = isset($sessionData['guest']) ? $sessionData['guest'] : '';
+            $rooms = isset($sessionData['rooms']) ? $sessionData['rooms'] : '';
+
+          ?>
         <div class="tr-booking-deatils">
-          <div class="tr-date-section">
-            <label class="tr-room-guest">1 room, 2 guests</label>
+          <div class="tr-date-section section-2">
+            <label class="tr-room-guest"> <span class="room-count">@if($rooms !=''){{ $rooms }}@else 0 @endif </span> room , <span class="guest-count"> @if($guest !=''){{ $guest }}@else 0 @endif </span> guests</label>
             <div class="tr-add-edit-guest-count">
               <div class="tr-guests-modal">
                 <div class="tr-add-edit-guest tr-total-num-of-rooms">
@@ -693,7 +715,7 @@ button.tr-anchor-btn {
                   </div>
                   <div class="tr-qty-box">
                     <button class="minus disabled" value="minus">-</button>
-                    <input type="text" id="totalRoom"  class="totalRoom" value="0" id="" min="1" max="10" name="" readonly />
+                    <input type="text" id="totalRoom"  class="totalRoom" value="@if($rooms !=''){{ $rooms }}@else 0 @endif" id="" min="1" max="10" name="" readonly />
                     <button class="plus" value="plus">+</button>
                   </div>
                 </div>
@@ -704,7 +726,7 @@ button.tr-anchor-btn {
                   </div>
                   <div class="tr-qty-box">
                     <button class="minus disabled" value="minus">-</button>
-                    <input type="text" id="totalAdultsGuest" value="0" id="" min="1" max="10" name="" readonly />
+                    <input type="text" id="totalAdultsGuest" value="@if($guest !=''){{ $guest }}@else 0 @endif" id="" min="1" max="10" name="" readonly />
                     <button class="plus" value="plus">+</button>
                   </div>
                 </div>
@@ -773,17 +795,18 @@ button.tr-anchor-btn {
                   </div>
                 </div>
                 <button type="submit" class="tr-btn filterchackinout">Get Price</button>
-                <span class="d-none price-loader">
-                <button type="submit" class="tr-btn is-loading">Get Price</button>
-                <div class="tr-loader">
+                <!-- <span class="d-none price-loader"> -->
+                <button type="submit" class="tr-btn is-loading d-none price-loader">Get Price</button>
+                <div class="tr-loader d-none price-loader">
                     <div class="ball"></div>
                     <div class="ball"></div>
                     <div class="ball"></div>
                     <div class="ball"></div>
                   </div>
-                  </span>
+                  <!-- </span> -->
               </div>
-              <div class="tr-calenders-modal-2">
+                <!-- start calendar code -->
+              <!-- <div class="tr-calenders-modal-2">
                 <div class="tr-calenders-top">
                   <div class="tr-search-info">
                       <div class="tr-total-nights" id="totalNights"></div>
@@ -792,9 +815,9 @@ button.tr-anchor-btn {
                   </div>
                     <div class="tr-stay-date">
                     <div class="tr-col">
-                        <label for="checkInDate">Check-in</label>
+                        <label for="checkInInput2">Check-in</label>
 
-                        <input type="text" id="checkInDate" class="dateInput checkinval2" @if(Session::has('checkin'))
+                        <input type="text" id="checkInInput2" class="dateInput checkinval2" @if(Session::has('checkin'))
                             value="{{$checkin}}" @endif placeholder="Select a date" name="" readonly autocomplete="off">
                     </div>
                     <div class="tr-col">
@@ -823,7 +846,51 @@ button.tr-anchor-btn {
                     <button class="tr-clear-details">Clear dates</button>
                     <button class="tr-close-btn">Close</button>
                   </div>
-              </div>
+              </div> -->
+              <div class="tr-calenders-modal-2">
+                <div class="tr-calenders-top">
+                  <div class="tr-search-info">
+                      <div class="tr-total-nights" id="totalNights"></div>
+                    <div class="tr-check-in-checkout-date" id="totaldates" >@if(Session::has('checkin')) {{$checkin}} @endif -
+                      @if(Session::has('checkin')){{$checkout}} @endif</div>
+                  </div>
+                    <div class="tr-stay-date">
+                    <div class="tr-col">
+                        <label for="checkInInput2">Check-in</label>
+
+                        <input type="text" id="checkInInput2" class="checkIn dateInput checkinval2" @if(Session::has('checkin'))
+                            value="{{$checkin}}" @endif placeholder="Select a date" name="" readonly autocomplete="off">
+                    </div>
+                    <div class="tr-col">
+                        <label for="checkOutInput2">Check-out</label>
+
+                        <input type="text" id="checkOutInput2" class="checkOut dateInput checkoutval2" @if(Session::has('checkin'))
+                            value="{{$checkout}}" @endif placeholder="Select a date" name="" readonly autocomplete="off">
+                    </div>
+                </div>
+                </div>
+                <div class="tr-calenders-section">
+                  <div id="calendarPair2" class="calendarPair">
+                    <div class="navigation">
+                      <button type="button" class="prevMonth" id="prevMonth2">Previous</button>
+                      <button type="button" class="nextMonth" id="nextMonth2">Next</button>
+                    </div>
+                    <div class="custom-calendar checkInCalendar" id="checkInCalendar2">
+                      <div class="monthYear"></div>
+                      <div class="calendarBody"></div>
+                    </div>
+                    <div class="custom-calendar checkOutCalendar" id="checkOutCalendar2">
+                      <div class="monthYear"></div>
+                      <div class="calendarBody"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tr-action">
+                  <button type="button" class="tr-clear-details" id="reset2">Clear dates</button>
+                  <button class="tr-close-btn">Close</button>
+                </div>
+          </div>
+              <!-- end calendar code -->
             </div>
           </div>
 
@@ -886,7 +953,7 @@ button.tr-anchor-btn {
                 <!-- Show the cheapest deal label with the lowest price -->
                 <div class="tr-travel-site">
                     <div class="tr-travel-img">
-                        <span style="color: green;">cheapest deal</span>
+                        <div style="color: green;">cheapest deal</div>
                         <img loading="lazy" src="{{ 'http://pics.avs.io/hl_gates/100/30/' . $agencyData->agency_id . '.png' }}" alt="Booking">
                     </div>
                     <div class="tr-travel-price">
@@ -1134,7 +1201,7 @@ button.tr-anchor-btn {
               "Laundry service" => "Laundry service",
               "Laundry" => "Laundry service",
           ];
-      
+
           // return print_r($shortFacilities);
           ?>
           <div class="tr-facilities-details">
@@ -1161,8 +1228,8 @@ button.tr-anchor-btn {
 
             <ul class="tr-facilities-box-lists">
               @foreach ($sortedFacilities as $mnt)
-              <li> 
-              @if($mnt->image == 1 && is_string($mnt->name)) 
+              <li>
+              @if($mnt->image == 1 && is_string($mnt->name))
                   <img src="{{ asset('public/frontend/hotel-detail/images/amenities/'.trim($mnt->name).'.svg') }}" >
               @else
                   <img src="{{ asset('public/frontend/hotel-detail/images/amenities/wifi.svg') }}" >
@@ -1993,7 +2060,7 @@ button.tr-anchor-btn {
 
         </div>
         <!--WHERE TO STAY - END-->
-  
+
         <!--NEARBY HOTEL - START-->
         <div class="tr-nearby-hotel">
           <h3 class="d-none d-md-block">Nearby hotel</h3>
@@ -2110,19 +2177,33 @@ button.tr-anchor-btn {
   @include('frontend.footer')
  <div class="overlay" id="overLay"></div>
 
-  <!-- Share Modal -->
-  <div class="modal" id="shareModal">
+ <!-- Share Modal -->
+ <div class="modal" id="shareModal">
     <div class="modal-dialog">
       <div class="modal-content">
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         <h3>Share this experience</h3>
         <div class="tr-share-infos">
-          <div class="tr-hotel-img">
-            <img  src="images/room-image-1.png" alt="Room Image">
-          </div>
+             <div class="tr-hotel-img">
+        @if(!empty($searchresult[0]->hotelid) && isset($images[$searchresult[0]->hotelid][0]))
+            <img src="https://photo.hotellook.com/image_v2/limit/{{ $images[$searchresult[0]->hotelid][0] }}/628/567.auto">
+        @else
+            <img src="{{ asset('public/images/Hotel lobby-image.png') }}">
+        @endif
+    </div>
           <div class="tr-share-details">
-            <span class="tr-hotel-name">Hyatt Regency Houston West</span>
-            <span class="tr-rating">4.83</span>
+            <span class="tr-hotel-name">{{ $searchresult[0]->name }}</span>
+				<span class="tr-rating">
+                @if(!empty($searchresult[0]->rating))
+                    <?php
+                        $rating = (float)$searchresult[0]->rating;
+                        $formattedRating = round($rating, 2); // Rounded to two decimal places
+                    ?>
+                    {{ $formattedRating }}
+                @else
+                    N/A
+                @endif
+            </span>
             <span class="tr-bedrooms">
               <span>2 bedrooms</span>
               <span>3 beds</span>
@@ -2135,31 +2216,34 @@ button.tr-anchor-btn {
             <a href="javascript:void(0);" class="tr-copy">Copy link</a>
           </div>
           <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-email">Email</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-messages">Messages</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-whatsapp">Whatsapp</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-messenger">Messenger</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-facebook">Facebook</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-twitter">Twitter</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-embed">Embed</a>
-          </div>
+          <a href="#" id="emailShare" target="_blank" class="tr-email">Email</a>
         </div>
-        <div class="tr-alert tr-copy-alert">Link copied</div>
+        <div class="tr-share-option">
+          <a href="#" id="smsShare" target="_blank" class="tr-messages">Messages</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="whatsappShare" target="_blank" class="tr-whatsapp">WhatsApp</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="facebookShare" target="_blank" class="tr-facebook">Facebook</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="twitterShare" target="_blank" class="tr-twitter">Twitter</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="messengerShare" target="_blank" class="tr-messenger">Messenger</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="javascript:void(0);" onclick="copyEmbedCode()" class="tr-embed">Embed</a>
+        </div>
       </div>
+
+      <!-- Feedback Alerts -->
+      <div class="tr-alert tr-copy-alert" id="copyAlert">Link copied</div>
+      <div class="tr-alert tr-copy-alert" id="embedAlert">Embed code copied</div>
     </div>
   </div>
+</div>
 
   <!-- Gallery Modal-->
   <div class="tr-gallery-popup">
@@ -2180,13 +2264,13 @@ button.tr-anchor-btn {
 
     <div class="tr-gallery-categories responsive-container">
       <div class="tr-galleries-section" id="galleryOutdoor">
-      
+
        <!---- new code -->
       <h3>Indoor and Outdoor</h3>
          <!-- start -->
         <div class="tr-gallery-category ">
 
-    
+
              @if($hotelid !="")
             <?php
             $hoteid = $hotelid;
@@ -2195,7 +2279,7 @@ button.tr-anchor-btn {
             <ul>
               @if(isset($images[$hoteid][0]) && $images[$hoteid][0] != "")
               <li data-bs-toggle="modal" data-bs-target="#gallerySliderModal"  class="">
-                <img 
+                <img
                   src="https://photo.hotellook.com/image_v2/limit/{{ $images[$hoteid][0] }}/1000/1000.auto"
                   alt="Outdoor Pictures 1">
               </li>
@@ -2204,12 +2288,12 @@ button.tr-anchor-btn {
               $remainingImages = array_slice($images[$hoteid], 1);
               @endphp
               <?php $a = 2; ?>
-              @for ($i = 0; $i <$imgcount; $i++) 
+              @for ($i = 0; $i <$imgcount; $i++)
               @if ($i < count($remainingImages))
                @php $image=$remainingImages[$i];
 
-                @endphp 
-              
+                @endphp
+
                 @if(!empty($image)) <li data-bs-toggle="modal" data-bs-target="#gallerySliderModal" class="">
                 <img  src="https://photo.hotellook.com/image_v2/limit/{{ $image }}/1000/1000.auto"
                   alt="Outdoor Pictures {{$a}}">
@@ -2221,26 +2305,26 @@ button.tr-anchor-btn {
             </ul>
             @endif
 
-     
-       
-       
+
+
+
         </div>
 
       <!-- end -->
-      
-      
-      
+
+
+
      <!-- end all image code  -->
-        
-   
-    
-     
+
+
+
+
     </div>
   </div>
-    
+
 </div>
   <!-- Gallery Slider Modal -->
-  <div class="modal" id="gallerySliderModal">
+  <div class="modal responsive-container" id="gallerySliderModal">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -2585,3 +2669,55 @@ button.tr-anchor-btn {
         };
     });
 </script>
+
+	<script>
+    // Function to update share links with the current page URL
+    function updateShareLinks() {
+      var currentUrl = window.location.href;
+
+      // Set each share button's link for direct sharing on mobile
+      document.getElementById("emailShare").href = `mailto:?subject=Check this out&body=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("smsShare").href = `sms:?body=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("whatsappShare").href = `https://api.whatsapp.com/send?text=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("twitterShare").href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent("Check this out!")}`;
+      document.getElementById("messengerShare").href = `https://m.me/?link=${encodeURIComponent(currentUrl)}`;
+    }
+
+    // Event listener to update links each time the modal is shown
+    document.getElementById('shareModal').addEventListener('show.bs.modal', updateShareLinks);
+
+    // Copy link function
+    function copyLink() {
+      var copyText = document.createElement("textarea");
+      copyText.value = window.location.href;
+      document.body.appendChild(copyText);
+      copyText.select();
+      document.execCommand("copy");
+      document.body.removeChild(copyText);
+
+      // Show feedback alert
+      var alert = document.getElementById("copyAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
+
+    // Copy embed code function
+    function copyEmbedCode() {
+      var embedCode = `<iframe src="${window.location.href}" width="600" height="400"></iframe>`;
+      var tempInput = document.createElement("textarea");
+      document.body.appendChild(tempInput);
+      tempInput.value = embedCode;
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      var alert = document.getElementById("embedAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
+  </script>

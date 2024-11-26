@@ -2,7 +2,7 @@
 <html lang="en-US">
   <head>
      <title>Travell : Travell Like a Local</title>
- 
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+
   <link rel="apple-touch-icon" sizes="57x57" href="{{asset('/favicon.ico')}}">
   <link rel="apple-touch-icon" sizes="60x60" href="{{asset('/favicon.ico')}}">
   <link rel="apple-touch-icon" sizes="72x72" href="{{asset('/favicon.ico')}}">
@@ -34,7 +34,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{{asset('/favicon.ico')}}">
   <link rel="icon" type="image/png" sizes="96x96" href="{{asset('/favicon.ico')}}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{asset('/favicon.ico')}}">
-  
+
     <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/jquery.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/bootstrap.bundle.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/jquery-ui-datepicker.min.js')}}"></script>
@@ -69,11 +69,11 @@
                     $userData = session('frontend_user');
                     $Username = $userData['Username'];
                     $user_image = $userData['user_image'];
-                     
+
                  }
                 ?>
               <div class="tr-login-section">
-              @if (session()->has('frontend_user')) 
+              @if (session()->has('frontend_user'))
                 <!--Below Button for signin - currently it hide-->
                 <button class="tr-logged"><div class="tr-username"> {{$Username}}</div></button>
                 <div class="tr-myaccount-modal">
@@ -81,7 +81,7 @@
                     <ul>
                       <li class="tr-my-profile-link"><a href="{{route('user_dashboard')}}">Dashboard</a></li>
                       <!-- <li class="tr-my-trip-link"><a href="javascript:void(0);">My trips</a></li> -->
-                    </ul> 
+                    </ul>
                   </div>
                   <div class="tr-mz-myaccount-info">
                     <ul>
@@ -136,42 +136,18 @@
                         </div>
                         <div class="col tr-form-where">
                           <div class="tr-mobile tr-close-btn">Where are you going?</div>
-                         
+
                           <input type="text" class="form-control search_explore" id="searchLocation" placeholder="Search location" name="search" autocomplete="off">
-                         
+
                           <div class="tr-recent-searchs-modal tr-custom-scrollbar"  id="recentSearchLocation">
-                            <p id="loc-list" class="autoCompletewrapper"></p>
+                            <div id="loc-list" class="autoCompletewrapper">
+                              <!-- Results will be populated here -->
+                            </div>
                           </div>
-                          <!-- 
-                          <div class="tr-recent-searchs-modal" id="recentSearchLocation">
-                            <div class="tr-enable-location">Around Current Location</div>
-                            <h5>Recent searches</h5>
-                            <ul>
-                              <li>
-                                <div class="tr-place-info">
-                                  <div class="tr-location-icon"></div>
-                                  <div class="tr-location-info">
-                                    <div class="tr-hotel-name">London Hotels</div>
-                                    <div class="tr-hotel-city">England, United Kingdom</div>
-                                  </div>
-                                </div>
-                              </li>
-                              <li>
-                                <div class="tr-place-info">
-                                  <div class="tr-location-icon"></div>
-                                  <div class="tr-location-info">
-                                    <div class="tr-hotel-name">Morocco</div>
-                                    <div class="tr-hotel-city">North Africa</div>
-                                  </div>
-                                </div>
-                              </li>
-                            </ul>
-                          </div> 
-                          -->
                           <div class="col tr-form-btn">
                             <button type="button" class="tr-btn tr-mobile">Continue</button>
                           </div>
-                        </div>  
+                        </div>
                       </div>
 
                       <div class="col tr-form-btn">
@@ -251,9 +227,9 @@
                           autocomplete="off">
                           <input type="text" class="form-control" id="searchhotel" placeholder="Search destinations" name="hsearch" autocomplete="off">
                           <div class="tr-recent-searchs-modal tr-custom-scrollbar" id="recentSearchsDestination">
-                            <!-- 
+                            <!--
                             search-box-info
-                            <p class="small my-3" id="recent-search">@if (Session::has('lastsearch')) RECENTLY VIEWED @else POPULAR DESTINATIONS @endif</p> 
+                            <p class="small my-3" id="recent-search">@if (Session::has('lastsearch')) RECENTLY VIEWED @else POPULAR DESTINATIONS @endif</p>
                             -->
                             <p id="hotel_loc_list" class="autoCompletewrapper"></p>
                           </div>
@@ -291,7 +267,7 @@
                             </div>
                           </div>
                           <div class="col tr-form-btn">
-                            <button type="button" class="tr-btn tr-mobile">Next</button>                        
+                            <button type="button" class="tr-btn tr-mobile">Next</button>
                           </div>
                         </div>
                         <div class="col tr-form-who">
@@ -387,7 +363,7 @@
                   <li>Interactive Travel Maps: Pin your favorite destinations, view customizable itineraries, and get personalized travel suggestions based on your interests.</li>
                   <li>Behind-the-Scenes Cultural Insights: From local customs and traditions to hidden neighborhood gems, our in-depth guides go beyond the tourist attractions.</li>
                   <li>Sustainability Tracker: Helping you measure the eco-impact of your trips, with tips for making more responsible choices.</li>
-                  <li>Travel by Season: Curated itineraries and travel recommendations tailored to every season, ensuring the best experience year-round.</li>  
+                  <li>Travel by Season: Curated itineraries and travel recommendations tailored to every season, ensuring the best experience year-round.</li>
                 </ul>
                 <p>Pro Tip: Make sure to create a free account to unlock features like saving itineraries, customizing your personal dashboard, and getting personalized trip suggestions based on your travel history.</p>
 
@@ -438,7 +414,7 @@
   "@type" : "Organization",
   "url" : "https://www.travell.co/",
   "contactPoint" : [
-    { "@type" : "ContactPoint",     
+    { "@type" : "ContactPoint",
       "contactType" : "customer service"
     } ] }
 </script>
@@ -465,7 +441,7 @@
         "valueName": "search_term_string"
       },
         "query": "required"
-     
+
     }
   ]
 }
@@ -473,6 +449,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
 <!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/common.js')}} "></script> 
+<script type="text/javascript" src="{{ asset('/public/frontend/hotel-detail/js/common.js')}} "></script>
 <script src="{{ asset('/public/js/custom.js')}}"></script>
 <!--<script src="{{ asset('/public/js/index.js')}}"></script>-->

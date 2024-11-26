@@ -3,6 +3,9 @@ body {
   font-family: "Poppins", sans-serif;
   color: #222222;
   font-weight: 400;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 b {
@@ -2259,7 +2262,20 @@ img.pinned {
   width: 1px;
   height: 20px;
   margin: 0 8px;
-}/*# sourceMappingURL=style.css.map */
+}
+
+/* Add these styles for footer */
+.footer-section {
+    width: 100%;
+    background: #fff;
+    margin-top: auto;
+    position: relative;
+    z-index: 1;
+}
+
+.responsive-container {
+    flex: 1;
+}
 
 /* weather */
 .contact-form-left .p {
@@ -2917,7 +2933,7 @@ input[type=range]::-webkit-slider-thumb {
 
 input[type=range]::-webkit-slider-thumb {
   --thumb-radius: calc((var(--thumb-height) * 0.5) - 1px);
-  --clip-top: calc((var(--thumb-height) - var(--track-height)) * 0.5 - 0.5px);
+  --clip-top: calc((var(--thumb-height) - var(--track-height)) * 0.5 - 0.5px));
   --clip-bottom: calc(var(--thumb-height) - var(--clip-top));
   --clip-further: calc(100% + 1px);
   --box-fill: calc(-100vmax - var(--thumb-width, var(--thumb-height))) 0 0 100vmax currentColor;
@@ -3491,4 +3507,87 @@ left:unset;
 .search-box-info{
 width:100%;
 }
+}
+
+/* Recent Search Modal - This controls the autocomplete/suggestions dropdown */
+.tr-find-hotels .tr-recent-searchs-modal {
+  padding: 16px;
+  position: absolute;
+  width: 326px;
+  left: 0;
+  top: 59px;
+  background: #FFFFFF;
+  border-radius: 0px 0px 12px 12px;
+  display: none;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-enable-location {
+  background-image: url(../images/icons/location-enable-icon.svg);
+  background-repeat: no-repeat;
+  background-size: 32px;
+  background-position: top 0px left 0px;
+  font-weight: 600;
+  line-height: 32px;
+  padding: 0 0 20px 42px;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal h5 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #6A6A6A;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal ul {
+  flex-wrap: wrap;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal ul li {
+  border-top: 1px solid #D6D6D6;
+  padding: 16px 0;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal ul li:first-child {
+  padding-top: 0;
+  border-top-color: transparent;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal ul li:last-child {
+  padding-bottom: 0;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-place-info {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 8px 6px;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-place-info:hover {
+  background: #F7F7F7;
+  border-radius: 8px;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-location-icon {
+  background-color: rgba(214, 214, 214, 0.3);
+  background-image: url(../images/icons/map-pin-icon.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px;
+  border-radius: 100px;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-location-info .tr-hotel-name {
+  font-size: 14px;
+  line-height: 17px;
+  padding-bottom: 4px;
+}
+
+.tr-find-hotels .tr-recent-searchs-modal .tr-location-info .tr-hotel-city {
+  font-size: 12px;
+  line-height: 14px;
+  color: #6A6A6A;
 }

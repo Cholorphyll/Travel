@@ -132,7 +132,7 @@
     <?php
         // Define an array to map each selected amenity to its specific icon path
         $amenityIconPaths = [
-            'A/C' => 'public/frontend/hotel-detail/images/amenities/A/C.svg',
+            'A/C' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
             'Parking' => 'public/frontend/hotel-detail/images/amenities/Parking.svg',
             'Wi-Fi' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
             'Laundry' => 'public/frontend/hotel-detail/images/amenities/Laundry.svg',
@@ -140,7 +140,6 @@
             'Pool' => 'public/frontend/hotel-detail/images/amenities/Pool.svg',
             'Gym' => 'public/frontend/hotel-detail/images/amenities/Gym.svg',
             'Food' => 'public/frontend/hotel-detail/images/amenities/Food.svg',
-            'Pets' => 'public/frontend/hotel-detail/images/amenities/Pets.svg',
             'Bar' => 'public/frontend/hotel-detail/images/amenities/Bar.svg',
             'Spa' => 'public/frontend/hotel-detail/images/amenities/Spa.svg',
             // Add additional amenities as needed

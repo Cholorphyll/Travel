@@ -60,13 +60,6 @@
   .leaflet-popup-tip-container {
     display: none;
   }
-
- .tr-more-facilities ul {
-    max-height: 36px;
-    overflow: hidden;
-    position: relative;
-}
-
   </style>
 
   <script type="text/javascript">
@@ -444,19 +437,6 @@
                 @else
                 <span class="timing_<?php echo $j;?>"></span>
                 @endif
-
-                <div class="tr-more-facilities">
-                    @if(!empty($searchresult->MicroSummary))
-                        <ul class="short-description-content">
-                            <li>{{ $searchresult->MicroSummary }}</li>
-                        </ul>
-
-                        @if(strlen($searchresult->MicroSummary) > 100) <!-- Show "Read More" if the description is long -->
-                            <button type="button" class="tr-anchor-btn toggle-list" onclick="toggleContent(this)">Read More</button>
-                        @endif
-                    @endif
-                </div>
-
                 <div class="tr-like-review">
                   <div class="tr-heart">
                     <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -843,19 +823,6 @@
                                         </div>
                                     @endif
 
-
-                                    <div class="tr-more-facilities">
-                                        @if(!empty($searchresult->MicroSummary))
-                                            <ul class="short-description-content">
-                                                <li>{{ $searchresult->MicroSummary }}</li>
-                                            </ul>
-
-                                            @if(strlen($searchresult->MicroSummary) > 100) <!-- Show "Read More" if the description is long -->
-                                                <button type="button" class="tr-anchor-btn toggle-list" onclick="toggleContent(this)">Read More</button>
-                                            @endif
-                                        @endif
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -875,43 +842,7 @@
           <button type="button" class="tr-btn tr-load-more">Load More</button>
 
 
-          <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="tr-single-page">
-                        <div class="tr-terms-and-conditions-section">
-                            <h3 style="font-weight: bold; margin-bottom: 20px; font-size: 24px;">Why Book Hotels With Travell ?</h3>
-                            <p style="margin-top: 20px;">Discover the real essence of every place with Travell, which is beyond the ordinary constituent of travel guides via its unique platform to discover special places that bonds you with the city’s soul and culture. We feel that travel isn't so much about visiting monuments and sites; it is more about relating to a locality's character and tradition; in other words, its hidden treasure. Travell offers experiences hand picked off the beaten path and imbued with local counsel. In addition to famous landmarks, you can explore alleyways, cheap eats, and frolicking local favorites. We make it easier for you to experience the main and the slim dance of each city. Imagine scooping up street food, going hunting for art scenes, or joining a local festival; Travell is your toolkit for experiencing each destination in the deepest and thickest sense.  You select what matches your preferences for the day, and we do the rest to ensure your trip culminates in note-perfect moments at every one of your stops. At Travell, we are all about making travel attainable, exhilarating, and tremendous. With Travell, you do not just see one city—you see it alive! Live among returning with kaleidoscopic memories that mirrors the actual soul of places you visit. Let Travell show you what makes every place special.  Whether an avid foodie, budding artist, or festival enthusiast, we have just the experiences for you. We create your personas to give you the insider perspective on some unique places to explore without the stress of maps or guides. Let us know what speaks to you, and we will take it all from there. Come with us along this unforgettable journey; let Travell be your eyes for exploring what gives a city its heart.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-
-   <!--BREADCRUMB - START-->
-            @if(!empty($breadcumb))
-            <div class="tr-breadcrumb-section">
-              <ul class="tr-breadcrumb">
-              @if($breadcumb[0]->ccName !="")
-                <li><a href="{{ route('explore_continent_list',[$breadcumb[0]->contid,$breadcumb[0]->ccName])}}">{{$breadcumb[0]->ccName}}</a></li>
-                @endif
-                <li><a href="{{ route('explore_country_list',[$breadcumb[0]->CountryId,$breadcumb[0]->cslug])}}">@if(!empty($breadcumb)) {{$breadcumb[0]->CountryName}} @endif</a></li>
-                @if(!empty($locationPatent))
-                <?php
-                $locationPatent = $locationPatent;
-
-                ?>
-                  @foreach ($locationPatent as $location)
-                <li><a href="{{ route('search.results',[$location['LocationId'].'-'.strtolower($location['slug'])]) }}">{{ $location['Name'] }}</a></li>
-                @endforeach
-                @endif
-                <li>{{$breadcumb[0]->LName}}</li>
-              </ul>
-
-            </div>
-            @endif
-          <!--BREADCRUMB - END-->
           <div class="tr-map-and-filter">
             <button type="button" class="tr-explore-map-btn map"><svg width="14" height="14" viewBox="0 0 14 14"
                 fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1011,32 +942,65 @@
   <!-- Map Modal With Filter & Hotel List - Start-->
 
   <!-- Map Modal With Filter & Hotel List - End-->
+  <div class="container" style="margin-top: 30px;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tr-single-page">
+                <div class="tr-terms-and-conditions-section">
+                    <h3 style="font-weight: bold; margin-bottom: 20px; font-size: 24px;">How Travell Works?</h3>
+                    <p style="margin-top: 20px;">
+                        Discover the real essence of every place with Travell, which is beyond the ordinary constituent of travel guides via its unique platform to discover special places that bond you with the city’s soul and culture. We feel that travel isn't so much about visiting monuments and sites; it is more about relating to a locality's character and tradition—in other words, its hidden treasures. Travell offers experiences hand-picked off the beaten path and imbued with local counsel. In addition to famous landmarks, you can explore alleyways, cheap eats, and frolicking local favorites.
+                    </p>
+                    <p>
+                        Imagine scooping up street food, going hunting for art scenes, or joining a local festival; Travell is your toolkit for experiencing each destination in the deepest and thickest sense. You select what matches your preferences for the day, and we do the rest to ensure your trip culminates in note-perfect moments at every one of your stops. At Travell, we are all about making travel attainable, exhilarating, and tremendous. With Travell, you do not just see one city—you see it alive! Live among returning with kaleidoscopic memories that mirror the actual soul of places you visit. Let Travell show you what makes every place special.
+                    </p>
+                    <p>
+                        Whether you are an avid foodie, budding artist, or festival enthusiast, we have just the experiences for you. We create your personas to give you the insider perspective on some unique places to explore without the stress of maps or guides. Let us know what speaks to you, and we will take it all from there. Come with us along this unforgettable journey; let Travell be your eyes for exploring what gives a city its heart.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+
+
+<!--BREADCRUMB - START-->
+    @if(!empty($breadcumb))
+    <div class="tr-breadcrumb-section">
+      <ul class="tr-breadcrumb">
+      @if($breadcumb[0]->ccName !="")
+        <li><a href="{{ route('explore_continent_list',[$breadcumb[0]->contid,$breadcumb[0]->ccName])}}">{{$breadcumb[0]->ccName}}</a></li>
+        @endif
+        <li><a href="{{ route('explore_country_list',[$breadcumb[0]->CountryId,$breadcumb[0]->cslug])}}">@if(!empty($breadcumb)) {{$breadcumb[0]->CountryName}} @endif</a></li>
+        @if(!empty($locationPatent))
+        <?php
+        $locationPatent = $locationPatent;
+
+        ?>
+          @foreach ($locationPatent as $location)
+        <li><a href="{{ route('search.results',[$location['LocationId'].'-'.strtolower($location['slug'])]) }}">{{ $location['Name'] }}</a></li>
+        @endforeach
+        @endif
+        <li>{{$breadcumb[0]->LName}}</li>
+      </ul>
+
+    </div>
+    @endif
+  <!--BREADCRUMB - END-->
   <!--FOOTER-->
   @include('frontend.footer')
   <div class="overlay" id="overLay"></div>
 
   <!-- Share Modal -->
-  <div class="modal" id="shareModal">
+ <div class="modal" id="shareModal">
     <div class="modal-dialog">
       <div class="modal-content">
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         <h3>Share this experience</h3>
-        <div class="tr-share-infos">
-          <div class="tr-hotel-img">
-            <img loading="lazy" src="images/room-image-1.png" alt="Room Image">
-          </div>
+		    <div class="tr-share-infos">
           <div class="tr-share-details">
-            <span class="tr-hotel-name">Things to do in London</span>
-            <p>3590 Attractions found in London</p>
-            <!--
-              <span class="tr-rating">4.83</span>
-              <span class="tr-bedrooms">
-                <span>2 bedrooms</span>
-                <span>3 beds</span>
-                <span>2 bathrooms</span>
-              </span>
-              -->
+            <span class="tr-hotel-name"> @if(!empty($searchresults)) <h2 class="tr-title">@if($top_attractions == 1)Top Attractions in {{$lname}} @else Things to do in {{$lname}} @endif</h2>@endif</span>
           </div>
         </div>
         <div class="tr-share-options">
@@ -1044,31 +1008,34 @@
             <a href="javascript:void(0);" class="tr-copy">Copy link</a>
           </div>
           <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-email">Email</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-messages">Messages</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-whatsapp">Whatsapp</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-messenger">Messenger</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-facebook">Facebook</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-twitter">Twitter</a>
-          </div>
-          <div class="tr-share-option">
-            <a href="javascript:void(0);" class="tr-embed">Embed</a>
-          </div>
+          <a href="#" id="emailShare" target="_blank" class="tr-email">Email</a>
         </div>
-        <div class="tr-alert tr-copy-alert">Link copied</div>
+        <div class="tr-share-option">
+          <a href="#" id="smsShare" target="_blank" class="tr-messages">Messages</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="whatsappShare" target="_blank" class="tr-whatsapp">WhatsApp</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="facebookShare" target="_blank" class="tr-facebook">Facebook</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="twitterShare" target="_blank" class="tr-twitter">Twitter</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="messengerShare" target="_blank" class="tr-messenger">Messenger</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="javascript:void(0);" onclick="copyEmbedCode()" class="tr-embed">Embed</a>
+        </div>
       </div>
+
+      <!-- Feedback Alerts -->
+      <div class="tr-alert tr-copy-alert" id="copyAlert">Link copied</div>
+      <div class="tr-alert tr-copy-alert" id="embedAlert">Embed code copied</div>
     </div>
   </div>
+</div>
 </body>
 
 </html>
@@ -1488,22 +1455,55 @@ marker<?php echo $i; ?>.on('mouseout', function(e) {
         updateMarkerIcons(); // Initial update to ensure custom icons on load
     };
 </script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const readMoreBtn = document.querySelector('.custom-read-more');
-    const trMoreFacilities = document.querySelector('.tr-more-facilities');
 
-    if (readMoreBtn && trMoreFacilities) {
-        readMoreBtn.addEventListener('click', function() {
-            trMoreFacilities.classList.toggle('expanded');
+	<script>
+    // Function to update share links with the current page URL
+    function updateShareLinks() {
+      var currentUrl = window.location.href;
 
-            // Optional: Change button text to "Read Less" when expanded
-            if (trMoreFacilities.classList.contains('expanded')) {
-                readMoreBtn.textContent = 'Read Less';
-            } else {
-                readMoreBtn.textContent = 'Read More';
-            }
-        });
+      // Set each share button's link for direct sharing on mobile
+      document.getElementById("emailShare").href = `mailto:?subject=Check this out&body=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("smsShare").href = `sms:?body=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("whatsappShare").href = `https://api.whatsapp.com/send?text=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("twitterShare").href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent("Check this out!")}`;
+      document.getElementById("messengerShare").href = `https://m.me/?link=${encodeURIComponent(currentUrl)}`;
     }
-});
-</script>
+
+    // Event listener to update links each time the modal is shown
+    document.getElementById('shareModal').addEventListener('show.bs.modal', updateShareLinks);
+
+    // Copy link function
+    function copyLink() {
+      var copyText = document.createElement("textarea");
+      copyText.value = window.location.href;
+      document.body.appendChild(copyText);
+      copyText.select();
+      document.execCommand("copy");
+      document.body.removeChild(copyText);
+
+      // Show feedback alert
+      var alert = document.getElementById("copyAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
+
+    // Copy embed code function
+    function copyEmbedCode() {
+      var embedCode = `<iframe src="${window.location.href}" width="600" height="400"></iframe>`;
+      var tempInput = document.createElement("textarea");
+      document.body.appendChild(tempInput);
+      tempInput.value = embedCode;
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      var alert = document.getElementById("embedAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
+  </script>

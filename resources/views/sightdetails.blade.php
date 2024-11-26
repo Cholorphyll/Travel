@@ -107,7 +107,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   <ul>
                   @if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='')
                     <li>
-                      <img src="https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image}}" alt="Tower Bridge" height="445" height="360">
+                      <img src="https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image}}" alt="Tower Bridge" height="445" height="360" width="608">
                     </li>
                     @else
                     <!-- Below element When We don't have data - Start -->
@@ -1495,51 +1495,73 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <div class="overlay" id="overLay"></div>
 
-    <!-- Share Modal -->
-    <div class="modal" id="shareModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-          <h3>Share this experience</h3>
+   <!-- Share Modal -->
+ <div class="modal" id="shareModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <h3>Share this experience</h3>
+        <div class="tr-share-infos">
           <div class="tr-share-infos">
-            <div class="tr-hotel-img">
-              <img loading="lazy" src="@if( isset($Sight_image[0]->Image) && $Sight_image[0]->Image !='') https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image}}  @else {{asset('public/frontend/hotel-detail/images/no-data-place-image.png')}} @endif" alt="Tower Bridge">
-            </div>
-            <div class="tr-share-details">
-              <div class="tr-hotel-name">{{$searchresult[0]->Title}}</div>
-              <div>{{$searchresult[0]->Address}}</div>
-            </div>
+    <!-- Hotel Image -->
+    <div class="tr-hotel-img">
+        @if(!empty($searchresult[0]->hotelid) && isset($images[$searchresult[0]->hotelid][0]))
+            <img src="https://photo.hotellook.com/image_v2/limit/{{ $images[$searchresult[0]->hotelid][0] }}/628/567.auto" alt="{{ $searchresult[0]->name }}">
+        @elseif(isset($Sight_image[0]->Image) && $Sight_image[0]->Image != '')
+            <img src="https://s3-us-west-2.amazonaws.com/s3-travell/Sight-images/{{$Sight_image[0]->Image}}" alt="{{ $searchresult[0]->name }}" height="445" width="608">
+        @else
+            <img src="{{ asset('public/frontend/hotel-detail/images/no-data-place-image.png') }}" alt="No Image Available">
+        @endif
+    </div>
+
+    <!-- Hotel Details -->
+    <div class="tr-share-details">
+        <!-- Hotel Name -->
+        <span class="tr-hotel-name">
+            {{ $searchresult[0]->Title ?? $searchresult[0]->name ?? 'Hotel Name Not Available' }}
+        </span>
+
+     <!-- Hotel Address -->
+        <div class="tr-hotel-address">
+            {{ $searchresult[0]->Address ?? 'Address Not Available' }}
+        </div>
+
+    </div>
+</div>
+			</div>
+        <div class="tr-share-options">
+          <div class="tr-share-option">
+            <a href="javascript:void(0);" class="tr-copy">Copy link</a>
           </div>
-          <div class="tr-share-options">
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-copy">Copy link</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-email">Email</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-messages">Messages</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-whatsapp">Whatsapp</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-messenger">Messenger</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-facebook">Facebook</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-twitter">Twitter</a>
-            </div>
-            <div class="tr-share-option">
-              <a href="javascript:void(0);" class="tr-embed">Embed</a>
-            </div>
-          </div>
-          <div class="tr-alert tr-copy-alert">Link copied</div>
+          <div class="tr-share-option">
+          <a href="#" id="emailShare" target="_blank" class="tr-email">Email</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="smsShare" target="_blank" class="tr-messages">Messages</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="whatsappShare" target="_blank" class="tr-whatsapp">WhatsApp</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="facebookShare" target="_blank" class="tr-facebook">Facebook</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="twitterShare" target="_blank" class="tr-twitter">Twitter</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="#" id="messengerShare" target="_blank" class="tr-messenger">Messenger</a>
+        </div>
+        <div class="tr-share-option">
+          <a href="javascript:void(0);" onclick="copyEmbedCode()" class="tr-embed">Embed</a>
         </div>
       </div>
+
+      <!-- Feedback Alerts -->
+      <div class="tr-alert tr-copy-alert" id="copyAlert">Link copied</div>
+      <div class="tr-alert tr-copy-alert" id="embedAlert">Embed code copied</div>
     </div>
+  </div>
+</div>
 
     <!-- Gallery Modal-->
     <div class="tr-gallery-popup">
@@ -2146,22 +2168,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "@type": "PostalAddress",
       "streetAddress": "{{$searchresult[0]->Address}}"
     },
-    @if(!empty($sightreviews))
+     @if(!$sightreviews->isEmpty())
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "@if($searchresult[0]->TAAggregateRating !="" && $searchresult[0]->TAAggregateRating !=0.00){{$searchresult[0]->TAAggregateRating}} @else not available @endif",
-      "reviewCount": "@if(!$sightreviews->isEmpty()){{count($sightreviews)}}@endif"
+      "ratingValue": "@if($searchresult[0]->TAAggregateRating !="" && $searchresult[0]->TAAggregateRating !=0.00){{$searchresult[0]->TAAggregateRating}}@else not available @endif",
+      "reviewCount": "@if(!$sightreviews->isEmpty()){{count($sightreviews)}}@else not available @endif"
     },
     @endif "openingHours": "",
     "email": "@if($searchresult[0]->Email != ""){{ $searchresult[0]->Email}} @endif",
     "telephone": "@if($searchresult[0]->Phone != ""){{ $searchresult[0]->Phone}} @endif",
-    "sameAs": "@if($searchresult[0]->Website != "") {{ $searchresult[0]->Website}} @endif",
+    "sameAs": "@if($searchresult[0]->Website != "") {{ $searchresult[0]->Website}} @endif"
     @if(!$sightreviews->isEmpty())
+	,
     "review":[
       @foreach($sightreviews as $review)
     {
-        "@type": "Review",
-        "author": "{{$review->Name}}",
+         "author": {
+                "@type": "Person",
+                "name": "{{ $review->Name }}"
+            },
         "reviewBody": "{{$review->ReviewDescription}}"
     }@if(!$loop->last),@endif
     @endforeach
@@ -2296,4 +2321,56 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 
   });
+  </script>
+
+<script>
+    // Function to update share links with the current page URL
+    function updateShareLinks() {
+      var currentUrl = window.location.href;
+
+      // Set each share button's link for direct sharing on mobile
+      document.getElementById("emailShare").href = `mailto:?subject=Check this out&body=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("smsShare").href = `sms:?body=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("whatsappShare").href = `https://api.whatsapp.com/send?text=${encodeURIComponent("Check this out: " + currentUrl)}`;
+      document.getElementById("facebookShare").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`;
+      document.getElementById("twitterShare").href = `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent("Check this out!")}`;
+      document.getElementById("messengerShare").href = `https://m.me/?link=${encodeURIComponent(currentUrl)}`;
+    }
+
+    // Event listener to update links each time the modal is shown
+    document.getElementById('shareModal').addEventListener('show.bs.modal', updateShareLinks);
+
+    // Copy link function
+    function copyLink() {
+      var copyText = document.createElement("textarea");
+      copyText.value = window.location.href;
+      document.body.appendChild(copyText);
+      copyText.select();
+      document.execCommand("copy");
+      document.body.removeChild(copyText);
+
+      // Show feedback alert
+      var alert = document.getElementById("copyAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
+
+    // Copy embed code function
+    function copyEmbedCode() {
+      var embedCode = `<iframe src="${window.location.href}" width="600" height="400"></iframe>`;
+      var tempInput = document.createElement("textarea");
+      document.body.appendChild(tempInput);
+      tempInput.value = embedCode;
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      var alert = document.getElementById("embedAlert");
+      alert.style.display = "block";
+      setTimeout(function() {
+        alert.style.display = "none";
+      }, 2000);
+    }
   </script>

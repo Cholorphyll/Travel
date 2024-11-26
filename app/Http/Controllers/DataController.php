@@ -31,29 +31,40 @@ class DataController extends Controller
 
 
 
-	  public function listLocation(Request $request)
+    public function listLocation(Request $request)
     {
         if ($request->has('search')) {
             $searchText = $request->input('search');
-
-            // Create a unique cache key based on the search text
             $cacheKey = 'locations_search_' . md5($searchText);
 
-            // Attempt to retrieve the locations from the cache
             $locations = Cache::remember($cacheKey, 600, function() use ($searchText) {
-                // First query to check for matching names
-                $query = DB::table('Location')
-                    ->select('slugid AS id', DB::raw("CONCAT(Name, ', ', country) AS displayName"), 'Slug')
-                    ->where('Name', 'LIKE', $searchText . '%')
-                    ->orderBy('avg_monthly_searches', 'desc')
+                // First query with parent location info
+                $query = DB::table('Location AS l')
+                    ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
+                    ->select(
+                        'l.slugid AS id',
+                        'l.Name AS name',
+                        'l.country',
+                        'l.Slug',
+                        'parent.Name AS parent_name'
+                    )
+                    ->where('l.Name', 'LIKE', $searchText . '%')
+                    ->orderBy('l.avg_monthly_searches', 'desc')
                     ->limit(10);
 
                 $locations = $query->get();
 
-                // If no results found, try a more flexible search
+                // If no results found, try more flexible search
                 if ($locations->isEmpty()) {
                     $query = DB::table('Location AS l')
-                        ->select('slugid AS id', DB::raw("CONCAT(Name, ', ', country) AS displayName"), 'Slug AS Slug')
+                        ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
+                        ->select(
+                            'l.slugid AS id',
+                            'l.Name AS name',
+                            'l.country',
+                            'l.Slug',
+                            'parent.Name AS parent_name'
+                        )
                         ->where(function ($query) use ($searchText) {
                             $query->where(DB::raw("LOWER(CONCAT(l.Name, ' ', l.country))"), 'LIKE', '%' . strtolower($searchText) . '%');
                         })
@@ -66,7 +77,14 @@ class DataController extends Controller
                 // If still no results, try searching by Slug
                 if ($locations->isEmpty()) {
                     $query = DB::table('Location AS l')
-                        ->select('slugid AS id', DB::raw("CONCAT(l.Name, ', ', l.country) AS displayName"), 'Slug AS Slug')
+                        ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
+                        ->select(
+                            'l.slugid AS id',
+                            'l.Name AS name',
+                            'l.country',
+                            'l.Slug',
+                            'parent.Name AS parent_name'
+                        )
                         ->where('l.Slug', 'LIKE', $searchText . '%')
                         ->orderBy('l.avg_monthly_searches', 'desc')
                         ->limit(10);
@@ -74,13 +92,28 @@ class DataController extends Controller
                     $locations = $query->get();
                 }
 
-                return $locations; // Return the result to cache
+                return $locations;
             });
 
             $result = [];
             if (!$locations->isEmpty()) {
                 foreach ($locations as $loc) {
-                    $result[] = ['id' => $loc->id, 'Slug' => $loc->Slug, 'value' => $loc->displayName];
+                    // Format the display value based on available information
+                    $displayValue = $loc->name;
+                    if ($loc->parent_name) {
+                        $displayValue .= ", {$loc->parent_name}";
+                    }
+                    if ($loc->country) {
+                        $displayValue .= ", {$loc->country}";
+                    }
+
+                    $result[] = [
+                        'id' => $loc->id,
+                        'Slug' => $loc->Slug,
+                        'value' => $displayValue,
+                        'parent_name' => $loc->parent_name,
+                        'country_name' => $loc->country
+                    ];
                 }
             } else {
                 $result[] = ['value' => "Result not found"];

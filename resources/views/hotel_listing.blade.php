@@ -125,75 +125,6 @@
 .tr-more-facilities.expanded .custom-read-more {
     display: none;
 }
-.tr-price-range-section {
-  position: relative;
-}
-
-#maxPrice {
-  position: absolute;
-  top: -25px; /* Adjust vertical position to place it above the slider */
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: left 0.1s ease; /* Smooth transition */
-  right: 0; /* Initially align the max price to the right */
-}
-.tr-price-range-section {
-  position: relative;
-}
-
-#maxPrice {
-  position: absolute;
-  top: -25px; /* Adjust this value to move the label above the slider */
-  left: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: left 0.1s ease;  /* Smooth transition when moving */
-}
-
-#minPrice {
-  position: absolute;
-  top: -25px; /* Same for the min price */
-  left: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.tr-price-slider {
-  position: relative;
-  width: 100%; /* Ensure slider takes the full width */
-}
-
-.tr-price-slider input[type=range] {
-  -webkit-appearance: none;
-  appearance: none;
-  background: transparent;
-  width: 100%;
-  height: 5px;
-  pointer-events: none;
-  position: absolute;
-}
-
-.tr-price-slider input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  background-color: #FFFFFF;
-  border-radius: 50%;
-  border: 1px solid #000000;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.tr-price-slider input[type=range]::-moz-range-thumb {
-  background: #4CAF50;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 15px;
-  height: 15px;
-  pointer-events: auto;
-}
-
   </style>
    <?php
       $locationPatents = $locationPatent;
@@ -622,40 +553,40 @@
               <h4 class="tr-filter-label">Filter:</h4>
               <div class="tr-filter-lists">
                 <h5>Search by</h5>
-                <ul>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-fls2-'.$slugdata ) }}">2+ Star</a></li>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-fls3-'.$slugdata ) }}">3+ Star</a></li>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-fls4-'.$slugdata ) }}">4+ Star</a></li>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-fls5-'.$slugdata ) }}">5 Star</a></li>
-                </ul>
+                 <ul>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?st=2' ) }}">2+ Star</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?st=3' ) }}">3+ Star</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?st=4' ) }}">4+ Star</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?st=5') }}">5 Star</a></li>
+				  </ul>
               </div>
               <div class="tr-filter-lists">
                 <h5>Search by review score</h5>
                 <ul>
-                  <li class="tr-filter-list"><a href="#">6+ Okay</a></li>
-                  <li class="tr-filter-list"><a href="#">7+ Good</a></li>
-                  <li class="tr-filter-list"><a href="#">8+ Great</a></li>
-                  <li class="tr-filter-list"><a href="#">9+ Excellent</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?rs=6') }}">6+ Okay</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?rs=7') }}">7+ Good</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?rs=8') }}">8+ Great</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?rs=9') }}">9+ Excellent</a></li>
                 </ul>
               </div>
               <div class="tr-filter-lists">
                 <h5>Search by price</h5>
                 <ul>
-                  <li class="tr-filter-list"><a href="#">$32 - $223</a></li>
-                  <li class="tr-filter-list"><a href="#">$223 - $415</a></li>
-                  <li class="tr-filter-list"><a href="#">$415 - $607</a></li>
-                  <li class="tr-filter-list"><a href="#">$607 - $799</a></li>
-                  <li class="tr-filter-list"><a href="#">$799+ per night</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?price=32-223') }}">$32 - $223</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?price=223-$415') }}">$223 - $415</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?price=415-607') }}">$415 - $607</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?price=607-799') }}">$607 - $799</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?price=799') }}">$799+ per night</a></li>
                 </ul>
               </div>
               <div class="tr-filter-lists">
                 <h5>Search by freebies</h5>
                 <ul>
-                  <li class="tr-filter-list"><a href="#">Free cancellation</a></li>
-                  <li class="tr-filter-list"><a href="#">Free breakfast</a></li>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-flmparking-'.$slugdata ) }}">Free
+                   <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?amenity=free_cancellation') }}">Free cancellation</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?amenity=breakfast') }}">Free breakfast</a></li>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?amenity=parking') }}">Free
                       parking</a></li>
-                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-flmwifi-'.$slugdata ) }}">Free internet</a>
+                  <li class="tr-filter-list"><a href="{{ url('ho-'.$slgid .'-'.$slugdata.'?amenity=Wi-Fi') }}">Free internet</a>
                   </li>
                 </ul>
               </div>
@@ -664,13 +595,14 @@
             @else
             <!-- without data -->
             <div class="tr-filters-section" data-section="1">
-                <h4 class="tr-filter-label" style="display: block !important; visibility: visible !important; color:black  !important; background-color: white !important; z-index: 9999 !important; font-size: 20px !important;">
-              <h4 class="tr-filter-label d-block d-sm-block d-md-none">Filters</h4>
+               <h4 class="tr-filter-label d-block d-sm-block d-md-none">Filters</h4>
+
               <div class="d-block d-sm-block d-md-none">
                 <div class="tr-filter-selected-section selected-data" data-section="1"></div>
               </div>
               <div class="tr-filter-lists">
-               <h4 class="tr-filter-label">Filter by:</h4>
+               <h4 class="tr-filter-label filter-by-heading">Filter by:</h4>
+
                 <h5 class="unique-h5">Pricing</h5>
                 <div class="tr-price-graph">
                   <div class="tr-price-graph-col" style="height: 45px;"></div>
@@ -683,18 +615,19 @@
                   <div class="tr-price-graph-col" style="height: 81px;"></div>
                 </div>
                 <div class="tr-price-range-section">
-                    <div class="tr-price-slider">
-                      <input type="range" min="0" max="5000" value="0" class="min-range" step="1" id="minRange">
-                      <input type="range" min="0" max="5000" value="5000" class="max-range" step="1" id="maxRange">
-                    </div>
-                    <div class="tr-title min-price-title" id="minPrice">$0</div>
-                    <div class="tr-title max-price-title" id="maxPrice">$5000</div>
-                    <div class="tr-range-values">
-                      <div class="min-price hl-filter">Min Price</div>
-                      <span>-</span>
-                      <div class="max-price hl-filter">Max Price</div>
-                    </div>
+                  <div class="tr-price-slider">
+                    <input type="range" min="0" max="1000" value="0" class="min-range" step="1"  id="minRange">
+                    <input type="range" min="0" max="5000" value="5000" class="max-range" step="1" id="maxRange">
                   </div>
+                  <div class="tr-title min-price-title " id="minPrice">$0</div>
+                  <div class="tr-title max-price-title " id="maxPrice">$5000</div>
+                  <div class="tr-range-values">
+                    <div class="min-price hl-filter">Min Price</div>
+                    <span>-</span>
+                    <div class="max-price hl-filter">Max Price</div>
+                  </div>
+                </div>
+              </div>
               <div class="tr-filter-lists mnt">
                 <h5>Facilities</h5>
                 <ul>
@@ -796,7 +729,23 @@
                   <span class="d-none lname">{{$lname}}</span>
                   <span class="d-none filter-st">{{$st}}</span>
                   <span class="d-none filter-amenity">{{$amenity}}</span>
-                  <h1 class="d-none d-md-block">Showing hotels in {{$lname}}</h1>
+                  <span class="d-none filter-rs">{{$reviewscore}}</span>
+                  <span class="d-none filter-price">{{$price}}</span>
+
+                  <h1 class="d-none d-md-block">Showing @if($st !="") {{$st}} star @endif hotels in {{$lname}}
+                  @if($amenity !="")
+                  with @if($amenity == "breakfast")Free Breakfast @elseif($amenity == "parking") Free Parking @elseif($amenity == "free cancellation")Free cancellation @elseif($amenity =="Wi-Fi")Free internet @endif
+                  @elseif($reviewscore !="")
+                    with {{$reviewscore}}+ Review Score
+                  @elseif($price !="")
+                  <?php if (strpos($price, '-') !== false) {
+                          $price_range = explode("-", $price);
+                          $formatted_price = "$" . $price_range[0] . " and $" . $price_range[1];
+                      } else {
+                          $formatted_price = "$" . $price;
+                      } ?>
+                    with a price range between {{$formatted_price}} price
+                  @endif</h1>
                   <h1 class="d-block d-sm-block d-md-none">Top hotels</h1>
                   <div class="tr-share-section">
                     <a href="javascript:void(0);" class="tr-share" data-bs-toggle="modal"
@@ -973,7 +922,7 @@
     <?php
         // Define an array to map each selected amenity to its specific icon path
         $amenityIconPaths = [
-            'A/C' => 'public/frontend/hotel-detail/images/amenities/A/C.svg',
+            'A/C' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
             'Parking' => 'public/frontend/hotel-detail/images/amenities/Parking.svg',
             'Wi-Fi' => 'public/frontend/hotel-detail/images/amenities/Wi-Fi.svg',
             'Laundry' => 'public/frontend/hotel-detail/images/amenities/Laundry.svg',
@@ -981,7 +930,6 @@
             'Pool' => 'public/frontend/hotel-detail/images/amenities/Pool.svg',
             'Gym' => 'public/frontend/hotel-detail/images/amenities/Gym.svg',
             'Food' => 'public/frontend/hotel-detail/images/amenities/Food.svg',
-            'Pets' => 'public/frontend/hotel-detail/images/amenities/Pets.svg',
             'Bar' => 'public/frontend/hotel-detail/images/amenities/Bar.svg',
             'Spa' => 'public/frontend/hotel-detail/images/amenities/Spa.svg',
             // Add additional amenities as needed
@@ -1509,7 +1457,7 @@
         <div class="col-sm-12">
             <div class="tr-single-page">
                 <div class="tr-terms-and-conditions-section">
-                    <h3 style="font-weight: bold; margin-bottom: 20px; font-size: 24px;">Why Book Hotels With Travell ?</h3>
+                    <h3 style="font-weight: bold; margin-bottom: 20px; font-size: 24px;">How Travell Works?</h3>
                     <p style="margin-top: 20px;">Welcome to Travell's hotel search engine, whereby you can easily get your best deal. Why waste time looking at hotel prices on different sites when you can view all available options at once? We search the web for all the prices and deals available in a particular place, enabling you to select what suits you best for your stay without having to hop from one site to the other. More than 3.3 million hotels, apartments, motels, and hostels worldwide can make the choice of accommodation an easier one. There is, indeed, something to cater to every traveler, be it luxury hotels, homely apartments, budget motels, or party hostels in exciting cities. Booking through Travell means you get the best rates, and you save time as well. Travell is here to help you browse quickly and find the best deals so that you can plan your next trip easily and affordably. Travell will help you find that ideal accommodation, and from there, we will help you make the most of your journey.</p>
                 </div>
             </div>
@@ -1573,18 +1521,12 @@
       <div class="modal-content">
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         <h3>Share this experience</h3>
-        <div class="tr-share-infos">
-          <div class="tr-hotel-img">
-            <img src="{{asset('public/frontend/hotel-detail/images/room-image-1.png')}}" alt="Room Image">
-          </div>
+		  <div class="tr-share-infos">
           <div class="tr-share-details">
-            <span class="tr-hotel-name">Hyatt Regency Houston West</span>
-            <span class="tr-rating">4.83</span>
-            <span class="tr-bedrooms">
-              <span>2 bedrooms</span>
-              <span>3 beds</span>
-              <span>2 bathrooms</span>
-            </span>
+            <span class="tr-hotel-name">
+				<h4 class="d-none d-md-block">{{$lname}}: <span class="hotel_count"></span></h4>
+                <h4 class="d-block d-sm-block d-md-none">{{$lname}}: hotels &amp; places to stay</h4>
+			  </span>
           </div>
         </div>
         <div class="tr-share-options">
@@ -1805,36 +1747,50 @@
 </script>
 @endif
 <script>
-    const minRange = document.getElementById('minRange');
-const maxRange = document.getElementById('maxRange');
-const minPrice = document.getElementById('minPrice');
-const maxPrice = document.getElementById('maxPrice');
-const slider = document.querySelector('.tr-price-slider');  // The slider container
-const sliderWidth = slider.offsetWidth;  // Get the width of the slider
+    // Get references to the elements
+    // Get references to the elements
+const minRange = document.getElementById("minRange");
+const maxRange = document.getElementById("maxRange");
+const minPrice = document.getElementById("minPrice");
+const maxPrice = document.getElementById("maxPrice");
 
-// Update the min and max price dynamically
-minRange.addEventListener('input', function () {
-  minPrice.textContent = `$${minRange.value}`;
-  updateMaxPricePosition();  // Update the position of the max price
-});
+// Function to update the price labels' positions and values
+function updatePriceLabels() {
+  const minValue = parseInt(minRange.value);
+  const maxValue = parseInt(maxRange.value);
 
-maxRange.addEventListener('input', function () {
-  maxPrice.textContent = `$${maxRange.value}`;
-  updateMaxPricePosition();  // Update the position of the max price
-});
+  // Update label text to reflect current slider values
+  minPrice.textContent = `$${minValue}`;
+  maxPrice.textContent = `$${maxValue}`;
 
-// Function to update the position of the maxPrice
-function updateMaxPricePosition() {
-  const maxPosition = (maxRange.value / maxRange.max) * sliderWidth;
+  // Calculate percentage positions within the slider
+  const minPosition = (minValue / minRange.max) * minRange.offsetWidth;
+  const maxPosition = (maxValue / maxRange.max) * maxRange.offsetWidth;
 
-  // Update the left position of maxPrice to move it with the slider
+  // Position labels according to calculated slider thumb positions
+  minPrice.style.left = `${minPosition}px`;
   maxPrice.style.left = `${maxPosition}px`;
-
-  // Prevent the maxPrice label from going beyond the right edge of the slider
-  if (maxPosition + maxPrice.offsetWidth > sliderWidth) {
-    maxPrice.style.left = `${sliderWidth - maxPrice.offsetWidth}px`;  // Prevent overflow
-  }
 }
+
+// Function to update listings based on slider values (replace with your actual filter function)
+function updateListings() {
+  // Your existing logic to update listings based on `minRange.value` and `maxRange.value`
+  console.log(`Updating listings with min price: $${minRange.value} and max price: $${maxRange.value}`);
+  // Add your actual filtering logic here
+}
+
+// Combined function to update both labels and listings
+function handleSliderChange() {
+  updatePriceLabels();
+  updateListings();
+}
+
+// Initialize label positions
+updatePriceLabels();
+
+// Update label positions and listings when the sliders move
+minRange.addEventListener("input", handleSliderChange);
+maxRange.addEventListener("input", handleSliderChange);
 
 
 </script>

@@ -4684,117 +4684,102 @@ footer .tr-social-links ul li:nth-of-type(3) {
 /******* Filter Section - Start *******/
 
 /******* Price Range - Start *******/
-
 .tr-price-graph {
-    display: flex;
-    align-items: end;
-    justify-content: center;
-    gap: 10px;
-    padding: 24px 10px 0;
-  }
-
-  .tr-price-graph-col {
-    background-color: #F0F3F5;
-    width: 20px;
-    border-radius: 4px 4px 0 0;
-  }
-
-  .tr-price-range-section {
-    margin-top: -5px;
-    position: relative;
-  }
-
-  .tr-price-range-section .tr-price-slider {
-    background-image: url(../images/date-range-bg.png);
-    background-repeat: repeat-x;
-    background-size: 8px;
-    height: 5px;
-    margin: 9px 0 40px;
-    position: relative;
-  }
-
-  .tr-price-range-section .tr-title {
-    display: block; /* Change from 'none' to 'block' */
-    color: #000000;
-    font-size: 12px;
-    position: absolute;
-    top: -20px; /* Adjust vertical position to avoid overlap */
-    width: 60px; /* Adjust width as needed */
-    text-align: center;
-    transform: translateX(-50%);
-  }
-
-  .tr-price-range-section .min-price-title {
-    left: 0;
-  }
-
-  .tr-price-range-section .max-price-title {
-    right: 0;
-  }
-
-  .tr-price-range-section .tr-price-slider input[type=range] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    width: 100%;
-    height: 5px;
-    pointer-events: none;
-    position: absolute;
-  }
-
-  .tr-price-range-section .tr-price-slider input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    background-color: #FFFFFF;
-    background-image: url(../images/icons/arrow-left-right-black.svg);
-    background-repeat: no-repeat;
-    background-size: 12px;
-    background-position: center;
-    border-radius: 50%;
-    border: 1px solid #000000;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    pointer-events: auto;
-  }
-
-  .tr-price-range-section .tr-price-slider input[type=range]:hover::-webkit-slider-thumb {
-    background-color: #000000;
-    background-image: url(../images/icons/arrow-left-right-white.svg);
-  }
-
-  .tr-price-range-section .tr-price-slider input[type=range]::-moz-range-thumb {
-    background: #4CAF50;
-    cursor: pointer;
-    border-radius: 50%;
-    width: 15px;
-    height: 15px;
-    pointer-events: auto;
-  }
-
-  .tr-price-range-section .tr-range-values {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #F0F3F5;
-    border: 1px solid #FFFFFF;
-    border-radius: 40px;
-    padding: 4px;
-  }
-
-  .tr-price-range-section .tr-range-values div {
-    background-color: #FFFFFF;
-    border-radius: 40px;
-    font-weight: 600;
-    line-height: 40px;
-    color: #222222;
-    width: calc(50% - 10px);
-    height: 40px;
-    text-align: center;
-  }
-
-  /******* Price Range - End *******/
-
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 10px 0;
+}
+.tr-price-graph-col {
+  background-color: #F0F3F5;
+  width: 20px;
+  border-radius: 4px 4px 0 0;
+}
+.tr-price-range-section {
+  margin-top: -5px;
+  position: relative;
+}
+.tr-price-range-section .tr-price-slider {
+  background-image: url(../images/date-range-bg.png);
+  background-repeat: repeat-x;
+  background-size: 8px;
+  height: 5px;
+  margin: 9px 0 40px;
+  position: relative;
+}
+.tr-price-range-section .tr-title {
+  display: none;
+  color: #000000;
+  font-size: 12px;
+  position: absolute;
+  top: 18px;
+  width: 40px;
+  text-align: center;
+  transform: translateX(-50%);
+}
+.tr-price-range-section .min-price-title {
+  margin-left: 11px;
+}
+.tr-price-range-section .max-price-title {
+  margin-left: -10px;
+}
+.tr-price-range-section .tr-price-slider input[type=range] {
+  -webkit-appearance: none;
+          appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 5px;
+  pointer-events: none;
+  position: absolute;
+}
+.tr-price-range-section .tr-price-slider input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+          appearance: none;
+  background-color: #FFFFFF;
+  background-image: url(../images/icons/arrow-left-right-black.svg);
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: center;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.tr-price-range-section .tr-price-slider input[type=range]:hover::-webkit-slider-thumb {
+  background-color: #000000;
+  background-image: url(../images/icons/arrow-left-right-white.svg);
+}
+.tr-price-range-section .tr-price-slider input[type=range]::-moz-range-thumb {
+  background: #4CAF50;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  pointer-events: auto;
+}
+.tr-price-range-section .tr-range-values {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #F0F3F5;
+  border: 1px solid #FFFFFF;
+  border-radius: 40px;
+  padding: 4px;
+}
+.tr-price-range-section .tr-range-values div {
+  background-color: #FFFFFF;
+  border-radius: 40px;
+  font-weight: 600;
+  line-height: 40px;
+  color: #222222;
+  width: calc(50% - 10px);
+  height: 40px;
+  text-align: center;
+}
+/******* Price Range - End *******/
 
 /******* ROOM Start *******/
 .tr-hotel-info-section {
@@ -4997,8 +4982,10 @@ footer .tr-social-links ul li:nth-of-type(3) {
   padding: 4px 8px;
 }
 .tr-room-section-2 .tr-hotel-deatil .tr-hotel-facilities {
-  padding: 24px 0;
+    padding: 24px 0;
+    margin: 10px 0;
 }
+
 .tr-room-section-2 .tr-hotel-deatil .tr-hotel-facilities ul {
   display: flex;
   flex-wrap: wrap;
@@ -5024,6 +5011,20 @@ footer .tr-social-links ul li:nth-of-type(3) {
 }*/
 
 
+.tr-room-section-2 .tr-hotel-deatil .tr-more-facilities ul {
+    max-height: 36px; /* Adjusted for two lines based on font-size and line-height */
+    overflow: hidden;
+    position: relative;
+  }
+
+  .tr-room-section-2 .tr-hotel-deatil .tr-more-facilities ul.show-more {
+    max-height: none; /* Allows full content to display when toggled */
+  }
+
+
+.tr-more-facilities ul li {
+    display: inline; /* Ensures list items appear in a single block */
+}
 
 .tr-room-section-2 .tr-hotel-deatil .tr-more-facilities ul li {
   font-size: 14px;
@@ -7690,10 +7691,3 @@ footer .tr-social-links ul li:nth-of-type(3) {
   padding: 74px 30px 28px;
 }
 /******* Home Page - End *******/
-/* font-family: 'Figtree', sans-serif !important;
-color: #222;
-font-size: 16px;
-line-height: 28px;
-overflow-x: hidden;
-word-break: break-word;
-} */
