@@ -140,10 +140,34 @@
                           <input type="text" class="form-control search_explore" id="searchLocation" placeholder="Search location" name="search" autocomplete="off">
 
                           <div class="tr-recent-searchs-modal tr-custom-scrollbar"  id="recentSearchLocation">
-                            <div id="loc-list" class="autoCompletewrapper">
-                              <!-- Results will be populated here -->
-                            </div>
+                            <p id="loc-list" class="autoCompletewrapper"></p>
                           </div>
+                          <!--
+                          <div class="tr-recent-searchs-modal" id="recentSearchLocation">
+                            <div class="tr-enable-location">Around Current Location</div>
+                            <h5>Recent searches</h5>
+                            <ul>
+                              <li>
+                                <div class="tr-place-info">
+                                  <div class="tr-location-icon"></div>
+                                  <div class="tr-location-info">
+                                    <div class="tr-hotel-name">London Hotels</div>
+                                    <div class="tr-hotel-city">England, United Kingdom</div>
+                                  </div>
+                                </div>
+                              </li>
+                              <li>
+                                <div class="tr-place-info">
+                                  <div class="tr-location-icon"></div>
+                                  <div class="tr-location-info">
+                                    <div class="tr-hotel-name">Morocco</div>
+                                    <div class="tr-hotel-city">North Africa</div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                          -->
                           <div class="col tr-form-btn">
                             <button type="button" class="tr-btn tr-mobile">Continue</button>
                           </div>

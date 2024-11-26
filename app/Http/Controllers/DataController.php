@@ -31,40 +31,29 @@ class DataController extends Controller
 
 
 
+
     public function listLocation(Request $request)
     {
+        $sight = 0;
+
         if ($request->has('search')) {
             $searchText = $request->input('search');
-            $cacheKey = 'locations_search_' . md5($searchText);
 
-            $locations = Cache::remember($cacheKey, 600, function() use ($searchText) {
-                // First query with parent location info
-                $query = DB::table('Location AS l')
-                    ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
-                    ->select(
-                        'l.slugid AS id',
-                        'l.Name AS name',
-                        'l.country',
-                        'l.Slug',
-                        'parent.Name AS parent_name'
-                    )
-                    ->where('l.Name', 'LIKE', $searchText . '%')
-                    ->orderBy('l.avg_monthly_searches', 'desc')
+            $cacheKey = 'locations_search_' . md5($searchText);
+            $cachedData = Cache::remember($cacheKey, 600, function () use ($searchText) {
+                $sight = 0;
+
+                $query = DB::table('Location')
+                    ->select('slugid AS id', 'ParentId', DB::raw("CONCAT(Name, ', ', country) AS displayName"), 'Slug')
+                    ->where('Name', 'LIKE', $searchText . '%')
+                    ->orderBy('avg_monthly_searches', 'desc')
                     ->limit(10);
 
                 $locations = $query->get();
 
-                // If no results found, try more flexible search
                 if ($locations->isEmpty()) {
                     $query = DB::table('Location AS l')
-                        ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
-                        ->select(
-                            'l.slugid AS id',
-                            'l.Name AS name',
-                            'l.country',
-                            'l.Slug',
-                            'parent.Name AS parent_name'
-                        )
+                        ->select('slugid AS id', 'l.ParentId', DB::raw("CONCAT(Name, ', ', country) AS displayName"), 'Slug AS Slug')
                         ->where(function ($query) use ($searchText) {
                             $query->where(DB::raw("LOWER(CONCAT(l.Name, ' ', l.country))"), 'LIKE', '%' . strtolower($searchText) . '%');
                         })
@@ -74,17 +63,9 @@ class DataController extends Controller
                     $locations = $query->get();
                 }
 
-                // If still no results, try searching by Slug
                 if ($locations->isEmpty()) {
                     $query = DB::table('Location AS l')
-                        ->leftJoin('Location AS parent', 'l.ParentId', '=', 'parent.LocationId')
-                        ->select(
-                            'l.slugid AS id',
-                            'l.Name AS name',
-                            'l.country',
-                            'l.Slug',
-                            'parent.Name AS parent_name'
-                        )
+                        ->select('slugid AS id', 'l.ParentId', DB::raw("CONCAT(l.Name, ', ', l.country) AS displayName"), 'Slug AS Slug')
                         ->where('l.Slug', 'LIKE', $searchText . '%')
                         ->orderBy('l.avg_monthly_searches', 'desc')
                         ->limit(10);
@@ -92,39 +73,56 @@ class DataController extends Controller
                     $locations = $query->get();
                 }
 
-                return $locations;
+                if ($locations->isEmpty()) {
+                    $sight = 1;
+                    $query = DB::table('Sight AS s')
+                        ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
+                        ->select('s.Location_id AS id', 'l.ParentId', 's.SightId AS SightId', DB::raw("CONCAT(s.Title, ', ', l.country) AS displayName"), 's.Slug AS Slug')
+                        ->where('s.Title', 'LIKE', $searchText . '%')
+                        ->limit(10);
+
+                    $locations = $query->get();
+                }
+
+                if ($locations->isEmpty()) {
+                    $sight = 1;
+                    $query = DB::table('Sight AS s')
+                        ->join('Location as l', 's.LocationId', '=', 'l.LocationId')
+                        ->select('s.Location_id AS id', 'l.ParentId', 's.SightId AS SightId', DB::raw("CONCAT(s.Title, ', ', l.country) AS displayName"), 's.Slug AS Slug')
+                        ->where('s.search_field', 'LIKE', strtolower($searchText) . '%')
+                        ->limit(10);
+
+                    $locations = $query->get();
+                }
+
+                return ['locations' => $locations, 'sight' => $sight];
             });
 
+            $locations = $cachedData['locations'];
+            $sight = $cachedData['sight'];
             $result = [];
+
             if (!$locations->isEmpty()) {
                 foreach ($locations as $loc) {
-                    // Format the display value based on available information
-                    $displayValue = $loc->name;
-                    if ($loc->parent_name) {
-                        $displayValue .= ", {$loc->parent_name}";
-                    }
-                    if ($loc->country) {
-                        $displayValue .= ", {$loc->country}";
-                    }
-
                     $result[] = [
                         'id' => $loc->id,
                         'Slug' => $loc->Slug,
-                        'value' => $displayValue,
-                        'parent_name' => $loc->parent_name,
-                        'country_name' => $loc->country
+                        'value' => $loc->displayName,
+                        'ParentId' => $loc->ParentId ?? null,
+                        'SightId' => $sight == 1 ? $loc->SightId : null
                     ];
                 }
             } else {
                 $result[] = ['value' => "Result not found"];
             }
 
-            return view('mainpage_result', ['searchresults' => $result]);
+            return view('mainpage_result', ['searchresults' => $result, 'sight' => $sight]);
         }
     }
 
-    public function recenthistory(Request $request){
 
+    public function recenthistory(Request $request){
+        $sight = 0;
         if (Session::has('lastsearch')) {
             $serializedData = Session::get('lastsearch');
             $search = unserialize($serializedData);
@@ -172,10 +170,11 @@ class DataController extends Controller
 
         }
 
-        return view('mainpage_result', ['searchresults' => $result]);
+        return view('mainpage_result', ['searchresults' => $result,'sight'=>$sight]);
 
     }
-	   public function singleLocation($segment, Request $request){
+	public function singleLocation(Request $request, $segment, $category = null){
+ //   public function singleLocation($segment, $category = null, Request $request){
 
         $parts = explode('-', $segment);
 	    $id = null;
@@ -184,6 +183,7 @@ class DataController extends Controller
             $id = array_shift($parts);
             $slug = implode('-', $parts);
         }
+
         $explocname = $slug;
 		$dist =50;
         $rest = implode('-', $parts);
@@ -214,14 +214,53 @@ class DataController extends Controller
           }
           abort(404, 'NOT FOUND');
         }
+    //    redirect url
+
+    if($request->get('category') !=""){
+        $oldcat =  str_replace('ct','',$request->get('category'));
+
+        $getloccheck = DB::table('Location')
+            ->select('Slug')
+            ->where('Slug', $slug)
+            ->where('slugid', $id)
+            ->get();
+            $redirecturl = DB::table('Category')->select('Title')->where('CategoryId',$oldcat)->get();
+            if(!$redirecturl->isEmpty()){
+                $cattitle = str_replace(' ','-',$redirecturl[0]->Title) ;
+                $newUrl = route('search.results', [
+                    'id' => $id . '-' . $slug,
+                    'category' => $cattitle,
+                ]);
+
+                // Redirect to the new URL
+                return redirect($newUrl);
+            }
+       }
+
+    // end redirect url
 
         $location_name =$getloccheck[0]->Name;
+
         $locationID=$getloccheck[0]->LocationId;
         $lociID = $locationID ;
         $locn=$getloccheck[0]->Name;
 
 		 //cat code
-		$catid = $request->get('category');
+
+
+         $catheading ="";
+       //new code
+        $catid = null;
+
+        if($category !=""){
+            $category = str_replace('-',' ',$category);
+            $catheading =$category;
+            $getcatid = DB::table('Category')->select('CategoryId')->where('Title',$category)->get();
+            if(!$getcatid->isEmpty()){
+                $catid = $getcatid[0]->CategoryId;
+            }
+        }
+        // end new code
 		$catid= str_replace('ct','',$catid);
 		$lid = $request->session()->get('locId');
 
@@ -702,6 +741,12 @@ if ($countresult > 2) {
         }
     }
 }
+$lslug =null;
+$lslugid =null;
+ if(!empty($searchresults)){
+    $lslug = $searchresults[0]->Lslug;
+    $lslugid = $searchresults[0]->slugid;
+}
 $sightIds = []; // Initialize the array to hold SightId values
 $sightImages =collect();
 if (!empty($searchresults)) {
@@ -788,20 +833,24 @@ if (!empty($searchresults)) {
      }
 
      $getparent = DB::table('Location')->where('LocationId', $lociID)->get();
-
+//new code
      $locationPatent = [];
-
+     $location_parent_name =null;
      if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
+
          $loopcount = $getparent[0]->LocationLevel;
          $lociID = $getparent[0]->ParentId;
          for ($i = 1; $i < $loopcount; $i++) {
              $getparents = DB::table('Location')->where('LocationId', $lociID)->get();
              if (!empty($getparents)) {
-                  $locationPatent[] = [
-                      'LocationId' => $getparents[0]->slugid,
-                      'slug' => $getparents[0]->Slug,
-                      'Name' => $getparents[0]->Name,
-                  ];
+                if($i==1){
+                    $location_parent_name =$getparents[0]->Name;
+                }
+                $locationPatent[] = [
+                    'LocationId' => $getparents[0]->slugid,
+                    'slug' => $getparents[0]->Slug,
+                    'Name' => $getparents[0]->Name,
+                ];
                  if (!empty($getparents) && $getparents[0]->ParentId != "") {
                  $lociID = $getparents[0]->ParentId;
               }
@@ -916,11 +965,13 @@ if (!empty($searchresults)) {
         }
 
           //end nearby hotel
+
       $lname  =$location_name;
 
-
+            //   return print_r($locationPatent);
      $type ="h";
-      return view('listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('restaurantdata',$restaurantdata)->with('getexp',$getexp)->with('location_name',$location_name)->with('type',$type)->with('lname',$lname)->with('totalCountResults',$totalCountResults)->with('sightImages',$sightImages)->with('top_attractions',$top_attractions);
+      return view('listing')->with('searchresults',$searchresults)->with('searchlocation',$locn)->with('faq',$faq)->with('getSightCat',$getSightCat)->with('rest_avail',$rest_avail)->with('ismustsee',$ismustsee)->with('tplocname',$tplocname)->with('locationPatent',$locationPatent)->with('getrest',$getrest)->with('experience',$experience)->with('gethotellistiid',$gethotellistiid)->with('breadcumb',$breadcumb)->with('restaurantdata',$restaurantdata)->with('getexp',$getexp)->with('location_name',$location_name)->with('type',$type)->with('lname',$lname)->with('totalCountResults',$totalCountResults)->with('sightImages',$sightImages)->with('top_attractions',$top_attractions)->with('lslug',$lslug)
+      ->with('lslugid',$lslugid)->with('catheading',$catheading)->with('location_parent_name',$location_parent_name);
   }
   public function getrestaurents( $searchresults,$locationId)
   {
@@ -1633,7 +1684,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
       ->Leftjoin('Location', 'Sight.LocationId', '=', 'Location.LocationId')
       ->Leftjoin('Country', 'Location.CountryId', '=', 'Country.CountryId')
  ->Leftjoin('Category', 'Sight.CategoryId', '=', 'Category.CategoryId')
- ->select('Sight.Title','Sight.Address','Sight.SightId','Sight.LocationId','Sight.Longitude','Sight.Latitude','Sight.TAAggregateRating','Sight.About','Sight.Phone' , 'Sight.Website', 'Sight.CategoryId','Sight.TATotalReviews', 'Location.Name', 'Location.Slug as Lslug', 'Country.Name as countryName','Location.slugid','Sight.IsMustSee','Sight.duration','Sight.ReviewSummaryLabel','Sight.ReviewSummary','Sight.Award','Sight.Award_description','Sight.Email','Sight.MetaTagTitle','Sight.MetaTagDescription')
+ ->select('Sight.Title','Sight.Address','Sight.SightId','Sight.LocationId','Sight.Longitude','Sight.Latitude','Sight.TAAggregateRating','Sight.About','Sight.Phone' , 'Sight.Website', 'Sight.CategoryId','Sight.TATotalReviews','Sight.MetaTagTitle','Sight.MetaTagDescription', 'Location.Name', 'Location.Slug as Lslug', 'Country.Name as countryName','Location.slugid','Sight.IsMustSee','Sight.duration','Sight.ReviewSummaryLabel','Sight.ReviewSummary','Sight.Award','Sight.Award_description','Sight.Email','Location.Slug as lslug')
       ->where('Sight.SightId', $sighid)
       ->where('Location.LocationId', $locationID)
       ->where('Sight.Slug', $slug)
@@ -1663,6 +1714,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		   abort(404, 'NOT FOUND');
 		  }
 
+         $lslug = $searchresults[0]->lslug;
+          $lslugid = $searchresults[0]->slugid;
           $lname =$searchresults[0]->Name;
 
 		// get parent
@@ -1816,7 +1869,9 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
     ->with('Sight_image',$Sight_image)
     ->with('type','explore')
     ->with('lname',$lname)
-    ->with('get_nearby_rest',$get_nearby_rest);
+    ->with('get_nearby_rest',$get_nearby_rest)
+		  ->with('lslug',$lslug)
+    ->with('lslugid',$lslugid);
 
     }
       public function save_sight_nb_hotel(request $request){
@@ -2083,13 +2138,23 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
     $id = null;
     $slug = null;
     $desiredId = null;
+    $lslugid="";
+    $lslug="";
    		$st="";
 		$amenity="";
+        $price="";
+        $reviewscore="";
 		if($request->get('st') !=""){
 			$st =trim($request->get('st')) ;
 		}
 		if($request->get('amenity') !=""){
 			$amenity = trim(str_replace('_',' ',$request->get('amenity')) );
+		}
+        if($request->get('rs') !=""){
+			$reviewscore = trim(str_replace('_',' ',$request->get('rs')) );
+		}
+        if($request->get('price') !=""){
+			$price = trim(str_replace('_',' ',$request->get('price')) );
 		}
    // return $amenity;
     // Split segment by '-' to separate the ID and slug
@@ -2155,7 +2220,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                 'checkin' => $getval,
                 'rooms' => $rooms,
                 'guest' => $guest,
-				 'slug' => $slug,
+				'slug' => $slug,
                 'slugid'=>$locationid,
             ]);
             $fullname = "";
@@ -2347,10 +2412,16 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             $getloclink =collect();
 
             $getloclink = DB::table('Location as l')
-            ->select('l.LocationLevel','l.ParentId','l.LocationId','l.Slug')
+            ->select('l.LocationLevel','l.ParentId','l.LocationId','l.Slug','l.slugid')
             ->where('l.slugid', $desiredId)
             ->limit(1)
             ->get();
+            if(!$getloclink->isEmpty()){
+                $lslug = $getloclink[0]->Slug;
+                $lslugid = $getloclink[0]->slugid;
+              //  $lname =$getloclink[0]->Name;
+            }
+           // return print_r($getloclink);
 
             $getcontlink =collect();
             $getcontlink = DB::table('Country as co')
@@ -2387,6 +2458,7 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
                     }
                 }
             }
+
 
             /*breadcrumb*/
 
@@ -2500,8 +2572,14 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
          $metadata = DB::table('Location')->select('HotelTitleTag','HotelMetaDescription','MetaTagTitle','MetaTagDescription')->where('slugid', $slgid)->get();
 
          $searchresults = DB::table('TPHotel as h')
-		->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with amenities
-		->select(
+		->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.facilities)'), '>', DB::raw('0'));
+        if ($amenity == 'free cancellation' || $amenity == 'breakfast') {
+            // return 22;
+             $searchresults->leftJoin('TPRoomtype_tmp as rt', function($join) {
+                 $join->on('h.hotelid', '=', 'rt.hotelid');
+           });
+        }
+		$searchresults->select(
 			'h.hotelid',
 			'h.id',
 			'h.name',
@@ -2527,18 +2605,55 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 		)
 		->where('h.slugid', $slgid)
 		->whereNotNull('h.slugid') ;
-
 			if (!empty($st)) {
 				$searchresults->where('h.stars', $st);
 			}
-			if (!empty($amenity)) {
+            if (!empty($amenity)) {
 
-				$searchresults->whereExists(function($subquery) use ($amenity) {
-					$subquery->select(DB::raw(1))
-						->from('TPHotel_amenities as a2')
-						->whereRaw('FIND_IN_SET(a2.id, h.shortFacilities)')
-						->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
-				});
+                if($amenity == 'parking' || $amenity == 'wifi'){
+                    $searchresults->whereExists(function($subquery) use ($amenity) {
+                     $subquery->select(DB::raw(1))
+                         ->from('TPHotel_amenities as a2')
+                         ->whereRaw('FIND_IN_SET(a2.id, h.facilities)')
+                         ->where(function ($q) use ($amenity) {
+                             $q->where('a2.name', 'LIKE', '%' . $amenity . '%')
+                               ->orWhere('a2.name', 'LIKE', '% ' . $amenity . '%')
+                               ->orWhere('a2.name', 'LIKE', '%' . $amenity . ' %');
+                         });
+                         //->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
+                    });
+                 } elseif ($amenity == 'free cancellation') {
+                     $searchresults->where('rt.refundable', 1);
+                 } elseif ($amenity == 'breakfast') {
+                     $searchresults->where('rt.breakfast', 1);
+                 }
+
+             }
+			// if (!empty($amenity)) {
+
+			// 	$searchresults->whereExists(function($subquery) use ($amenity) {
+			// 		$subquery->select(DB::raw(1))
+			// 			->from('TPHotel_amenities as a2')
+			// 			->whereRaw('FIND_IN_SET(a2.id, h.shortFacilities)')
+			// 			->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
+			// 	});
+			// }
+
+
+            if ($reviewscore !="") {
+                $searchresults->whereNotNull('h.rating')
+                ->where('h.rating', '>=', $reviewscore);
+			}
+            if (!empty($price)) {
+                if (strpos($price, '-') !== false) {
+                    [$minPrice, $maxPrice] = explode('-', $price);
+                    $minPrice = (int)trim($minPrice);
+                    $maxPrice = (int)trim($maxPrice);
+                    $searchresults->whereBetween('h.pricefrom', [$minPrice, $maxPrice]);
+                } else {
+                    $singlePrice = (int)trim($price);
+                    $searchresults->where('h.pricefrom', '=', $singlePrice);
+                }
 			}
 		$searchresults->orderBy(DB::raw('h.short_description IS NULL'), 'asc');
 		// Group by necessary columns
@@ -2561,6 +2676,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 			 ->with('agencyData',$agencyData)
 			->with('st',$st)
             ->with('amenity',$amenity)
+            ->with('price',$price)
+            ->with('reviewscore',$reviewscore)
             ->with('pagetype',$pagetype)
             ->with('gethoteltype',$gethoteltype)
             ->with('lname',$lname)
@@ -2576,21 +2693,34 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->with('slgid',$slgid )
             ->with('locationid',$locationid )
             ->with('count_result',$count_result)
-			->with('slugdata',$explocname);
+			->with('slugdata',$explocname)
+            ->with('lslug',$lslug)
+            ->with('lslugid',$lslugid);;
     }
-
     public function getwithoutdatedata(Request $request) {
         $pagetype = "withoutdate";
         $desiredId = $request->get('locationid');
         $lname = $request->get('lname');
-         $st="";
+        $st="";
         $amenity="";
+        $price="";
+        $reviewscore ="";
+
         if($request->get('starrating') !=""){
             $st =trim($request->get('starrating')) ;
         }
         if($request->get('amenity') !=""){
             $amenity = trim(str_replace('_',' ',$request->get('amenity')) );
         }
+
+        if($request->get('rs') !=""){
+            $reviewscore = trim(str_replace('_',' ',$request->get('rs')) );
+        }
+        if($request->get('price') !=""){
+            $price = trim(str_replace('_',' ',$request->get('price')) );
+        }
+
+
 
 
        if($amenity ==""){
@@ -2624,16 +2754,39 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             if ($st !="") {
 				$query->where('h.stars', $st);
 			}
-       $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc');
+            if ($reviewscore !="") {
+
+                $query->whereNotNull('h.rating')
+                ->where('h.rating', '>=', $reviewscore);
+            }
+            if ($price !="") {
+                if (strpos($price, '-') !== false) {
+                    [$minPrice, $maxPrice] = explode('-', $price);
+                    $minPrice = (int)trim($minPrice);
+                    $maxPrice = (int)trim($maxPrice);
+                    $query->whereBetween('h.pricefrom', [$minPrice, $maxPrice]);
+                } else {
+                    $singlePrice = (int)trim($price);
+                    $query->where('h.pricefrom', '=', $singlePrice);
+                }
+            }
+        $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc')
+        ->orderBy('h.stars', 'desc');
         $query->groupBy('h.id');
         $searchresults = $query->paginate(30);
       }
 
         if($amenity !=""){
             $query = DB::table('TPHotel as h')
-            // ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.facilities)'), '>', DB::raw('0')) // Join with amenities
-            ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with
-            ->select(
+            // ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.shortFacilities)'), '>', DB::raw('0')) // Join with amenities
+            ->leftJoin('TPHotel_amenities as a', DB::raw('FIND_IN_SET(a.id, h.facilities)'), '>', DB::raw('0')); // Join with
+            if ($amenity == 'free cancellation' || $amenity == 'breakfast') {
+               // return 22;
+                $query->leftJoin('TPRoomtype_tmp as rt', function($join) {
+                    $join->on('h.hotelid', '=', 'rt.hotelid');
+              });
+           }
+            $query->select(
                 'h.hotelid',
                 'h.id',
                 'h.name',
@@ -2660,30 +2813,62 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             }
             if (!empty($amenity)) {
 
-                $query->whereExists(function($subquery) use ($amenity) {
+               if($amenity == 'parking' || $amenity == 'wifi'){
+                   $query->whereExists(function($subquery) use ($amenity) {
                     $subquery->select(DB::raw(1))
                         ->from('TPHotel_amenities as a2')
-                        ->whereRaw('FIND_IN_SET(a2.id, h.shortFacilities)')
-                        ->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
-                });
-            }
+                        ->whereRaw('FIND_IN_SET(a2.id, h.facilities)')
+                        ->where(function ($q) use ($amenity) {
+                            $q->where('a2.name', 'LIKE', '%' . $amenity . '%')
+                              ->orWhere('a2.name', 'LIKE', '% ' . $amenity . '%')
+                              ->orWhere('a2.name', 'LIKE', '%' . $amenity . ' %');
+                        });
+                        //->where('a2.name', 'LIKE', '%' . trim($amenity) . '%');
+                   });
+                } elseif ($amenity == 'free cancellation') {
+                    $query->where('rt.refundable', 1);
+                } elseif ($amenity == 'breakfast') {
+                    $query->where('rt.breakfast', 1);
+                }
 
-            $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc');
+            }
+            if ($reviewscore !="") {
+
+                $query->whereNotNull('h.rating')
+                ->where('h.rating', '>=', $reviewscore);
+            }
+            if ($price !="") {
+                if (strpos($price, '-') !== false) {
+                    [$minPrice, $maxPrice] = explode('-', $price);
+                    $minPrice = (int)trim($minPrice);
+                    $maxPrice = (int)trim($maxPrice);
+                    $query->whereBetween('h.pricefrom', [$minPrice, $maxPrice]);
+                } else {
+                    $singlePrice = (int)trim($price);
+                    $query->where('h.pricefrom', '=', $singlePrice);
+                }
+            }
+            $query->orderBy(DB::raw('h.short_description IS NULL'), 'asc')
+            ->orderBy('h.stars', 'desc');
             $query->groupBy('h.id');
             $searchresults = $query->paginate(30);
         }
-
+   //return print_r($searchresults);
 
         $paginationLinks = $searchresults->appends($request->except(['_token']))->links('hotellist_pagg.default');
 
 
         $count_result = $searchresults->total();
 
-
+       // return  print_r($searchresults);
         return view('frontend.hotel.hoteldata_withoutdate', [
             'count_result' => $count_result,
             'searchresults' => $searchresults,
             'lname' => $lname,
+            'st'=>$st,
+            'amenity'=>$amenity,
+            'price'=>$price,
+            'reviewscore'=>$reviewscore,
         ]);
     }
     public function gethotellist_withoutdate_test(request $request){
@@ -2719,8 +2904,14 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
        $hotelId = $request->get('hid');
        $cityName = $request->get('cityName') ;
 
-       $guests = Session()->get('guest');
-       $rooms = Session()->get('rooms');
+       $guests = $request->get('guest');
+       $rooms = $request->get('rooms') ;
+        if($guests == 0){
+            $guests = Session()->get('guest');
+        }
+        if($rooms == 0){
+            $rooms = Session()->get('rooms');
+        }
 
        $stchin = $request->get('checkin');
        $checkout = $request->get('checkout');
@@ -2862,12 +3053,13 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
 
    //HOTEL DETAIL Page
 		//start hotel detail
-       public function hotel_detail($id,Request $request) {
+     public function hotel_detail($id,Request $request) {
 
             $currentTime  = now();
             $checkin = $request->get('checkin');
             $checkout = $request->get('checkout');
-
+            $lslugid="";
+            $lslug="";
 
             $TPRoomtype = collect();
             $gethotel = collect();
@@ -2999,14 +3191,18 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
         $getloclink =collect();
         $getcontlink =collect();
         $getlocationexp =collect();
-
+   //  return $locid;
         $locationPatent = [];
         $getloclink = DB::table('Temp_Mapping as tm')
         ->join('Location as l', 'l.LocationId', '=', 'tm.Tid')
-        ->select('l.LocationId','l.LocationLevel','l.ParentId','l.CountryId')
+        ->select('l.LocationId','l.LocationLevel','l.ParentId','l.CountryId','l.Slug','l.slugid')
         ->where('tm.LocationId', $locid)
         ->get();
-
+        if(!$getloclink->isEmpty()){
+            $lslug = $getloclink[0]->Slug;
+            $lslugid = $getloclink[0]->slugid;
+          //  $lname =$getloclink[0]->Name;
+        }
          if(!$getloclink->isEmpty() ){
              $getcontlink = DB::table('Country as co')
              ->join('CountryCollaboration as cont','cont.CountryCollaborationId','=','co.CountryCollaborationId')
@@ -3127,7 +3323,8 @@ return response()->json(['mapData' => $locationDataJson, 'html' => $html]);
             ->with('lname',$lname)
             ->with('facilityNames',$facilityNames)
 			->with('shortFacilities',$shortFacilities)
-			->with('getprice',$getprice);
+			->with('getprice',$getprice)->with('lslug',$lslug)
+            ->with('lslugid',$lslugid);
 
         }
 
@@ -6795,7 +6992,8 @@ if (!empty($getparent) && $getparent[0]->LocationLevel != 1) {
             if (!empty($sort_by)) {
 
 				if($sort_by == 'Top-rated'){
-					$searchresults->where('h.rating', '>=', 8.0);
+					$searchresults->where('h.rating', '>=', 8.0)
+						->orderBy('h.rating', 'desc');
                 }elseif ($sort_by == 'Price: High to Low') {
 
                     $searchresults->orderBy(DB::raw('(SELECT MIN(hotemp.price) FROM hotelbookingstemp hotemp WHERE hotemp.hotelid = h.hotelid)'), 'desc');

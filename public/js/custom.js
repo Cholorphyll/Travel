@@ -37,13 +37,21 @@ function performSearch(value) {
             success: function(response) {
                 var resultList = $('#searchResults');
                 resultList.empty(); // Clear previous results
-                $('#loc-list').html("");
+                $('#loc-list').html(""); // Clear existing HTML
+
+                response.searchresults.forEach(function(item) {
+                    var locationHtml = `
+                        <div class="location-item">
+                            <div>${item.value}</div>
+                            <div style="font-size: 0.9em; color: gray;">ParentId: ${item.ParentId || 'N/A'}</div>
+                        </div>
+                    `;
+                    $('#loc-list').append(locationHtml);
+                });
                 $('#recent-search').addClass('d-none');
-                $('#loc-list').html(response); // Display new search results
             }
         });
     } else {
-        // If the input is empty, show recent search history
         $(".recent-his").removeClass("d-none");
         $("#cat-list").css("display", "block");
         $(".recent-his").css("display", "block");
@@ -59,47 +67,58 @@ function performSearch(value) {
                 $('#recent-search').removeClass('d-none');
                 var resultList = $('#searchResults');
                 resultList.empty(); // Clear previous results
-                $('#loc-list').html("");
-                $('#loc-list').html(response); // Display recent search history
+                $('#loc-list').html(""); // Clear existing HTML
+
+                response.forEach(function(item) {
+                    var locationHtml = `
+                        <div class="location-item">
+                            <div>${item.value}</div>
+                            <div style="font-size: 0.9em; color: gray;">ParentId: ${item.ParentId || 'N/A'}</div>
+                        </div>
+                    `;
+                    $('#loc-list').append(locationHtml);
+                });
             }
         });
     }
 }
 
-
 $(document).ready(function() {
+    $('.search_explore').on('click', function() {
+        var value = $(this).val();
+        if (value.length <= 0) {
+            $("#recentSearchLocation").css("display", "block");
+            $("#cat-list").css("display", "block");
 
-  $('.search_explore').on('click', function() {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: 'get',
+                url: base_url + 'recenthistory',
+                data: {},
+                success: function(response) {
+                    $("#recentSearchLocation").css("display", "block");
+                    $(".recent-his").removeClass("d-none");
+                    var resultList = $('#searchResults');
+                    resultList.empty(); // Clear previous results
+                    $('#loc-list').html(""); // Clear existing HTML
 
-    var value = $(this).val();
-    if (value.length <= 0) {
-      $("#recentSearchLocation").css("display", "block");
-
-      $("#cat-list").css("display", "block");
-
-
-
-      $.ajax({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        type: 'get',
-        url: base_url + 'recenthistory',
-        data: {
-          // Your data here
-        },
-        success: function(response) {
-          $("#recentSearchLocation").css("display", "block");
-          $(".recent-his").removeClass("d-none");
-          var resultList = $('#searchResults');
-          resultList.empty();
-          $('#loc-list').html(response);
-
+                    response.forEach(function(item) {
+                        var locationHtml = `
+                            <div class="location-item">
+                                <div>${item.value}</div>
+                                <div style="font-size: 0.9em; color: gray;">ParentId: ${item.ParentId || 'N/A'}</div>
+                            </div>
+                        `;
+                        $('#loc-list').append(locationHtml);
+                    });
+                }
+            });
         }
-      });
-    }
-  });
+    });
 });
+
 
 
 
@@ -202,8 +221,6 @@ $(document).ready(function() {
     }
   });
 });
-
-
 //second function
 $(document).on('click', '.tr-more-price.tr', function() {
     const $this = $(this);
@@ -615,8 +632,9 @@ $(document).on('click', '.filter-chackinout', function () {
     var slug = $('#slug').text().trim();
 
         var hotel = $('#hotel').text();
-        var checkin = $('.t-input-check-in').val();
+        var checkin = $('#checkInInput1').val();
         var checkout = $('.t-input-check-out').val();
+
         var currentDate = new Date();
         var cin = new Date();
         var cout = new Date();
@@ -671,7 +689,7 @@ $(document).on('click', '.filter-chackinout', function () {
             window.location.href = url;
         }
 
-        if ( checkin != sessionCheckin || checkout != sessionCheckout  || guest != sessionGuest || rooms != sessionRooms || slug != sessionSlug ) {
+        //if ( checkin != sessionCheckin || checkout != sessionCheckout  || guest != sessionGuest || rooms != sessionRooms || slug != sessionSlug ) {
 
             let formattedCheckin = checkin.replace(/\s+/g, '-');
             let fcheckout = checkout.replace(/\s+/g, '-');
@@ -683,8 +701,8 @@ $(document).on('click', '.filter-chackinout', function () {
                     '&lid=' + lid +
                     '&rooms=' + rooms +
                     '&guest=' + guest;
-            window.location.href = url;
-        }
+              window.location.href = url;
+     //   }
 
 });
 
@@ -694,6 +712,26 @@ $(document).on('click', '.filter-chackinout', function () {
 
 
 
+
+//search hotel list
+$(document).on('click', '.exp-search', function () {
+
+
+        var slugid = $('.loc-slugid').text();
+        var slug = $('.loc-slug').text();
+
+        if(slug ==""){
+            alert('Location is required.');
+            return ;
+        }
+        var url = 'lo-' + slugid +
+            '-' + slug;
+        window.location.href = url;
+
+});
+
+
+//end explore search
 
 
 //show more about
